@@ -2,6 +2,7 @@ import { Entity } from "@/ecs";
 import { LightComponent, LightEntry, LightInstance } from "./LightComponent";
 import { LightRegistry } from "./LightRegistry";
 import { Scene } from "@/core/Scene";
+import { Logger } from "../core/Logger";
 
 export class LightingSystem {
     private lightRegistry: LightRegistry;
@@ -346,7 +347,7 @@ export class LightingSystem {
                     entry.instance.destroy?.();
                     this.lightRegistry.cleanupLightInstance(entry.instance);
                 } catch (err) {
-                    console.error('Error limpiando luz:', err);
+                    Logger.getInstance().error('Error limpiando luz:', err);
                 }
 
                 entry.instance = undefined;

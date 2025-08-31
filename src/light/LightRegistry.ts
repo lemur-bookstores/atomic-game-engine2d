@@ -1,4 +1,5 @@
 import { LightConstructor, LightMetadata, LightInstance, LightState } from "./LightComponent";
+import { Logger } from "../core/Logger";
 
 export class LightRegistry {
     private lightTypes = new Map<string, LightConstructor>();
@@ -39,9 +40,9 @@ export class LightRegistry {
                 category: options?.category || 'basic'
             });
 
-            console.log(`💡 Luz ${lightType} registrada con ${properties.length} propiedades`);
+            Logger.getInstance().info(`💡 Luz ${lightType} registrada con ${properties.length} propiedades`);
         } catch (err) {
-            console.warn(`⚠️ Error extrayendo metadatos de ${lightType}:`, err);
+            Logger.getInstance().warn(`⚠️ Error extrayendo metadatos de ${lightType}:`, err);
         }
     }
 

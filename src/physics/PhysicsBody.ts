@@ -2,6 +2,7 @@ import type { Body } from 'box2d-wasm';
 import { Vector2 } from '../math/Vector2';
 import { Transform } from '../math/Transform';
 import { PhysicsWorld } from './PhysicsWorld';
+import { Logger } from '../core/Logger';
 
 export enum PhysicsBodyType {
     Static = 'static',
@@ -13,6 +14,7 @@ export enum PhysicsShape {
     Box = 'box',
     Circle = 'circle'
 }
+
 
 export interface PhysicsBodyConfig {
     type?: PhysicsBodyType;
@@ -89,7 +91,6 @@ export class PhysicsBody {
             { name: 'restitution', type: 'number', default: 0.2 },
             { name: 'isSensor', type: 'boolean', default: false },
             { name: 'position', type: 'Vector2', default: { x: 0, y: 0 } },
-            { name: 'angle', type: 'number', default: 0 },
             { name: 'collisionCategory', type: 'number', default: 0x0001 },
             { name: 'collisionMask', type: 'number', default: 0xFFFF }
         ];
@@ -112,7 +113,7 @@ export class PhysicsBody {
 
         // Defensive: if Box2D or world not available, skip initialization (fallback mode)
         if (!box2d || !w) {
-            console.log('PhysicsBody: Box2D/world not available, skipping body creation');
+            Logger.getInstance().debug('PhysicsBody: Box2D/world not available, skipping body creation');
             return;
         }
 
@@ -128,6 +129,9 @@ export class PhysicsBody {
             case PhysicsBodyType.Kinematic:
                 bodyDef.type = box2d.b2_kinematicBody;
                 break;
+            default:
+                Logger.getInstance().warn('PhysicsBody: Unknown body type, defaulting to dynamic');
+                bodyDef.type = box2d.b2_dynamicBody;
         }
 
         bodyDef.position = this.world.toB2Vec2(this.config.position!);
@@ -238,6 +242,7 @@ export class PhysicsBody {
 
     public applyForce(force: Vector2, point?: Vector2): void {
         if (!this.body) {
+            Logger.getInstance().debug('PhysicsBody: Box2D body not available for applyForce');
             return;
         }
         const worldPoint = point ? this.world.toB2Vec2(point) : this.body.GetWorldCenter();
@@ -246,6 +251,7 @@ export class PhysicsBody {
 
     public applyImpulse(impulse: Vector2, point?: Vector2): void {
         if (!this.body) {
+            Logger.getInstance().debug('PhysicsBody: Box2D body not available for applyImpulse');
             return;
         }
         const worldPoint = point ? this.world.toB2Vec2(point) : this.body.GetWorldCenter();
@@ -254,6 +260,7 @@ export class PhysicsBody {
 
     public applyTorque(torque: number): void {
         if (!this.body) {
+            Logger.getInstance().debug('PhysicsBody: Box2D body not available for applyTorque');
             return;
         }
         this.body.ApplyTorque(torque, true);
@@ -276,6 +283,7 @@ export class PhysicsBody {
         this.world.unregisterBody(this);
 
         if (!this.body) {
+            Logger.getInstance().debug('PhysicsBody: Box2D body not available for destroy');
             return;
         }
         const world = this.world.getWorld();

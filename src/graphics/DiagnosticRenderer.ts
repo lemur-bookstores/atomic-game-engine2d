@@ -2,6 +2,7 @@ import { RenderStrategy } from './Renderer';
 import { Texture } from './Texture';
 import { Vector2 } from '../math/Vector2';
 import { Color } from '../math/Color';
+import { Logger } from '../core/Logger';
 
 /**
  * Diagnostic renderer that overlays visual debugging information
@@ -33,7 +34,7 @@ export class DiagnosticRenderer implements RenderStrategy {
             throw new Error('Failed to get 2D context for diagnostic canvas');
         }
 
-        console.log('[DiagnosticRenderer] Diagnostic overlay canvas created');
+        Logger.getInstance().debug('[DiagnosticRenderer] Diagnostic overlay canvas created');
     }
 
     clear(): void {
@@ -89,7 +90,7 @@ export class DiagnosticRenderer implements RenderStrategy {
             position.y + size.y / 2 + 15
         );
 
-        console.log(`[DiagnosticRenderer] Drew sprite at (${position.x}, ${position.y}) size (${size.x}, ${size.y})`);
+        Logger.getInstance().debug(`[DiagnosticRenderer] Drew sprite at (${position.x}, ${position.y}) size (${size.x}, ${size.y})`);
     } present(): void {
         // Add diagnostic info overlay
         if (this.ctx && this.isEnabled) {

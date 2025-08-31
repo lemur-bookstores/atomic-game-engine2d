@@ -1,3 +1,5 @@
+import { Logger } from '../core/Logger';
+
 export class Texture {
     public readonly width: number;
     public readonly height: number;
@@ -8,10 +10,10 @@ export class Texture {
         this.width = image.width;
         this.height = image.height;
 
-        console.log(`[Texture] Created texture with dimensions: ${this.width}x${this.height}, complete: ${image.complete}, src: ${image.src}`);
+        Logger.getInstance().debug(`[Texture] Created texture with dimensions: ${this.width}x${this.height}, complete: ${image.complete}, src: ${image.src}`);
 
         if (!image.complete) {
-            console.warn(`[Texture] Warning: Image not fully loaded when creating texture!`);
+            Logger.getInstance().warn(`[Texture] Warning: Image not fully loaded when creating texture!`);
         }
     }
 

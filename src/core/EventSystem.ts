@@ -3,6 +3,8 @@
 /**
  * Event system for handling game events using the Observer pattern
  */
+import { Logger } from './Logger';
+
 export class EventSystem {
     private static instance: EventSystem;
     private listeners = new Map<AllEventTypes, EventCallback<any>[]>();
@@ -25,7 +27,7 @@ export class EventSystem {
      * Emit an event to be processed
      */
     emit<T>(type: AllEventTypes & T, data: any = null): void {
-        // console.log(`[EventSystem] Emitting event: ${type}`, data);
+        Logger.getInstance().debug(`[EventSystem] Emitting event: ${type}`, data);
         const event: GameEvent = {
             type,
             data,
@@ -107,7 +109,7 @@ export class EventSystem {
      */
     processEvents(): void {
         if (this.isProcessing) {
-            console.warn('EventSystem is already processing events. Recursive call detected.');
+            Logger.getInstance().warn('EventSystem is already processing events. Recursive call detected.');
             return;
         }
 
@@ -119,7 +121,7 @@ export class EventSystem {
                 this.dispatchEvent(event);
             }
         } catch (error) {
-            console.error('Error processing events:', error);
+            Logger.getInstance().error('Error processing events:', error as any);
         } finally {
             this.isProcessing = false;
         }
@@ -142,7 +144,7 @@ export class EventSystem {
                     callback(event);
                     invoked.add(callback);
                 } catch (error) {
-                    console.error(`Error in event listener for '${event.type}':`, error);
+                    Logger.getInstance().error(`Error in event listener for '${event.type}':`, error as any);
                 }
             }
         }
@@ -172,7 +174,7 @@ export class EventSystem {
                             callback(event);
                             invoked.add(callback);
                         } catch (error) {
-                            console.error(`Error in event listener for '${altType}':`, error);
+                            Logger.getInstance().error(`Error in event listener for '${altType}':`, error as any);
                         }
                     }
                 }
@@ -189,7 +191,7 @@ export class EventSystem {
                             callback(event);
                             invoked.add(callback);
                         } catch (error) {
-                            console.error(`Error in event listener for '${camelName}':`, error);
+                            Logger.getInstance().error(`Error in event listener for '${camelName}':`, error as any);
                         }
                     }
                 }
@@ -210,7 +212,7 @@ export class EventSystem {
                                 callback(event);
                                 invoked.add(callback);
                             } catch (error) {
-                                console.error(`Error in event listener for '${changedType}':`, error);
+                                Logger.getInstance().error(`Error in event listener for '${changedType}':`, error as any);
                             }
                         }
                     }
@@ -226,7 +228,7 @@ export class EventSystem {
                                 callback(event);
                                 invoked.add(callback);
                             } catch (error) {
-                                console.error(`Error in event listener for '${changedName}':`, error);
+                                Logger.getInstance().error(`Error in event listener for '${changedName}':`, error as any);
                             }
                         }
                     }

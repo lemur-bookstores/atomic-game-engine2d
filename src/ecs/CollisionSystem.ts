@@ -2,6 +2,7 @@ import { System } from './System';
 import { Entity } from './Entity';
 import { TransformComponent, ColliderComponent } from './Component';
 import { EventSystem } from '../core/EventSystem';
+import { Logger } from '../core/Logger';
 import { PHYSICS_EVENTS } from '../types/event-const';
 
 export class CollisionSystem extends System {
@@ -17,7 +18,7 @@ export class CollisionSystem extends System {
         const collidableEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
 
         if (collidableEntities.length > 0) {
-            console.log(`CollisionSystem: Checking ${collidableEntities.length} entities for collisions`);
+            Logger.getInstance().debug(`CollisionSystem: Checking ${collidableEntities.length} entities for collisions`);
         }
 
         // Check collisions between all pairs of entities
@@ -27,7 +28,7 @@ export class CollisionSystem extends System {
                 const entityB = collidableEntities[j];
 
                 if (this.checkCollision(entityA, entityB)) {
-                    console.log('Collision detected between entities:', entityA.id, entityB.id);
+                    Logger.getInstance().debug('Collision detected between entities:', entityA.id, entityB.id);
 
                     this.eventSystem.emit(PHYSICS_EVENTS.COLLISION_BEGIN, {
                         entityA,
