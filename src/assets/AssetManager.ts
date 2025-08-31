@@ -4,6 +4,7 @@ import { Texture, SpriteSheet } from '../graphics';
 import { ASSET_EVENTS } from '../types/event-const';
 import { SpriteSheetLibrary, GridDetectionConfig, DynamicDetectionConfig } from '../libs/sprite-sheet';
 import { convertNormalizedToPixelFrames, createImageDataFromCanvas, createCanvasFromImage } from '../libs/sprite-sheet/engine-adapter';
+import { Logger } from '../core/Logger';
 
 interface Asset {
     type: AssetType;
@@ -108,17 +109,17 @@ export class AssetManager {
     private setupEventListeners(): void {
         this.eventSystem.on(ASSET_EVENTS.LOADED, (event: GameEvent) => {
             const assetEvent = event.data as AssetLoadEvent;
-            console.log(`Asset loaded: ${assetEvent.asset}`);
+            Logger.getInstance().info(`Asset loaded: ${assetEvent.asset}`);
         });
 
         this.eventSystem.on(ASSET_EVENTS.ERROR, (event: GameEvent) => {
             const assetEvent = event.data as AssetLoadEvent;
-            console.error(`Error loading asset: ${assetEvent.asset}`, assetEvent.error);
+            Logger.getInstance().error(`Error loading asset: ${assetEvent.asset}`, assetEvent.error);
         });
 
         this.eventSystem.on(ASSET_EVENTS.PROGRESS, (event: GameEvent) => {
             const assetEvent = event.data as AssetLoadEvent;
-            console.log(`Loading progress: ${assetEvent.progress! * 100}%`);
+            Logger.getInstance().info(`Loading progress: ${assetEvent.progress! * 100}%`);
         });
     }
 

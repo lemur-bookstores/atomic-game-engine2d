@@ -1,4 +1,5 @@
 import { ScriptInstance, ScriptState } from './ScriptComponent';
+import { Logger } from '../core/Logger';
 
 export interface ScriptMetadata {
     className: string;
@@ -47,7 +48,7 @@ export class ScriptRegistry {
         skipMetadataExtraction?: boolean;
     }): void {
         if (this.map.has(name)) {
-            console.warn(`⚠️ Script ${name} ya está registrado. Sobrescribiendo...`);
+            Logger.getInstance().warn(`⚠️ Script ${name} ya está registrado. Sobrescribiendo...`);
         }
 
         this.map.set(name, ctor);
@@ -69,12 +70,12 @@ export class ScriptRegistry {
                 description: options?.description
             });
 
-            console.log(`📝 Script ${name} registrado con ${properties.length} propiedades`);
+            Logger.getInstance().info(`📝 Script ${name} registrado con ${properties.length} propiedades`);
             if (properties.length > 0) {
-                console.log(`   Propiedades: ${properties.map(p => `${p.name}(${p.type})`).join(', ')}`);
+                Logger.getInstance().info(`   Propiedades: ${properties.map(p => `${p.name}(${p.type})`).join(', ')}`);
             }
         } catch (err) {
-            console.warn(`⚠️ No se pudieron extraer metadatos para ${name}:`, err);
+            Logger.getInstance().warn(`⚠️ No se pudieron extraer metadatos para ${name}:`, err);
         }
     }
 
@@ -107,7 +108,7 @@ export class ScriptRegistry {
         // Limpiar cache al agregar nuevos mappers
         this.typeCache.clear();
 
-        console.log(`🔧 Type mapper '${fullMapper.typeName}' registrado (prioridad: ${fullMapper.priority || 0})`);
+        Logger.getInstance().info(`🔧 Type mapper '${fullMapper.typeName}' registrado (prioridad: ${fullMapper.priority || 0})`);
     }
 
     /**
@@ -234,7 +235,7 @@ export class ScriptRegistry {
 
                     // Validar si hay validator
                     if (mapper.validator && !mapper.validator(normalized)) {
-                        console.warn(`⚠️ Valor normalizado no pasa validación para tipo ${mapper.typeName}:`, normalized);
+                        Logger.getInstance().warn(`⚠️ Valor normalizado no pasa validación para tipo ${mapper.typeName}:`, normalized);
                         continue;
                     }
 
@@ -246,7 +247,7 @@ export class ScriptRegistry {
                     return { type: mapper.typeName, normalizedValue: normalized };
                 }
             } catch (err) {
-                console.warn(`⚠️ Error en mapper ${mapper.typeName}:`, err);
+                Logger.getInstance().warn(`⚠️ Error en mapper ${mapper.typeName}:`, err);
             }
         }
 
@@ -284,7 +285,7 @@ export class ScriptRegistry {
             try {
                 return mapper.deserialize(value);
             } catch (err) {
-                console.warn(`⚠️ Error deserializando ${expectedType}:`, err);
+                Logger.getInstance().warn(`⚠️ Error deserializando ${expectedType}:`, err);
             }
         }
 
@@ -317,7 +318,7 @@ export class ScriptRegistry {
                     // ✨ NUEVO: Validación antes de asignar
                     const propertyMetadata = metadata.properties.find(p => p.name === prop);
                     if (propertyMetadata?.validator && !propertyMetadata.validator(value)) {
-                        console.warn(`⚠️ Valor inválido para ${prop} en ${scriptName}:`, value);
+                        Logger.getInstance().warn(`⚠️ Valor inválido para ${prop} en ${scriptName}:`, value);
                         return false;
                     }
                     stateMap.set(prop, value);
@@ -413,7 +414,7 @@ export class ScriptRegistry {
      */
     clearCaches(): void {
         this.typeCache.clear();
-        console.log('🧹 Caches limpiados');
+        Logger.getInstance().info('🧹 Caches limpiados');
     }
 
     getScriptMetadata(name: string): ScriptMetadata | undefined {

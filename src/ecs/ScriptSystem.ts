@@ -2,6 +2,7 @@ import { System } from '../core/GameLoop';
 import { ScriptComponent } from './ScriptComponent';
 import { scriptRegistry } from './ScriptRegistry';
 import { EventSystem } from '../core/EventSystem';
+import { Logger } from '../core/Logger';
 import { SCENE_EVENTS, WORLD_EVENTS } from '../types/event-const';
 import { Entity } from './Entity';
 
@@ -32,7 +33,7 @@ export class ScriptSystem implements System {
                 scriptRegistry.cleanupInstance(entry.instance);
 
             } catch (err) {
-                console.error('Error destroying script instance', err);
+                Logger.getInstance().error('Error destroying script instance', err as any);
             }
             entry.instance = undefined;
         };
@@ -68,7 +69,7 @@ export class ScriptSystem implements System {
                     try {
                         inst = scriptRegistry.create(entry.scriptName, e);
                     } catch (err) {
-                        console.error('Script create error', err);
+                        Logger.getInstance().error('Script create error', err as any);
                         return;
                     }
 
@@ -81,7 +82,7 @@ export class ScriptSystem implements System {
                                 try {
                                     inst.setAllProperties(entry.state);
                                 } catch (err) {
-                                    console.warn('Error setting script state:', err);
+                                    Logger.getInstance().warn('Error setting script state:', err as any);
                                 }
                             } else {
                                 // Fallback a asignación directa para scripts legacy
@@ -95,7 +96,7 @@ export class ScriptSystem implements System {
                         try {
                             inst.init?.();
                         } catch (err) {
-                            console.error('Script init error', err);
+                            Logger.getInstance().error('Script init error', err as any);
                         }
                     }
                 }
@@ -103,7 +104,7 @@ export class ScriptSystem implements System {
                 try {
                     entry.instance?.update?.(dt);
                 } catch (err) {
-                    console.error('Script update error', err);
+                    Logger.getInstance().error('Script update error', err as any);
                 }
             };
 

@@ -1,4 +1,5 @@
 import { EventSystem } from './EventSystem';
+import { Logger } from './Logger';
 import { Entity } from '@/ecs';
 import { SCENE_EVENTS } from '@/types/event-const';
 
@@ -34,7 +35,7 @@ export class Scene {
      */
     initialize(): void {
         if (this.initialized) {
-            console.warn(`Scene '${this.name}' is already initialized`);
+            Logger.getInstance().warn(`Scene '${this.name}' is already initialized`);
             return;
         }
 
@@ -67,7 +68,7 @@ export class Scene {
         }
 
         if (this.entities.has(entity.id)) {
-            console.warn(`Entity with id '${entity.id}' already exists in scene '${this.name}'`);
+            Logger.getInstance().warn(`Entity with id '${entity.id}' already exists in scene '${this.name}'`);
             return;
         }
 

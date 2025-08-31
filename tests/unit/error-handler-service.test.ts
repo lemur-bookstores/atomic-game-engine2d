@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { EventSystem } from '../../src/core/EventSystem';
 import { ErrorHandlerService } from '../../src/core/ErrorHandlerService';
-import { MemoryErrorHandler, ConsoleErrorHandler } from '../../src/core/ErrorHandlers';
+import { MemoryErrorHandler } from '../../src/core/ErrorHandlers';
 import { EngineError } from '../../src/core/EngineError';
 
 describe('ErrorHandlerService', () => {

@@ -1,10 +1,11 @@
 import { EngineError } from './EngineError';
 import { ErrorHandler } from './ErrorHandlerService';
+import { Logger } from './Logger';
 
 export class ConsoleErrorHandler implements ErrorHandler {
     canHandle(_error: EngineError): boolean { return true; }
     async handleError(error: EngineError): Promise<void> {
-        console.error('Engine Error:', error.toJSON ? error.toJSON() : error);
+        Logger.getInstance().error('Engine Error:', error.toJSON ? error.toJSON() : error);
     }
 }
 
@@ -30,7 +31,7 @@ export class LocalStorageErrorHandler implements ErrorHandler {
             if (arr.length > this.max) arr.splice(this.max);
             localStorage.setItem(this.key, JSON.stringify(arr));
         } catch (e) {
-            console.warn('LocalStorageErrorHandler failed:', e);
+            Logger.getInstance().warn('LocalStorageErrorHandler failed:', e as any);
         }
     }
 }

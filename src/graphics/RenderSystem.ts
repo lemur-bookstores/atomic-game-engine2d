@@ -6,6 +6,7 @@ import { Texture } from './Texture';
 import { Vector2 } from '../math/Vector2';
 import { Camera2D } from './Camera2D';
 import { Color } from '../math/Color';
+import { Logger } from '../core/Logger';
 
 export interface TransformComponent {
     type: 'transform';
@@ -261,18 +262,19 @@ export class RenderSystem extends System {
         const sprite = entity.getComponent<SpriteComponent>('sprite');
 
         if (!transform || !sprite) {
-            console.log(`Entity ${entity.id} missing components - transform: ${!!transform}, sprite: ${!!sprite}`);
+            Logger.getInstance().debug(`Entity ${entity.id} missing components - transform: ${!!transform}, sprite: ${!!sprite}`);
             return;
         }
 
         const texture = this.textures.get(sprite.texture);
         if (!texture) {
-            console.warn(`Texture '${sprite.texture}' not found for entity ${entity.id}`);
-            console.log('Available textures:', Array.from(this.textures.keys()));
+            Logger.getInstance().warn(`Texture '${sprite.texture}' not found for entity ${entity.id}`);
+            Logger.getInstance().debug('Available textures:', Array.from(this.textures.keys()));
             return;
         }
 
-        // console.log(`Rendering entity ${entity.id} with texture '${sprite.texture}' at (${transform.position.x}, ${transform.position.y})`);
+        // debug
+        Logger.getInstance().debug(`Rendering entity ${entity.id} with texture '${sprite.texture}' at (${transform.position.x}, ${transform.position.y})`);
 
         // Calculate final position and size
         const finalPosition = new Vector2(
@@ -301,14 +303,14 @@ export class RenderSystem extends System {
         }
 
         // Render the sprite
-        // console.log(`[RenderSystem] About to call renderer.drawSprite for entity ${entity.id}`);
-        // console.log(`[RenderSystem] Renderer type:`, this.renderer.constructor.name);
+        Logger.getInstance().debug(`[RenderSystem] About to call renderer.drawSprite for entity ${entity.id}`);
+        Logger.getInstance().debug(`[RenderSystem] Renderer type:`, this.renderer.constructor.name);
 
         if (this.hasUVMapping(sprite)) {
-            // console.log(`[RenderSystem] Using UV mapping for entity ${entity.id}`);
+            Logger.getInstance().debug(`[RenderSystem] Using UV mapping for entity ${entity.id}`);
             this.renderSpriteWithUV(texture, finalPosition, finalSize, transform.rotation, sprite);
         } else {
-            // console.log(`[RenderSystem] Using standard drawSprite for entity ${entity.id}`);
+            Logger.getInstance().debug(`[RenderSystem] Using standard drawSprite for entity ${entity.id}`);
             this.renderer.drawSprite(
                 texture,
                 finalPosition,
@@ -339,7 +341,7 @@ export class RenderSystem extends System {
             const uvWidth = (sprite.uvWidth !== undefined ? sprite.uvWidth : 1) * texture.width;
             const uvHeight = (sprite.uvHeight !== undefined ? sprite.uvHeight : 1) * texture.height;
 
-            // console.log(`[RenderSystem] UV conversion - Original: (${sprite.uvX}, ${sprite.uvY}, ${sprite.uvWidth}, ${sprite.uvHeight}) Converted: (${uvX}, ${uvY}, ${uvWidth}, ${uvHeight})`);
+            Logger.getInstance().debug(`[RenderSystem] UV conversion - Original: (${sprite.uvX}, ${sprite.uvY}, ${sprite.uvWidth}, ${sprite.uvHeight}) Converted: (${uvX}, ${uvY}, ${uvWidth}, ${uvHeight})`);
 
             (this.renderer as any).drawSpriteUV(
                 texture,

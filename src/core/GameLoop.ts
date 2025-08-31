@@ -1,5 +1,6 @@
 import { GAMELOOP_EVENTS } from '@/types/event-const';
 import { EventSystem } from './EventSystem';
+import { Logger } from './Logger';
 
 /**
  * System interface for the ECS pattern
@@ -24,6 +25,7 @@ export class GameLoop {
     private systems: System[] = [];
     private entities: any[] = [];
     private eventSystem: EventSystem;
+    private logger: import('./Logger').Logger;
 
     // Performance tracking
     private frameCount = 0;
@@ -33,6 +35,7 @@ export class GameLoop {
 
     constructor() {
         this.eventSystem = EventSystem.getInstance();
+        this.logger = Logger.getInstance();
     }
 
     /**
@@ -77,7 +80,7 @@ export class GameLoop {
      */
     start(): void {
         if (this.running) {
-            console.warn('Game loop is already running');
+            this.logger.warn('Game loop is already running');
             return;
         }
 
@@ -184,9 +187,10 @@ export class GameLoop {
             try {
                 system.update(this.entities, deltaTime);
             } catch (error) {
-                console.error('Error in system update:', error);
+                this.logger.error('Error in system update:', error as any);
                 this.eventSystem.emit(GAMELOOP_EVENTS.SYSTEM_ERROR, { system, error });
             }
+
         }
 
         this.eventSystem.emit(GAMELOOP_EVENTS.FIXED_UPDATE_COMPLETE, { deltaTime });

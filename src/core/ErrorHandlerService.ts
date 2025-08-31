@@ -1,5 +1,6 @@
 import { EventSystem } from './EventSystem';
 import { EngineError } from './EngineError';
+import { Logger } from './Logger';
 
 export interface ErrorHandler {
     canHandle(error: EngineError): boolean;
@@ -31,13 +32,13 @@ export class ErrorHandlerService {
                     break;
                 }
             } catch (handlerErr) {
-                console.error('Error handler failed:', handlerErr);
+                Logger.getInstance().error('Error handler failed:', handlerErr as any);
                 // continue to next
             }
         }
 
         if (!handled) {
-            console.warn('No error handlers handled the error:', engineError);
+            Logger.getInstance().warn('No error handlers handled the error:', engineError);
         }
 
         if (engineError.isCritical) {
