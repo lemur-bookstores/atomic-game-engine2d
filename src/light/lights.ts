@@ -1,6 +1,7 @@
 import { Entity } from "@/ecs";
 import { LightInstance, LightBounds, createLightComponent, LightComponent } from "./LightComponent";
 import { LightingSystem, lightRegistry } from "./LightingSystem";
+import { Logger } from "../core/Logger";
 
 export class PointLight implements LightInstance {
     id: string = '';
@@ -20,7 +21,7 @@ export class PointLight implements LightInstance {
 
     init(): void {
         this.id = 'pointlight_' + Math.random().toString(36).substr(2, 9);
-        console.log(`💡 PointLight ${this.id} inicializada`);
+        Logger.getInstance().info(`💡 PointLight ${this.id} inicializada`);
     }
 
     update(_dt: number): void {
@@ -80,7 +81,7 @@ export class SpotLight implements LightInstance {
 
     init(): void {
         this.id = 'spotlight_' + Math.random().toString(36).substr(2, 9);
-        console.log(`🔦 SpotLight ${this.id} inicializada`);
+        Logger.getInstance().info(`🔦 SpotLight ${this.id} inicializada`);
     }
 
     update(_dt: number): void {

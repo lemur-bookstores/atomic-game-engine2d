@@ -7,6 +7,9 @@ import { Canvas2DRenderer } from '../graphics/Canvas2DRenderer';
 import { WebGLRenderer } from '../graphics/WebGLRenderer';
 import { DiagnosticRenderer } from '../graphics/DiagnosticRenderer';
 import { ENGINE_EVENTS, GAMELOOP_EVENTS } from '@/types/event-const';
+import { Logger } from './Logger';
+import { ErrorHandlerService } from './ErrorHandlerService';
+import { ConsoleErrorHandler, LocalStorageErrorHandler } from './ErrorHandlers';
 
 /**
  * Main engine class that coordinates all game systems
@@ -20,6 +23,8 @@ export class Engine {
     private initialized = false;
     private config: EngineConfig;
     private debugMode: boolean;
+    private logger = Logger.getInstance();
+    private errorHandlerService: ErrorHandlerService | null = null;
     private renderSystem: RenderSystem | null = null;
     private activeCamera: Camera2D | null = null;
 
@@ -43,11 +48,23 @@ export class Engine {
         this.eventSystem = EventSystem.getInstance();
         this.gameLoop = new GameLoop();
 
+        // Initialize logger early so other systems can use it
+        Logger.init(this.debugMode);
+        this.logger = Logger.getInstance();
+
+        // Setup core services
         this.setupCanvas();
         this.setupEventListeners();
 
+        // Initialize error handler service and default handlers
+        this.errorHandlerService = new ErrorHandlerService(this.eventSystem);
+        this.errorHandlerService.registerHandler(new ConsoleErrorHandler());
+        if ((this.config as any).enableLocalLogs) {
+            try { this.errorHandlerService.registerHandler(new LocalStorageErrorHandler()); } catch (_) { }
+        }
+
         if (this.debugMode) {
-            this.debugLog('GameEngine 2D created in debug mode');
+            this.logger.debug('GameEngine 2D created in debug mode');
         }
     }
 
@@ -56,7 +73,7 @@ export class Engine {
      */
     async initialize(): Promise<void> {
         if (this.initialized) {
-            console.warn('Engine is already initialized');
+            this.logger.warn('Engine is already initialized');
             return;
         }
 
@@ -90,9 +107,11 @@ export class Engine {
             this.initialized = true;
             this.eventSystem.emit(ENGINE_EVENTS.INITIALIZED);
 
-            this.debugLog('GameEngine 2D initialized successfully');
+            this.logger.info('GameEngine 2D initialized successfully');
         } catch (error) {
             this.eventSystem.emit(ENGINE_EVENTS.INITIALIZATION_ERROR, { error });
+            // Send to error handlers if available, then rethrow
+            try { this.errorHandlerService && this.errorHandlerService.handleError(error as Error); } catch (_) { }
             throw error;
         }
     }
@@ -111,7 +130,7 @@ export class Engine {
         this.gameLoop.start();
         this.eventSystem.emit(ENGINE_EVENTS.STARTED);
 
-        this.debugLog('GameEngine 2D started');
+        this.logger.info('GameEngine 2D started');
     }
 
     /**
@@ -121,7 +140,7 @@ export class Engine {
         this.gameLoop.stop();
         this.eventSystem.emit(ENGINE_EVENTS.STOPPED);
 
-        this.debugLog('GameEngine 2D stopped');
+        this.logger.info('GameEngine 2D stopped');
     }
 
     /**
@@ -130,7 +149,7 @@ export class Engine {
     pause(): void {
         this.gameLoop.pause();
         this.eventSystem.emit(ENGINE_EVENTS.PAUSED);
-        this.debugLog('GameEngine 2D paused');
+        this.logger.info('GameEngine 2D paused');
     }
 
     /**
@@ -139,7 +158,7 @@ export class Engine {
     resume(): void {
         this.gameLoop.resume();
         this.eventSystem.emit(ENGINE_EVENTS.RESUMED);
-        this.debugLog('GameEngine 2D resumed');
+        this.logger.info('GameEngine 2D resumed');
     }
 
     /**
@@ -148,7 +167,7 @@ export class Engine {
     addSystem(system: System): void {
         this.gameLoop.addSystem(system);
         this.eventSystem.emit(ENGINE_EVENTS.SYSTEM_ADDED, { system });
-        this.debugLog('System added:', system.constructor.name);
+        this.logger.debug('System added: ' + system.constructor.name);
         // If we have an active scene, propagate to the newly added system when possible
         if (this.activeScene && typeof (system as any).setScene === 'function') {
             try { (system as any).setScene(this.activeScene); } catch (_) { }
@@ -161,7 +180,7 @@ export class Engine {
     removeSystem(system: System): void {
         this.gameLoop.removeSystem(system);
         this.eventSystem.emit(ENGINE_EVENTS.SYSTEM_REMOVED, { system });
-        this.debugLog('System removed:', system.constructor.name);
+        this.logger.debug('System removed: ' + system.constructor.name);
     }
 
     /**
@@ -176,7 +195,7 @@ export class Engine {
         scene.initialize();
 
         this.eventSystem.emit(ENGINE_EVENTS.SCENE_ADDED, { scene });
-        this.debugLog('Scene added:', scene.name);
+        this.logger.debug('Scene added: ' + scene.name);
     }
 
     /**
@@ -197,7 +216,7 @@ export class Engine {
         this.scenes.delete(sceneName);
 
         this.eventSystem.emit(ENGINE_EVENTS.SCENE_REMOVED, { scene, sceneName });
-        this.debugLog('Scene removed:', sceneName);
+        this.logger.debug('Scene removed: ' + sceneName);
         return true;
     }
 
@@ -242,10 +261,7 @@ export class Engine {
             newScene: this.activeScene
         });
 
-        this.debugLog('Active scene changed from',
-            previousScene?.name || 'none',
-            'to',
-            this.activeScene?.name || 'none');
+        this.logger.debug(`Active scene changed from ${previousScene?.name || 'none'} to ${this.activeScene?.name || 'none'}`);
 
         // Propagate layer order to render system
         if (this.renderSystem) {
@@ -445,11 +461,11 @@ export class Engine {
                         return;
                     } catch (webglError) {
                         this.debugLog('WebGL initialization failed:', webglError);
-                        console.warn('WebGL initialization failed, falling back to Canvas2D:', webglError);
+                        this.logger.warn('WebGL initialization failed, falling back to Canvas2D:', webglError);
                     }
                 } else {
                     this.debugLog('WebGL not supported, falling back to Canvas2D');
-                    console.warn('WebGL not supported, falling back to Canvas2D');
+                    this.logger.warn('WebGL not supported, falling back to Canvas2D');
                 }
             }
 
@@ -489,7 +505,7 @@ export class Engine {
             this.debugLog('Diagnostic overlay added successfully');
         } catch (error) {
             this.debugLog('Failed to add diagnostic overlay:', error);
-            console.warn('Failed to add diagnostic overlay:', error);
+            this.logger.warn('Failed to add diagnostic overlay:', error);
         }
     }    /**
      * Check if WebGL is supported by the browser
@@ -568,7 +584,7 @@ export class Engine {
      */
     private debugLog(message: string, ...args: any[]): void {
         if (this.debugMode) {
-            console.log(`[GameEngine Debug] ${message}`, ...args);
+            Logger.getInstance().debug(`[GameEngine Debug] ${message}`, ...args);
         }
     }
 

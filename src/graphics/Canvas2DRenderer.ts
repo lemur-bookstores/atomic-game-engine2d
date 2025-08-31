@@ -2,6 +2,7 @@ import { RenderStrategy } from './Renderer';
 import { Texture } from './Texture';
 import { Vector2 } from '../math/Vector2';
 import { Color } from '../math/Color';
+import { Logger } from '../core/Logger';
 
 export class Canvas2DRenderer implements RenderStrategy {
     private ctx!: CanvasRenderingContext2D;
@@ -46,7 +47,8 @@ export class Canvas2DRenderer implements RenderStrategy {
         rotation: number = 0,
         tint: Color = new Color(255, 255, 255, 255)
     ): void {
-        // console.log(`[Canvas2DRenderer] Drawing sprite at (${position.x}, ${position.y}) size (${size.x}, ${size.y})`);
+        // Debug
+        Logger.getInstance().debug(`[Canvas2DRenderer] Drawing sprite at (${position.x}, ${position.y}) size (${size.x}, ${size.y})`);
 
         this.ctx.save();
 
@@ -66,7 +68,7 @@ export class Canvas2DRenderer implements RenderStrategy {
 
         // Draw the sprite
         const image = texture.getImage();
-        // console.log(`[Canvas2DRenderer] Image loaded:`, image.complete, 'Size:', image.width, 'x', image.height);
+        Logger.getInstance().debug(`[Canvas2DRenderer] Image loaded: ${image.complete} Size: ${image.width}x${image.height}`);
 
         if (image.complete && image.width > 0 && image.height > 0) {
             this.ctx.drawImage(
@@ -76,9 +78,9 @@ export class Canvas2DRenderer implements RenderStrategy {
                 size.x,
                 size.y
             );
-            // console.log(`[Canvas2DRenderer] Image drawn successfully`);
+            Logger.getInstance().debug(`[Canvas2DRenderer] Image drawn successfully`);
         } else {
-            console.warn(`[Canvas2DRenderer] Image not ready or invalid size`, {
+            Logger.getInstance().warn(`[Canvas2DRenderer] Image not ready or invalid size`, {
                 complete: image.complete,
                 width: image.width,
                 height: image.height,
@@ -106,8 +108,8 @@ export class Canvas2DRenderer implements RenderStrategy {
         flipY: boolean = false,
         tint: Color = new Color(255, 255, 255, 255)
     ): void {
-        // console.log(`[Canvas2DRenderer] Drawing sprite UV at (${position.x}, ${position.y}) size (${size.x}, ${size.y})`);
-        // console.log(`[Canvas2DRenderer] UV coords: (${uvX}, ${uvY}) size (${uvWidth}, ${uvHeight})`);
+        Logger.getInstance().debug(`[Canvas2DRenderer] Drawing sprite UV at (${position.x}, ${position.y}) size (${size.x}, ${size.y})`);
+        Logger.getInstance().debug(`[Canvas2DRenderer] UV coords: (${uvX}, ${uvY}) size (${uvWidth}, ${uvHeight})`);
 
         this.ctx.save();
 
@@ -142,8 +144,8 @@ export class Canvas2DRenderer implements RenderStrategy {
 
         // Draw the sprite with UV coordinates (source rectangle)
         const image = texture.getImage();
-        // console.log(`[Canvas2DRenderer] UV Image loaded:`, image.complete, 'Size:', image.width, 'x', image.height);
-        // console.log(`[Canvas2DRenderer] UV drawImage params - Source: (${uvX}, ${uvY}, ${uvWidth}, ${uvHeight}) Dest: (${-size.x / 2}, ${-size.y / 2}, ${size.x}, ${size.y})`);
+        Logger.getInstance().debug(`[Canvas2DRenderer] UV Image loaded: ${image.complete} Size: ${image.width}x${image.height}`);
+        Logger.getInstance().debug(`[Canvas2DRenderer] UV drawImage params - Source: (${uvX}, ${uvY}, ${uvWidth}, ${uvHeight}) Dest: (${-size.x / 2}, ${-size.y / 2}, ${size.x}, ${size.y})`);
 
         if (image.complete && image.width > 0 && image.height > 0) {
             this.ctx.drawImage(
@@ -151,9 +153,9 @@ export class Canvas2DRenderer implements RenderStrategy {
                 uvX, uvY, uvWidth, uvHeight,  // Source rectangle
                 -size.x / 2, -size.y / 2, size.x, size.y  // Destination rectangle
             );
-            // console.log(`[Canvas2DRenderer] UV Image drawn successfully`);
+            Logger.getInstance().debug(`[Canvas2DRenderer] UV Image drawn successfully`);
         } else {
-            console.warn(`[Canvas2DRenderer] UV Image not ready or invalid size`, {
+            Logger.getInstance().warn(`[Canvas2DRenderer] UV Image not ready or invalid size`, {
                 complete: image.complete,
                 width: image.width,
                 height: image.height,

@@ -2,6 +2,7 @@ import { System } from '../ecs/System';
 import { Entity } from '../ecs/Entity';
 import { AudioManager } from './AudioManager';
 import { EventSystem } from '../core/EventSystem';
+import { Logger } from '../core/Logger';
 import { ANIMATION_EVENTS } from '../types/event-const';
 import { AnimationComponent } from '../graphics/Animation';
 
@@ -41,7 +42,7 @@ export class AudioSystem extends System {
             if (!this.audioManager.has(audio.clip)) {
                 // best-effort load (fire-and-forget)
                 this.audioManager.loadAudio(audio.clip, `assets/${audio.clip}`)
-                    .catch(err => console.warn('Failed to load audio', audio.clip, err));
+                    .catch(err => Logger.getInstance().warn('Failed to load audio', audio.clip, err));
             }
         });
     }
@@ -80,7 +81,7 @@ export class AudioSystem extends System {
                 }
             } catch (e) {
                 // swallow to avoid crashing game loop
-                console.warn('Error in AudioSystem FRAME handler', e);
+                Logger.getInstance().warn('Error in AudioSystem FRAME handler', e);
             }
         });
     }

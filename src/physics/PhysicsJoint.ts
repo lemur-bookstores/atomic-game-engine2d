@@ -3,6 +3,7 @@ import { PhysicsWorld } from './PhysicsWorld';
 import { EventSystem } from '@/core/EventSystem';
 import { PHYSICS_EVENTS } from '@/types/event-const';
 import { PhysicsBody } from './PhysicsBody';
+import { Logger } from '../core/Logger';
 
 export enum JointType {
     Revolute = 'revolute',
@@ -93,13 +94,13 @@ export class PhysicsJoint {
 
         // Defensive: if Box2D is not available, skip initialization
         if (!box2d) {
-            console.log('PhysicsJoint: Box2D not available, skipping joint creation');
+            Logger.getInstance().debug('PhysicsJoint: Box2D not available, skipping joint creation');
             return;
         }
 
         const world = this.world.getWorld();
         if (!world) {
-            console.log('PhysicsJoint: Physics world not available');
+            Logger.getInstance().debug('PhysicsJoint: Physics world not available');
             return;
         }
 
@@ -139,7 +140,7 @@ export class PhysicsJoint {
         const bodyB = config.bodyB.getB2Body();
 
         if (!bodyA || !bodyB) {
-            console.log('PhysicsJoint: One or both bodies not available for revolute joint');
+            Logger.getInstance().debug('PhysicsJoint: One or both bodies not available for revolute joint');
             return;
         }
 
@@ -174,7 +175,7 @@ export class PhysicsJoint {
         const bodyB = config.bodyB.getB2Body();
 
         if (!bodyA || !bodyB) {
-            console.log('PhysicsJoint: One or both bodies not available for distance joint');
+            Logger.getInstance().debug('PhysicsJoint: One or both bodies not available for distance joint');
             return;
         }
 
@@ -210,7 +211,7 @@ export class PhysicsJoint {
         const bodyB = config.bodyB.getB2Body();
 
         if (!bodyA || !bodyB) {
-            console.log('PhysicsJoint: One or both bodies not available for rope joint');
+            Logger.getInstance().debug('PhysicsJoint: One or both bodies not available for rope joint');
             return;
         }
 
@@ -232,7 +233,7 @@ export class PhysicsJoint {
         const bodyB = config.bodyB.getB2Body();
 
         if (!bodyA || !bodyB) {
-            console.log('PhysicsJoint: One or both bodies not available for prismatic joint');
+            Logger.getInstance().debug('PhysicsJoint: One or both bodies not available for prismatic joint');
             return;
         }
 
@@ -268,7 +269,7 @@ export class PhysicsJoint {
         const bodyB = config.bodyB.getB2Body();
 
         if (!bodyA || !bodyB) {
-            console.log('PhysicsJoint: One or both bodies not available for weld joint');
+            Logger.getInstance().debug('PhysicsJoint: One or both bodies not available for weld joint');
             return;
         }
 

@@ -1,3 +1,5 @@
+import { Logger } from '../core/Logger';
+
 export type PlaybackHandle = {
     id: string;
     sourceNode?: AudioBufferSourceNode;
@@ -45,7 +47,7 @@ export class AudioManager {
         try {
             this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
         } catch (e) {
-            console.warn('WebAudio API not supported in this environment');
+            Logger.getInstance().warn('WebAudio API not supported in this environment');
             this.audioContext = null;
         }
     }
@@ -71,7 +73,7 @@ export class AudioManager {
         if (!this.audioContext) return null;
         const buffer = this.buffers.get(name);
         if (!buffer) {
-            console.warn(`Audio buffer '${name}' not found.`);
+            Logger.getInstance().warn(`Audio buffer '${name}' not found.`);
             return null;
         }
 

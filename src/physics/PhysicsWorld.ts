@@ -4,6 +4,7 @@ import wasmUrl from "box2d-wasm/dist/umd/Box2D.simd.wasm?url";
 
 import { Vector2 } from '../math/Vector2';
 import { EventSystem } from '../core/EventSystem';
+import { Logger } from '../core/Logger';
 import { getBodyUserData, PhysicsBody } from './PhysicsBody';
 import { PHYSICS_EVENTS } from '@/types/event-const';
 import { RaycastOptions, RaycastResult } from './Raycast';
@@ -42,10 +43,10 @@ async function LoadBox2DFactory(): Promise<(() => Promise<any>) | null> {
             return _box2dFactory;
         }
 
-        console.warn("PhysicsWorld: box2d-wasm export shape not recognized, fallback.");
+        Logger.getInstance().warn("PhysicsWorld: box2d-wasm export shape not recognized, fallback.");
         return null;
     } catch (err) {
-        console.warn("PhysicsWorld: dynamic import of box2d-wasm failed -> fallback mode.", err);
+        Logger.getInstance().warn("PhysicsWorld: dynamic import of box2d-wasm failed -> fallback mode.", err);
         return null;
     }
 }
@@ -125,7 +126,7 @@ export class PhysicsWorld {
 
             this.box2D = await factory();
             if (!this.box2D?.b2World) {
-                console.warn("PhysicsWorld: Box2D module shape unexpected, running in fallback mode");
+                Logger.getInstance().warn("PhysicsWorld: Box2D module shape unexpected, running in fallback mode");
                 this.box2D = undefined;
                 return;
             }
@@ -133,7 +134,7 @@ export class PhysicsWorld {
             this.world = new this.box2D.b2World(new this.box2D.b2Vec2(this.gravity.x, this.gravity.y)) as any;
             this.setupContactListener();
         } catch (err) {
-            console.warn("PhysicsWorld: Failed to initialize Box2D -> fallback mode.", err);
+            Logger.getInstance().warn("PhysicsWorld: Failed to initialize Box2D -> fallback mode.", err);
             this.box2D = undefined;
             this.world = undefined;
         }
@@ -185,7 +186,7 @@ export class PhysicsWorld {
                 }
             } catch (err) {
                 // swallow any errors from joint checks to avoid breaking simulation
-                // console.warn('PhysicsWorld: joint check failed', err);
+                Logger.getInstance().warn('PhysicsWorld: joint check failed', err);
             }
         }
     }
@@ -268,13 +269,13 @@ export class PhysicsWorld {
 
     public createJoint(jointDef: any): any {
         if (!this.world) {
-            console.warn('PhysicsWorld: Cannot create joint, world not initialized');
+            Logger.getInstance().warn('PhysicsWorld: Cannot create joint, world not initialized');
             return undefined;
         }
 
         // Defensive check for CreateJoint method
         if (!(this.world as any).CreateJoint) {
-            console.warn('PhysicsWorld: CreateJoint method not available');
+            Logger.getInstance().warn('PhysicsWorld: CreateJoint method not available');
             return undefined;
         }
 
@@ -285,13 +286,13 @@ export class PhysicsWorld {
 
     public destroyJoint(joint: any): void {
         if (!this.world || !joint) {
-            console.warn('PhysicsWorld: Cannot destroy joint, world or joint not available');
+            Logger.getInstance().warn('PhysicsWorld: Cannot destroy joint, world or joint not available');
             return;
         }
 
         // Defensive check for DestroyJoint method
         if (!(this.world as any).DestroyJoint) {
-            console.warn('PhysicsWorld: DestroyJoint method not available');
+            Logger.getInstance().warn('PhysicsWorld: DestroyJoint method not available');
             return;
         }
 
@@ -316,7 +317,7 @@ export class PhysicsWorld {
 
         // Defensive check for Box2D AABB and QueryAABB
         if (!this.box2D || !(this.box2D as any).b2AABB || !(this.world as any).QueryAABB) {
-            console.warn('PhysicsWorld: AABB query not available in this Box2D version');
+            Logger.getInstance().warn('PhysicsWorld: AABB query not available in this Box2D version');
             return bodies;
         }
 
@@ -356,7 +357,7 @@ export class PhysicsWorld {
 
         if (!this.world || !this.box2D) {
             // Fallback mode: simple AABB-based raycast simulation
-            console.log('PhysicsWorld: Using fallback raycast simulation');
+            Logger.getInstance().debug('PhysicsWorld: Using fallback raycast simulation');
             return this.fallbackRaycast(origin, direction, length, options);
         }
 
@@ -406,11 +407,11 @@ export class PhysicsWorld {
             if ((this.world as any).RayCast) {
                 (this.world as any).RayCast(callback, p1, p2);
             } else {
-                console.warn('PhysicsWorld: RayCast method not available in this Box2D version');
+                Logger.getInstance().warn('PhysicsWorld: RayCast method not available in this Box2D version');
             }
 
         } catch (error) {
-            console.warn('PhysicsWorld: Raycast failed', error);
+            Logger.getInstance().warn('PhysicsWorld: Raycast failed', error);
         }
 
         // Sort results by fraction (closest first)

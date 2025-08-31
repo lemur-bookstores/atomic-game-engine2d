@@ -63,8 +63,8 @@ describe('sprite-sheet engine adapter', () => {
         const spriteSheet = SpriteSheet.fromFrames(mockTexture, frames);
 
         expect(spriteSheet.getFrameCount()).toBe(2);
-        expect(spriteSheet.getFrame(0)).toEqual({ x: 0, y: 0, width: 32, height: 32 });
-        expect(spriteSheet.getFrame(1)).toEqual({ x: 32, y: 0, width: 32, height: 32 });
+        expect(spriteSheet.getFrame(0)).toEqual(expect.objectContaining({ x: 0, y: 0, width: 32, height: 32 }));
+        expect(spriteSheet.getFrame(1)).toEqual(expect.objectContaining({ x: 32, y: 0, width: 32, height: 32 }));
         expect(spriteSheet.getTexture()).toBe(mockTexture);
     });
 

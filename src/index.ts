@@ -10,5 +10,5 @@ export type { ScriptInstance } from './ecs/ScriptComponent';
 export { scriptRegistry } from './ecs/ScriptRegistry';
 
 // Version
-export const VERSION = '0.6.0';
+export const VERSION = '0.7.0';
 
