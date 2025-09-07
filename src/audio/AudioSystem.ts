@@ -1,51 +1,13 @@
-import { System } from '../ecs/System';
-import { Entity } from '../ecs/Entity';
+import { FunctionalSystem } from '../ecs/FunctionalSystem';
 import { AudioManager } from './AudioManager';
 import { EventSystem } from '../core/EventSystem';
 import { Logger } from '../core/Logger';
 import { ANIMATION_EVENTS } from '../types/event-const';
-import { AnimationComponent } from '../graphics/Animation';
 
-export interface AudioComponent {
-    type: 'audio';
-    clip: string;
-    loop?: boolean;
-    volume?: number;
-    group?: string;
-    autoplay?: boolean;
-    playingHandle?: any;
-    // Play this clip when the entity's animation hits a frame
-    autoplayOnFrame?: boolean;
-    // If set, only trigger when frameIndex equals this value
-    triggerFrame?: number;
-}
-
-export class AudioSystem extends System {
-    requiredComponents = ['audio'];
+export class AudioSystem extends FunctionalSystem {
+    requiredComponents: Array<ComponentType> = ['audio'];
     private audioManager = AudioManager.getInstance();
     private eventSystem = EventSystem.getInstance();
-
-    update(entities: Entity[], _deltaTime: number): void {
-        const audioEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
-
-        audioEntities.forEach(entity => {
-            const audio = entity.getComponent<AudioComponent>('audio');
-            if (!audio) return;
-
-            // Autoplay behavior
-            if (audio.autoplay && !audio.playingHandle && this.audioManager.has(audio.clip)) {
-                const handle = this.audioManager.play(audio.clip, { loop: !!audio.loop, volume: audio.volume, group: audio.group });
-                audio.playingHandle = handle;
-            }
-
-            // If clip not loaded, try to load lazily (no await here)
-            if (!this.audioManager.has(audio.clip)) {
-                // best-effort load (fire-and-forget)
-                this.audioManager.loadAudio(audio.clip, `assets/${audio.clip}`)
-                    .catch(err => Logger.getInstance().warn('Failed to load audio', audio.clip, err));
-            }
-        });
-    }
 
     constructor() {
         super();
@@ -54,7 +16,7 @@ export class AudioSystem extends System {
         this.eventSystem.on(ANIMATION_EVENTS.FRAME, (evt: any) => {
             try {
                 const data = evt.data || {};
-                const entity: Entity | undefined = data.entity;
+                const entity: EntityElement | undefined = data.entity;
                 const frameIndex: number | undefined = data.frameIndex;
 
                 if (!entity) return;
@@ -86,8 +48,31 @@ export class AudioSystem extends System {
         });
     }
 
+    update(entities: EntityElement[], _deltaTime: number): void {
+        const audioEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
+
+        audioEntities.forEach(entity => {
+            const audio = entity.getComponent<AudioComponent>('audio');
+            if (!audio) return;
+
+            // Autoplay behavior
+            if (audio.autoplay && !audio.playingHandle && this.audioManager.has(audio.clip)) {
+                const handle = this.audioManager.play(audio.clip, { loop: !!audio.loop, volume: audio.volume, group: audio.group });
+                audio.playingHandle = handle;
+            }
+
+            // If clip not loaded, try to load lazily (no await here)
+            if (!this.audioManager.has(audio.clip)) {
+                // best-effort load (fire-and-forget)
+                this.audioManager.loadAudio(audio.clip, `assets/${audio.clip}`)
+                    .catch(err => Logger.getInstance().warn('Failed to load audio', audio.clip, err));
+            }
+        });
+    }
+
+
     // Public API convenience methods
-    play(entity: Entity): boolean {
+    play(entity: EntityElement): boolean {
         const audio = entity.getComponent<AudioComponent>('audio');
         if (!audio) return false;
         const handle = this.audioManager.play(audio.clip, { loop: !!audio.loop, volume: audio.volume, group: audio.group });
@@ -95,7 +80,7 @@ export class AudioSystem extends System {
         return !!handle;
     }
 
-    stop(entity: Entity): boolean {
+    stop(entity: EntityElement): boolean {
         const audio = entity.getComponent<AudioComponent>('audio');
         if (!audio) return false;
         if (audio.playingHandle) {

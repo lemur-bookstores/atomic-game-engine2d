@@ -1,8 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { scriptRegistry } from '../../src/ecs/ScriptRegistry';
 
-import { ScriptInstance } from '../../src/ecs/ScriptComponent';
-
 class VectorScript implements ScriptInstance { public entity?: any; public position = { x: 0, y: 0 }; }
 
 class BodyScript implements ScriptInstance { public entity?: any; public body = { width: 10, height: 20, position: { x: 5, y: 5 }, extra: { foo: 'bar' } }; }

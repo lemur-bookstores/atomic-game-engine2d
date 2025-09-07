@@ -1,11 +1,11 @@
-import { Entity } from "@/ecs";
-import { LightInstance, LightBounds, createLightComponent, LightComponent } from "./LightComponent";
+import { Scene } from '@/core/Scene';
+import { createLightComponent } from "./LightComponent";
 import { LightingSystem, lightRegistry } from "./LightingSystem";
 import { Logger } from "../core/Logger";
 
 export class PointLight implements LightInstance {
     id: string = '';
-    entity?: Entity;
+    entity?: EntityElement;
     position: Vector2D = { x: 0, y: 0 };
     color: Color = { r: 255, g: 255, b: 255, a: 1 };
     intensity: number = 1;
@@ -63,7 +63,7 @@ export class PointLight implements LightInstance {
 
 export class SpotLight implements LightInstance {
     id: string = '';
-    entity?: Entity;
+    entity?: EntityElement;
     position: Vector2D = { x: 0, y: 0 };
     color: Color = { r: 255, g: 255, b: 255, a: 1 };
     intensity: number = 1;
@@ -135,7 +135,7 @@ export class SpotLight implements LightInstance {
 
 export class AnimatedLight implements LightInstance {
     id: string = '';
-    entity?: Entity;
+    entity?: EntityElement;
     position: Vector2D = { x: 0, y: 0 };
     color: Color = { r: 255, g: 255, b: 255, a: 1 };
     intensity: number = 1;
@@ -228,7 +228,7 @@ export class AnimatedLight implements LightInstance {
 // Clase para luces direccionales (como luz del sol)
 export class DirectionalLight implements LightInstance {
     id: string = '';
-    entity?: Entity;
+    entity?: EntityElement;
     position: Vector2D = { x: 0, y: 0 }; // No usado en directional
     color: Color = { r: 255, g: 248, b: 220, a: 1 };
     intensity: number = 0.7;
@@ -358,11 +358,11 @@ export class LightingUtils {
     /**
      * Obtiene todas las luces que afectan a un punto específico
      */
-    static getLightsAffectingPoint(point: Vector2D, entities: any[]): LightInstance[] {
+    static getLightsAffectingPoint(point: Vector2D, entities: EntityElement[]): LightInstance[] {
         const affectingLights: LightInstance[] = [];
 
         for (const entity of entities) {
-            const lightComp = entity.getComponent?.('light') as LightComponent;
+            const lightComp = entity.getComponent<LightComponent>('light');
             if (!lightComp) continue;
 
             const checkLight = (lightInstance: LightInstance) => {
@@ -392,7 +392,7 @@ export class LightingUtils {
     /**
      * Calcula la iluminación total en un punto específico
      */
-    static calculateLightingAtPoint(point: Vector2D, entities: any[], ambientLight: Color): Color {
+    static calculateLightingAtPoint(point: Vector2D, entities: EntityElement[], ambientLight: Color): Color {
         const lights = this.getLightsAffectingPoint(point, entities);
 
         let totalR = ambientLight.r;
@@ -401,7 +401,7 @@ export class LightingUtils {
 
         for (const light of lights) {
             const distance = this.distance(point, light.position);
-            const radius = (light as any).radius || 100;
+            const radius = light.radius || 100;
 
             if (distance <= radius) {
                 const attenuation = 1 - (distance / radius);
@@ -470,9 +470,9 @@ export class LightingEffects {
     /**
      * Actualiza todos los efectos activos
      */
-    updateEffects(entities: any[], dt: number): void {
+    updateEffects(entities: EntityElement[], dt: number): void {
         for (const entity of entities) {
-            const lightComp = entity.getComponent('light') as LightComponent;
+            const lightComp = entity.getComponent<LightComponent>('light');
             if (!lightComp) continue;
 
             const updateLightEffects = (lightInstance: LightInstance) => {
@@ -542,7 +542,6 @@ export class LightingEffects {
 
 // ===== EJEMPLO COMPLETO DE INTEGRACIÓN =====
 
-import { Scene } from '@/core/Scene';
 
 export class GameLightingManager {
     private lightingSystem: LightingSystem;
@@ -571,7 +570,7 @@ export class GameLightingManager {
     /**
      * Actualiza el sistema completo de iluminación
      */
-    update(entities: Entity[], dt: number): void {
+    update(entities: EntityElement[], dt: number): void {
         if (!this.isEnabled) return;
 
         this.lightingSystem.update(entities, dt);
@@ -581,7 +580,7 @@ export class GameLightingManager {
     /**
      * Renderiza la iluminación
      */
-    render(context: CanvasRenderingContext2D, entities: Entity[], camera?: any): void {
+    render(context: CanvasRenderingContext2D, entities: EntityElement[], camera?: any): void {
         if (!this.isEnabled) return;
 
         this.lightingSystem.render(context, entities, camera);
@@ -590,7 +589,7 @@ export class GameLightingManager {
     /**
      * Crea una luz con efecto específico
      */
-    createLightWithEffect(entity: Entity, lightType: string, effectType?: 'flicker' | 'breathing', effectOptions?: any): LightComponent {
+    createLightWithEffect(entity: EntityElement, lightType: string, effectType?: 'flicker' | 'breathing', effectOptions?: any): LightComponent {
         const lightComponent = createLightComponent(lightType);
 
         // Agregar componente a la entidad

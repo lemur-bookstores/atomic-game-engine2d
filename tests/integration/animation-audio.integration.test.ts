@@ -4,7 +4,6 @@ import { EventSystem } from '../../src/core/EventSystem';
 import { AnimationSystem } from '../../src/graphics/AnimationSystem';
 import { SpriteSheet } from '../../src/graphics/SpriteSheet';
 import { Entity } from '../../src/ecs/Entity';
-import { AnimationComponent } from '../../src/graphics/Animation';
 import { AudioManager } from '../../src/audio/AudioManager';
 import { AudioSystem } from '../../src/audio/AudioSystem';
 
@@ -43,7 +42,25 @@ test('integration: AnimationSystem advances frames and AudioSystem plays mapped 
     };
 
     entity.addComponent(anim);
-    entity.addComponent({ type: 'sprite', texture: '', width: 16, height: 16, uvX: 0, uvY: 0, uvWidth: 1, uvHeight: 1, flipX: false, flipY: false });
+
+    const sprint: SpriteComponent = {
+        type: 'sprite',
+        texture: '',
+        width: 16,
+        height: 16,
+        uvX: 0,
+        uvY: 0,
+        uvWidth: 1,
+        uvHeight: 1,
+        flipX: false,
+        flipY: false,
+        tint: {
+            r: 0,
+            g: 0,
+            b: 0
+        }
+    }
+    entity.addComponent(sprint);
 
     // Advance updates to reach frame index 2 (two updates with dt >= frameTime)
     animSys.update([entity], 0.05);

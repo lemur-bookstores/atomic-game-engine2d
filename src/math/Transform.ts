@@ -149,12 +149,12 @@ export class Transform {
         const sin = Math.sin(this.rotation);
 
         return [
-            cos * this.scale.x,           // a
-            sin * this.scale.x,           // b
-            -sin * this.scale.y,          // c
-            cos * this.scale.y,           // d
-            this.position.x,              // e
-            this.position.y               // f
+            cos * this.scale.x,   // a
+            sin * this.scale.x,   // b
+            -sin * this.scale.y,  // c
+            cos * this.scale.y,   // d
+            this.position.x,      // e
+            this.position.y       // f
         ];
     }
 

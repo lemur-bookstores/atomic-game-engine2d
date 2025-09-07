@@ -1,9 +1,6 @@
-import { System } from '../ecs/System';
-import { Entity } from '../ecs/Entity';
-import { AnimationStateMachineComponent } from '../types/anim-state';
+import { FunctionalSystem } from '../ecs/FunctionalSystem';
 import { StateMachineDefinition, AnimationTransition } from '../types/anim-state';
 import { EventSystem } from '../core/EventSystem';
-import { AnimationComponent } from './Animation';
 
 // Simple registry to hold shared definitions
 const stateMachineRegistry = new Map<string, StateMachineDefinition>();
@@ -12,15 +9,15 @@ export function registerStateMachine(key: string, def: StateMachineDefinition) {
     stateMachineRegistry.set(key, def);
 }
 
-export class AnimationStateMachineSystem extends System {
-    requiredComponents = ['anim-machine', 'animation'];
+export class AnimationStateMachineSystem extends FunctionalSystem {
+    requiredComponents: Array<ComponentType> = ['anim-machine', 'animation'];
     private eventSystem = EventSystem.getInstance();
     // track entities that contain anim-machine so event handlers can find targets
-    private trackedEntities: Map<string, Entity> = new Map();
+    private trackedEntities: Map<string, EntityElement> = new Map();
     // map of registered global handlers per event name
     private globalEventHandlers: Map<string, (ev: any) => void> = new Map();
     // cache entities grouped by state machine defKey for faster lookup from handlers
-    private entityCache: Map<string, Set<Entity>> = new Map();
+    private entityCache: Map<string, Set<EntityElement>> = new Map();
     // map trigger -> set of defKeys that declare transitions using that trigger
     private triggerToDefKeys: Map<string, Set<string>> = new Map();
 
@@ -28,7 +25,7 @@ export class AnimationStateMachineSystem extends System {
         super();
     }
 
-    update(entities: Entity[], deltaTime: number): void {
+    update(entities: EntityElement[], deltaTime: number): void {
         const targets = this.getEntitiesWithComponents(entities, this.requiredComponents);
 
         // refresh tracked entities for global listeners and build cache by defKey
@@ -131,7 +128,7 @@ export class AnimationStateMachineSystem extends System {
         }
     }
 
-    private findTransitionFor(entity: Entity, machine: AnimationStateMachineComponent, def: StateMachineDefinition): AnimationTransition | null {
+    private findTransitionFor(entity: EntityElement, machine: AnimationStateMachineComponent, def: StateMachineDefinition): AnimationTransition | null {
         const transitions = def.transitions.slice().sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
         for (const t of transitions) {
@@ -150,7 +147,7 @@ export class AnimationStateMachineSystem extends System {
         return null;
     }
 
-    private applyTransition(entity: Entity, machine: AnimationStateMachineComponent, animComp: AnimationComponent, def: StateMachineDefinition, transition: AnimationTransition) {
+    private applyTransition(entity: EntityElement, machine: AnimationStateMachineComponent, animComp: AnimationComponent, def: StateMachineDefinition, transition: AnimationTransition) {
         if (machine.currentState === transition.to) return;
 
         // run onExit for current state
@@ -177,7 +174,7 @@ export class AnimationStateMachineSystem extends System {
     }
 
     // Allow external triggers to request transition evaluation for an entity
-    trigger(entity: Entity, triggerName: string) {
+    trigger(entity: EntityElement, triggerName: string) {
         const machine = entity.getComponent<AnimationStateMachineComponent>('anim-machine');
         if (!machine) return;
 

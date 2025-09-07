@@ -6,7 +6,6 @@ export * from './math';
 export { Engine as GameEngine } from './core/Engine';
 
 // Script API
-export type { ScriptInstance } from './ecs/ScriptComponent';
 export { scriptRegistry } from './ecs/ScriptRegistry';
 
 // Version

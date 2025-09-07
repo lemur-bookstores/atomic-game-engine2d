@@ -1,11 +1,9 @@
-import { System } from '../ecs/System';
-import { Entity } from '../ecs/Entity';
-import { ParticleComponent } from './ParticleComponent';
+import { FunctionalSystem } from '../ecs/FunctionalSystem';
 import { ParticleRegistry } from './ParticleRegistry';
 import { Scene } from '../core/Scene';
 
-export class ParticleSystem extends System {
-    readonly requiredComponents: string[] = [];
+export class ParticleSystem extends FunctionalSystem {
+    readonly requiredComponents: Array<ComponentType> = [];
 
     // active particle instances
     private particles: any[] = [];
@@ -26,7 +24,7 @@ export class ParticleSystem extends System {
         }
     }
 
-    update(entities: Entity[], deltaTime: number): void {
+    update(entities: EntityElement[], deltaTime: number): void {
         // update emitters (spawn particles according to emissionRate)
         for (const emitter of this.emitters) {
             const acc = emitter.accumulator + emitter.component.emissionRate * deltaTime;
@@ -38,7 +36,7 @@ export class ParticleSystem extends System {
                 const ent = entities.find(e => e.id === emitter.entityId);
                 let px = 0, py = 0;
                 if (ent) {
-                    const t = ent.getComponent<any>('transform');
+                    const t = ent.getComponent<TransformComponent>('transform');
                     if (t && t.position) {
                         px = t.position.x ?? 0;
                         py = t.position.y ?? 0;
@@ -68,11 +66,11 @@ export class ParticleSystem extends System {
         this.particles = alive;
     }
 
-    attachEmitter(entity: Entity, component: ParticleComponent) {
+    attachEmitter(entity: EntityElement, component: ParticleComponent) {
         this.emitters.push({ entityId: entity.id, component, accumulator: 0 });
     }
 
-    attachEmitterFromSerialized(entity: Entity, serialized: any) {
+    attachEmitterFromSerialized(entity: EntityElement, serialized: any) {
         const comp = ParticleRegistry.getInstance().deserializeEmitter(serialized) as ParticleComponent;
         this.attachEmitter(entity, comp);
     }

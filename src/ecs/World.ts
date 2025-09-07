@@ -1,11 +1,11 @@
 import { Entity } from './Entity';
-import { System } from './System';
+import { FunctionalSystem } from './FunctionalSystem'
 import { EventSystem } from '../core/EventSystem';
 import { WORLD_EVENTS } from '@/types/event-const';
 
 export class World {
     private entities: Map<string, Entity>;
-    private systems: System[];
+    private systems: FunctionalSystem[];
     private eventSystem: EventSystem;
 
     constructor() {
@@ -14,7 +14,7 @@ export class World {
         this.eventSystem = EventSystem.getInstance();
     }
 
-    createEntity(): Entity {
+    createEntity(): EntityElement {
         const entity = new Entity();
         this.entities.set(entity.id, entity);
         this.eventSystem.emit(WORLD_EVENTS.ENTITY_CREATED, { entity });
@@ -30,11 +30,11 @@ export class World {
         }
     }
 
-    addSystem(system: System): void {
+    addSystem(system: FunctionalSystem): void {
         this.systems.push(system);
     }
 
-    removeSystem(system: System): void {
+    removeSystem(system: FunctionalSystem): void {
         const index = this.systems.indexOf(system);
         if (index !== -1) {
             this.systems.splice(index, 1);
@@ -46,15 +46,15 @@ export class World {
         this.systems.forEach(system => system.update(activeEntities, deltaTime));
     }
 
-    getEntity(entityId: string): Entity | undefined {
+    getEntity(entityId: string): EntityElement | undefined {
         return this.entities.get(entityId);
     }
 
-    getEntities(): Entity[] {
+    getEntities(): EntityElement[] {
         return Array.from(this.entities.values());
     }
 
-    getActiveEntities(): Entity[] {
+    getActiveEntities(): EntityElement[] {
         return this.getEntities().filter(entity => entity.active);
     }
 

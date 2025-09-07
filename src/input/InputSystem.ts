@@ -1,19 +1,9 @@
-import { System } from '../core/ecs/System';
-import { Entity } from '../core/ecs/Entity';
+import { ReactSystem } from '../core/ecs/ReactSystem';
 import { InputManager } from './InputManager';
 import { Transform } from '../math/Transform';
 import { INPUT_EVENTS } from '@/types/event-const';
 
-export interface InputComponent {
-    type: 'input';
-    moveSpeed: number;
-    rotationSpeed: number;
-    keyBindings: Map<string, string>; // key -> action
-    mouseEnabled: boolean;
-    touchEnabled: boolean;
-}
-
-export class InputSystem extends System {
+export class InputSystem extends ReactSystem {
     private inputManager: InputManager;
 
     constructor() {
@@ -26,14 +16,14 @@ export class InputSystem extends System {
         this.inputManager.update();
 
         // Process input for all entities with input components
-        this.entities.forEach((entity: Entity) => {
+        this.entities.forEach((entity: EntityElement) => {
             this.processEntityInput(entity, deltaTime);
         });
     }
 
-    private processEntityInput(entity: Entity, deltaTime: number): void {
-        const inputComponent = entity.getComponent('input') as InputComponent;
-        const transform = entity.getComponent('transform') as Transform;
+    private processEntityInput(entity: EntityElement, deltaTime: number): void {
+        const inputComponent = entity.getComponent<InputComponent>('input') as InputComponent;
+        const transform = entity.getComponent<TransformComponent>('transform') as unknown as Transform;
 
         if (!inputComponent || !transform) return;
 
@@ -56,7 +46,7 @@ export class InputSystem extends System {
     }
 
     private handleAction(
-        entity: Entity,
+        entity: EntityElement,
         action: string,
         deltaTime: number,
         inputComponent: InputComponent,
@@ -93,7 +83,7 @@ export class InputSystem extends System {
     }
 
     private processMouseInput(
-        entity: Entity,
+        entity: EntityElement,
         _inputComponent: InputComponent,
         transform: Transform,
         deltaTime: number
@@ -127,7 +117,7 @@ export class InputSystem extends System {
     }
 
     private processTouchInput(
-        entity: Entity,
+        entity: EntityElement,
         inputComponent: InputComponent,
         transform: Transform,
         deltaTime: number
@@ -187,42 +177,42 @@ export class InputSystem extends System {
     }
 
     // Utility methods for custom input handling
-    public bindKey(entity: Entity, key: string, action: string): void {
+    public bindKey(entity: EntityElement, key: string, action: string): void {
         const inputComponent = entity.getComponent('input') as InputComponent;
         if (inputComponent) {
             inputComponent.keyBindings.set(key, action);
         }
     }
 
-    public unbindKey(entity: Entity, key: string): void {
+    public unbindKey(entity: EntityElement, key: string): void {
         const inputComponent = entity.getComponent('input') as InputComponent;
         if (inputComponent) {
             inputComponent.keyBindings.delete(key);
         }
     }
 
-    public setMoveSpeed(entity: Entity, speed: number): void {
+    public setMoveSpeed(entity: EntityElement, speed: number): void {
         const inputComponent = entity.getComponent('input') as InputComponent;
         if (inputComponent) {
             inputComponent.moveSpeed = speed;
         }
     }
 
-    public setRotationSpeed(entity: Entity, speed: number): void {
+    public setRotationSpeed(entity: EntityElement, speed: number): void {
         const inputComponent = entity.getComponent('input') as InputComponent;
         if (inputComponent) {
             inputComponent.rotationSpeed = speed;
         }
     }
 
-    public enableMouse(entity: Entity, enabled: boolean = true): void {
+    public enableMouse(entity: EntityElement, enabled: boolean = true): void {
         const inputComponent = entity.getComponent('input') as InputComponent;
         if (inputComponent) {
             inputComponent.mouseEnabled = enabled;
         }
     }
 
-    public enableTouch(entity: Entity, enabled: boolean = true): void {
+    public enableTouch(entity: EntityElement, enabled: boolean = true): void {
         const inputComponent = entity.getComponent('input') as InputComponent;
         if (inputComponent) {
             inputComponent.touchEnabled = enabled;

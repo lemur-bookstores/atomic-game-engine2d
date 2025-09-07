@@ -1,14 +1,11 @@
-import { System } from '../ecs/System';
-import { Entity } from '../ecs/Entity';
-import { AnimationComponent } from './Animation';
-import { SpriteComponent } from './Sprite';
-import { SpriteSheet, Animation } from './SpriteSheet';
+import { FunctionalSystem } from '../ecs/FunctionalSystem';
+import { SpriteSheet } from './SpriteSheet';
 import { AssetManager } from '../assets/AssetManager';
 import { EventSystem } from '../core/EventSystem';
 import { ANIMATION_EVENTS } from '../types/event-const';
 
-export class AnimationSystem extends System {
-    requiredComponents = ['animation', 'sprite'];
+export class AnimationSystem extends FunctionalSystem {
+    requiredComponents: Array<ComponentType> = ['animation', 'sprite'];
     private spriteSheets = new Map<string, SpriteSheet>();
     private assetManager: AssetManager | null = null;
     private eventSystem?: EventSystem;
@@ -31,7 +28,7 @@ export class AnimationSystem extends System {
         return this.spriteSheets.get(name);
     }
 
-    update(entities: Entity[], deltaTime: number): void {
+    update(entities: EntityElement[], deltaTime: number): void {
         const animatedEntities = this.getEntitiesWithComponents(
             entities,
             this.requiredComponents
@@ -42,7 +39,7 @@ export class AnimationSystem extends System {
         });
     }
 
-    private updateAnimation(entity: Entity, deltaTime: number): void {
+    private updateAnimation(entity: EntityElement, deltaTime: number): void {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         const spriteComponent = entity.getComponent<SpriteComponent>('sprite');
 
@@ -112,7 +109,7 @@ export class AnimationSystem extends System {
         }
     }
 
-    private nextFrame(animComponent: AnimationComponent, animation: Animation): boolean {
+    private nextFrame(animComponent: AnimationComponent, animation: SpriteAnimation): boolean {
         if (animation.pingPong) {
             return this.updatePingPongFrame(animComponent, animation);
         } else {
@@ -120,7 +117,7 @@ export class AnimationSystem extends System {
         }
     }
 
-    private updateNormalFrame(animComponent: AnimationComponent, animation: Animation): boolean {
+    private updateNormalFrame(animComponent: AnimationComponent, animation: SpriteAnimation): boolean {
         animComponent.currentFrame++;
 
         if (animComponent.currentFrame >= animation.frames.length) {
@@ -129,14 +126,14 @@ export class AnimationSystem extends System {
             } else {
                 animComponent.currentFrame = animation.frames.length - 1;
                 animComponent.playing = false;
-                return true; // Animation completed
+                return true; // SpriteAnimation completed
             }
         }
 
         return false;
     }
 
-    private updatePingPongFrame(animComponent: AnimationComponent, animation: Animation): boolean {
+    private updatePingPongFrame(animComponent: AnimationComponent, animation: SpriteAnimation): boolean {
         // Use the typed runtime `direction` on the AnimationComponent
         if (typeof animComponent.direction !== 'number') {
             animComponent.direction = 1; // 1 = forward, -1 = backward
@@ -154,7 +151,7 @@ export class AnimationSystem extends System {
 
             if (!animation.loop) {
                 animComponent.playing = false;
-                return true; // Animation completed
+                return true; // SpriteAnimation completed
             }
         }
 
@@ -165,7 +162,7 @@ export class AnimationSystem extends System {
         sprite: SpriteComponent,
         spriteSheet: SpriteSheet,
         animComponent: AnimationComponent,
-        animation: Animation
+        animation: SpriteAnimation
     ): void {
         const frameIndex = animation.frames[animComponent.currentFrame];
         const frame = spriteSheet.getFrame(frameIndex);
@@ -181,7 +178,7 @@ export class AnimationSystem extends System {
         }
     }
 
-    private onAnimationComplete(entity: Entity, animationName: string): void {
+    private onAnimationComplete(entity: EntityElement, animationName: string): void {
         // Emit animation complete event
         if (this.eventSystem) {
             this.eventSystem.emit(ANIMATION_EVENTS.COMPLETE, { entity, animationName });
@@ -189,7 +186,7 @@ export class AnimationSystem extends System {
     }
 
     // Public methods for animation control
-    playAnimation(entity: Entity, animationName: string): boolean {
+    playAnimation(entity: EntityElement, animationName: string): boolean {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         if (!animComponent) return false;
 
@@ -215,7 +212,7 @@ export class AnimationSystem extends System {
         return true;
     }
 
-    pauseAnimation(entity: Entity): boolean {
+    pauseAnimation(entity: EntityElement): boolean {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         if (!animComponent) return false;
 
@@ -223,7 +220,7 @@ export class AnimationSystem extends System {
         return true;
     }
 
-    resumeAnimation(entity: Entity): boolean {
+    resumeAnimation(entity: EntityElement): boolean {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         if (!animComponent) return false;
 
@@ -231,7 +228,7 @@ export class AnimationSystem extends System {
         return true;
     }
 
-    stopAnimation(entity: Entity): boolean {
+    stopAnimation(entity: EntityElement): boolean {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         if (!animComponent) return false;
 
@@ -243,7 +240,7 @@ export class AnimationSystem extends System {
         return true;
     }
 
-    setAnimationSpeed(entity: Entity, speed: number): boolean {
+    setAnimationSpeed(entity: EntityElement, speed: number): boolean {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         if (!animComponent) return false;
 
@@ -251,17 +248,17 @@ export class AnimationSystem extends System {
         return true;
     }
 
-    getCurrentAnimationName(entity: Entity): string | null {
+    getCurrentAnimationName(entity: EntityElement): string | null {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         return animComponent ? animComponent.currentAnimation : null;
     }
 
-    isAnimationPlaying(entity: Entity): boolean {
+    isAnimationPlaying(entity: EntityElement): boolean {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         return animComponent ? animComponent.playing : false;
     }
 
-    getAnimationProgress(entity: Entity): number {
+    getAnimationProgress(entity: EntityElement): number {
         const animComponent = entity.getComponent<AnimationComponent>('animation');
         if (!animComponent) return 0;
 

@@ -37,14 +37,6 @@ export interface SpriteFrame {
     height: number;
 }
 
-export interface Animation {
-    name: string;
-    frames: number[];
-    duration: number;
-    loop: boolean;
-    pingPong: boolean;
-}
-
 export interface SpriteFrameUV {
     size: {
         width: number,
@@ -61,7 +53,7 @@ export interface SpriteFrameUV {
 export class SpriteSheet {
     private texture: Texture;
     private frames: SpriteFrame[] = [];
-    private animations: Map<string, Animation> = new Map();
+    private animations: Map<string, SpriteAnimation> = new Map();
 
     constructor(texture: Texture, frameWidth: number, frameHeight: number) {
         this.texture = texture;
@@ -85,11 +77,11 @@ export class SpriteSheet {
         }
     }
 
-    addAnimation(name: string, animation: Animation): void {
+    addAnimation(name: string, animation: SpriteAnimation): void {
         this.animations.set(name, animation);
     }
 
-    getAnimation(name: string): Animation | undefined {
+    getAnimation(name: string): SpriteAnimation | undefined {
         return this.animations.get(name);
     }
 

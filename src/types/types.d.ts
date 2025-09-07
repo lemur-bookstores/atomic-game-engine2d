@@ -9,7 +9,9 @@ declare module "*.wasm?url" {
  * Type definitions for the GameEngine 2D
  */
 
-interface PropertyMetadata {
+declare type EntityId = string;
+
+declare interface PropertyMetadata {
     name: string;
     initialValue: any;
     type: string;
@@ -18,12 +20,29 @@ interface PropertyMetadata {
     description?: string;
 }
 
-interface Vector2D {
+declare interface PlaybackHandle {
+    id: string;
+    sourceNode?: AudioBufferSourceNode;
+    gainNode?: GainNode;
+}
+
+declare interface Color {
+    r: number
+    g: number
+    b: number
+    a?: number
+}
+
+declare interface Vector2D {
     x: number;
     y: number;
 }
 
-interface EngineConfig {
+declare interface Vector3D extends Vector2D {
+    z: number;
+}
+
+declare interface EngineConfig {
     canvas: string | HTMLCanvasElement;
     width: number;
     height: number;
@@ -34,43 +53,25 @@ interface EngineConfig {
     debug?: boolean;
 }
 
-interface GameEvent<T = any> {
+declare interface GameEvent<T = any> {
     type: AllEventTypes;
     data: T;
     timestamp: number;
 }
 
-type EventCallback<T> = (event: GameEvent<T>) => void;
+declare type EventCallback<T> = (event: GameEvent<T>) => void;
 
-interface Color {
-    r: number;
-    g: number;
-    b: number;
-    a: number;
-}
-
-interface Rectangle {
+declare interface Rectangle {
     x: number;
     y: number;
     width: number;
     height: number;
 }
 
-interface TransformData {
+declare interface TransformData {
     position: Vector2D;
     rotation: number;
     scale: Vector2D;
 }
 
-type SystemUpdateFunction = <T>(entities: T[], deltaTime: number) => void;
-type ComponentType = string;
-type EntityId = string;
-
-interface AudioComponent {
-    type: 'audio';
-    clip: string; // key in AssetManager or path
-    loop?: boolean;
-    volume?: number; // 0..1
-    group?: string; // e.g., 'sfx' | 'music'
-    autoplay?: boolean;
-}
+declare type SystemUpdateFunction = <T>(entities: T[], deltaTime: number) => void;

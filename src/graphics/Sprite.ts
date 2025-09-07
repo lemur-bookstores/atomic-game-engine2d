@@ -1,20 +1,4 @@
-import { Component } from '../ecs/Component';
 import { Color } from '../math/Color';
-
-export interface SpriteComponent extends Component {
-    type: 'sprite';
-    texture: string;
-    width: number;
-    height: number;
-    tint: Color;
-    // Coordenadas UV para sprite sheets
-    uvX: number;
-    uvY: number;
-    uvWidth: number;
-    uvHeight: number;
-    flipX: boolean;
-    flipY: boolean;
-}
 
 export class Sprite {
     texture: string;

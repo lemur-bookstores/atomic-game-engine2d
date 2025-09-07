@@ -2,8 +2,6 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { AssetManager, SpriteSheetLibraryOptions } from '../../src/assets/AssetManager';
 import { AnimationSystem } from '../../src/graphics/AnimationSystem';
 import { Entity } from '../../src/ecs/Entity';
-import { SpriteComponent } from '../../src/graphics/Sprite';
-import { AnimationComponent } from '../../src/graphics/Animation';
 import { Texture } from '../../src/graphics/Texture';
 import { Color } from '../../src/math/Color';
 

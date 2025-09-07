@@ -1,5 +1,3 @@
-import { Entity } from '../ecs/Entity';
-
 export interface AnimationState {
     name: string;
     animation: string;
@@ -10,7 +8,7 @@ export interface AnimationState {
 export interface AnimationTransition {
     from: string | '*';
     to: string;
-    condition?: (entity: Entity) => boolean;
+    condition?: (entity: EntityElement) => boolean;
     trigger?: string;
     priority?: number;
 }
@@ -21,10 +19,3 @@ export interface StateMachineDefinition {
     initial: string;
 }
 
-export interface AnimationStateMachineComponent {
-    type: 'anim-machine';
-    defKey: string; // key to lookup shared definition
-    currentState: string;
-    elapsed: number;
-    params?: Record<string, any>;
-}

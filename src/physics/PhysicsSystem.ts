@@ -1,16 +1,14 @@
-import { System } from '../core/ecs/System';
-import { Entity } from '../core/ecs/Entity';
+import { ReactSystem } from '../core/ecs/ReactSystem';
 import { PhysicsWorld } from './PhysicsWorld';
 import { PhysicsBody, PhysicsBodyConfig, PhysicsBodyType, PhysicsShape } from './PhysicsBody';
 import { Transform } from '../math/Transform';
 import { Vector2 } from '../math/Vector2';
-import { PhysicsBodyComponent, TransformComponent } from '../ecs/Component';
 
 /**
- * PhysicsSystem manages the lifecycle of physics bodies and synchronizes 
+ * PhysicsSystem manages the lifecycle of physics bodies and synchronizes
  * transforms between Box2D and the ECS according to v0.4.0 specification
  */
-export class PhysicsSystem extends System {
+export class PhysicsSystem extends ReactSystem {
     private world!: PhysicsWorld;
     private physicsBodyMap = new Map<string, PhysicsBody>();
     private initialized = false;
@@ -27,7 +25,7 @@ export class PhysicsSystem extends System {
         this.initialized = true;
     }
 
-    public onEntityAdded(entity: Entity): void {
+    public onEntityAdded(entity: EntityElement): void {
         super.onEntityAdded(entity);
 
         const physicsComponent = entity.getComponent('physicsBody') as PhysicsBodyComponent ||
@@ -38,7 +36,7 @@ export class PhysicsSystem extends System {
         }
     }
 
-    public onEntityRemoved(entity: Entity): void {
+    public onEntityRemoved(entity: EntityElement): void {
         const physicsBody = this.physicsBodyMap.get(entity.getId());
         if (physicsBody) {
             physicsBody.destroy();
@@ -57,7 +55,7 @@ export class PhysicsSystem extends System {
         this.syncTransforms();
     }
 
-    private createPhysicsBody(entity: Entity, component: PhysicsBodyComponent): void {
+    private createPhysicsBody(entity: EntityElement, component: PhysicsBodyComponent): void {
         const transform = entity.getComponent('transform') as TransformComponent;
 
         const config: PhysicsBodyConfig = {
@@ -87,7 +85,7 @@ export class PhysicsSystem extends System {
             const entity = this.getEntityById(entityId);
             if (!entity) continue;
 
-            const transform = entity.getComponent('transform') as Transform;
+            const transform = entity.getComponent<TransformComponent>('transform') as unknown as Transform;
             if (!transform) continue;
 
             const physicsTransform = physicsBody.getTransform();
@@ -115,7 +113,7 @@ export class PhysicsSystem extends System {
         }
     }
 
-    private getEntityById(entityId: string): Entity | undefined {
+    private getEntityById(entityId: string): EntityElement | undefined {
         // Find entity in the system's entities set
         for (const entity of this.entities) {
             if (entity.getId() === entityId) {

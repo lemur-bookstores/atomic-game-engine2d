@@ -1,4 +1,4 @@
-import { LightConstructor, LightMetadata, LightInstance, LightState } from "./LightComponent";
+import { LightConstructor, LightMetadata } from "./LightComponent";
 import { Logger } from "../core/Logger";
 
 export class LightRegistry {
@@ -53,7 +53,7 @@ export class LightRegistry {
         const Constructor = this.lightTypes.get(lightType);
         if (!Constructor) return null;
 
-        const instance = new Constructor(...args);
+        const instance = new Constructor(...args) as LightInstance;
         return this.enhanceLightInstance(lightType, instance);
     }
 
@@ -215,14 +215,14 @@ export class LightRegistry {
 
         // Agregar métodos de gestión de estado
         proxy.getAllProperties = () => {
-            const result: LightState = {};
+            const result: State = {};
             stateMap.forEach((value, key) => {
                 result[key] = this.deepClone(value);
             });
             return result;
         };
 
-        proxy.setAllProperties = (state: LightState) => {
+        proxy.setAllProperties = (state: State) => {
             for (const [key, value] of Object.entries(state)) {
                 if (stateMap.has(key)) {
                     let finalValue = value;

@@ -1,12 +1,10 @@
-import { System } from './System';
-import { Entity } from './Entity';
-import { TransformComponent, ColliderComponent } from './Component';
+import { FunctionalSystem } from './FunctionalSystem';
 import { EventSystem } from '../core/EventSystem';
-import { Logger } from '../core/Logger';
 import { PHYSICS_EVENTS } from '../types/event-const';
+import { Logger } from '../core/Logger';
 
-export class CollisionSystem extends System {
-    readonly requiredComponents = ['transform', 'collider'];
+export class CollisionSystem extends FunctionalSystem {
+    readonly requiredComponents: Array<ComponentType> = ['transform', 'collider'];
     private eventSystem: EventSystem;
 
     constructor() {
@@ -14,7 +12,7 @@ export class CollisionSystem extends System {
         this.eventSystem = EventSystem.getInstance();
     }
 
-    update(entities: Entity[], _deltaTime: number): void {
+    update(entities: EntityElement[], _deltaTime: number): void {
         const collidableEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
 
         if (collidableEntities.length > 0) {
@@ -41,7 +39,7 @@ export class CollisionSystem extends System {
         }
     }
 
-    private checkCollision(entityA: Entity, entityB: Entity): boolean {
+    private checkCollision(entityA: EntityElement, entityB: EntityElement): boolean {
         const transformA = entityA.getComponent<TransformComponent>('transform');
         const colliderA = entityA.getComponent<ColliderComponent>('collider');
         const transformB = entityB.getComponent<TransformComponent>('transform');
@@ -70,7 +68,7 @@ export class CollisionSystem extends System {
         );
     }
 
-    private getCollisionPoint(entityA: Entity, entityB: Entity): { x: number; y: number } {
+    private getCollisionPoint(entityA: EntityElement, entityB: EntityElement): { x: number; y: number } {
         const transformA = entityA.getComponent<TransformComponent>('transform');
         const transformB = entityB.getComponent<TransformComponent>('transform');
 
@@ -85,7 +83,7 @@ export class CollisionSystem extends System {
         };
     }
 
-    private getCollisionNormal(entityA: Entity, entityB: Entity): { x: number; y: number } {
+    private getCollisionNormal(entityA: EntityElement, entityB: EntityElement): { x: number; y: number } {
         const transformA = entityA.getComponent<TransformComponent>('transform');
         const transformB = entityB.getComponent<TransformComponent>('transform');
 

@@ -1,12 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Entity } from '../../src/ecs/Entity';
-import { System } from '../../src/ecs/System';
+import { FunctionalSystem } from '../../src/ecs/FunctionalSystem';
 import { World } from '../../src/ecs/World';
-import { TransformComponent, SpriteComponent } from '../../src/ecs/Component';
 import { EventSystem } from '../../src/core/EventSystem';
 
-class RenderSystem extends System {
-    readonly requiredComponents = ['transform', 'sprite'];
+class RenderSystem extends FunctionalSystem {
+    readonly requiredComponents: Array<ComponentType> = ['transform', 'sprite'];
 
     // Mock WebGL context for testing
     private gl: WebGLRenderingContext | null = null;
@@ -26,7 +24,7 @@ class RenderSystem extends System {
         }
     }
 
-    update(entities: Entity[], _deltaTime: number): void {
+    update(entities: EntityElement[], _deltaTime: number): void {
         if (!this.gl || !this.isGLMocked) return;
 
         const renderableEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
@@ -113,7 +111,7 @@ describe('Render System Tests', () => {
     it('should handle multiple renderable entities', () => {
         const world = new World();
         const numEntities = 3;
-        const entities: Entity[] = [];
+        const entities: EntityElement[] = [];
 
         // Create multiple entities with different transforms but same sprite
         for (let i = 0; i < numEntities; i++) {

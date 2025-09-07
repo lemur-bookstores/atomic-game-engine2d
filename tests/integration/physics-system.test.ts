@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PhysicsSystem } from '../../src/physics/PhysicsSystem';
-import { Entity } from '../../src/core/ecs/Entity';
 import { Vector2 } from '../../src/math/Vector2';
-import { PhysicsBodyComponent, TransformComponent } from '../../src/ecs/Component';
+import { Entity } from '@/ecs';
 
 describe('PhysicsSystem Integration Tests', () => {
     let physicsSystem: PhysicsSystem;
@@ -21,7 +20,8 @@ describe('PhysicsSystem Integration Tests', () => {
             rotation: 0,
             scale: new Vector2(1, 1)
         };
-        testEntity.addComponent('transform', transform);
+
+        testEntity.addComponent(transform);
 
         // Add physics body component
         const physicsBody: PhysicsBodyComponent = {
@@ -35,7 +35,7 @@ describe('PhysicsSystem Integration Tests', () => {
             restitution: 0.2,
             fixedRotation: true
         };
-        testEntity.addComponent('physicsBody', physicsBody);
+        testEntity.addComponent(physicsBody);
     });
 
     afterEach(() => {
@@ -124,7 +124,7 @@ describe('PhysicsSystem Integration Tests', () => {
             rotation: 0,
             scale: { x: 1, y: 1 }
         };
-        legacyEntity.addComponent('transform', transform);
+        legacyEntity.addComponent(transform);
 
         const legacyPhysics: PhysicsBodyComponent = {
             type: 'physics', // Legacy type
@@ -135,7 +135,7 @@ describe('PhysicsSystem Integration Tests', () => {
             friction: 0.3,
             restitution: 0.1
         };
-        legacyEntity.addComponent('physicsBody', legacyPhysics);
+        legacyEntity.addComponent(legacyPhysics);
 
         // Wait for system initialization
         await new Promise(resolve => setTimeout(resolve, 100));

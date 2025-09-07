@@ -1,5 +1,4 @@
-import { Entity } from "@/ecs";
-import { LightComponent, LightEntry, LightInstance } from "./LightComponent";
+import { LightEntry } from "./LightComponent";
 import { LightRegistry } from "./LightRegistry";
 import { Scene } from "@/core/Scene";
 import { Logger } from "../core/Logger";
@@ -38,7 +37,7 @@ export class LightingSystem {
     /**
      * Actualiza el sistema de iluminación
      */
-    update(entities: Entity[], dt: number): void {
+    update(entities: EntityElement[], dt: number): void {
         for (const entity of entities) {
             const lightComponent = entity.getComponent<LightComponent>('light');
             if (!lightComponent) continue;
@@ -50,7 +49,7 @@ export class LightingSystem {
     /**
      * Actualiza un componente de luz específico
      */
-    private updateLightComponent(lightComponent: LightComponent, entity: Entity, dt: number): void {
+    private updateLightComponent(lightComponent: LightComponent, entity: EntityElement, dt: number): void {
         const handleLightEntry = (entry: LightEntry) => {
             if (!entry) return;
 
@@ -73,7 +72,7 @@ export class LightingSystem {
             // Actualizar instancia
             if (entry.instance) {
                 // Sincronizar posición con entidad si tiene transform
-                const transform = entity.getComponent?.('transform');
+                const transform = entity.getComponent<TransformComponent>('transform');
                 if (transform && transform.position) {
                     entry.instance.position = {
                         x: transform.position.x,
@@ -150,11 +149,11 @@ export class LightingSystem {
     /**
      * Renderiza todas las luces activas
      */
-    private renderLights(entities: any[], camera?: any): void {
+    private renderLights(entities: Array<EntityElement>, camera?: any): void {
         if (!this.lightingContext) return;
 
         for (const entity of entities) {
-            const lightComponent = entity.getComponent('light') as LightComponent;
+            const lightComponent = entity.getComponent<LightComponent>('light');
             if (!lightComponent) continue;
 
             this.renderEntityLights(lightComponent, entity, camera);
@@ -330,7 +329,7 @@ export class LightingSystem {
     /**
      * Limpia recursos de luces destruidas
      */
-    cleanup(entities: Entity[]): void {
+    cleanup(entities: Array<EntityElement>): void {
         for (const entity of entities) {
             const lightComponent = entity.getComponent<LightComponent>('light');
             if (!lightComponent) continue;

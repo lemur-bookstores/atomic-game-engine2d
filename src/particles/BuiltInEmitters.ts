@@ -1,6 +1,4 @@
-import { ParticleComponent } from './ParticleComponent';
-
-export class BasicEmitter implements ParticleComponent {
+export class BasicEmitter implements Omit<ParticleComponent, 'type'> {
     type = 'basic';
     color = { r: 255, g: 255, b: 255, a: 1 };
     lifetime = 1.0;

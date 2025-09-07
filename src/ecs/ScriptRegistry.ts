@@ -1,5 +1,6 @@
-import { ScriptInstance, ScriptState } from './ScriptComponent';
 import { Logger } from '../core/Logger';
+
+export type ScriptConstructor = new (...args: any[]) => ScriptInstance;
 
 export interface ScriptMetadata {
     className: string;
@@ -9,7 +10,6 @@ export interface ScriptMetadata {
     description?: string;
 }
 
-export type ScriptConstructor = new (...args: any[]) => ScriptInstance;
 
 // Interface para type mappers más robusta
 export interface TypeMapper {
@@ -331,14 +331,14 @@ export class ScriptRegistry {
 
         // Métodos de gestión de estado
         proxy.getAllProperties = () => {
-            const result: ScriptState = {};
+            const result: State = {};
             stateMap.forEach((value, key) => {
                 result[key] = this.deepClone(value);
             });
             return result;
         };
 
-        proxy.setAllProperties = (state: ScriptState) => {
+        proxy.setAllProperties = (state: State) => {
             for (const [key, value] of Object.entries(state)) {
                 if (stateMap.has(key)) {
                     // ✨ NUEVO: Usar deserialización inteligente
@@ -374,7 +374,7 @@ export class ScriptRegistry {
     /**
      * Valida que un objeto de estado sea compatible con un script
      */
-    validateState(scriptName: string, state: ScriptState): { valid: boolean, errors: string[] } {
+    validateState(scriptName: string, state: State): { valid: boolean, errors: string[] } {
         const metadata = this.metadata.get(scriptName);
         if (!metadata) {
             return { valid: false, errors: [`Script ${scriptName} no encontrado`] };

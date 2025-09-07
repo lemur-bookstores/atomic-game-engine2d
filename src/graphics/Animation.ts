@@ -1,21 +1,3 @@
-import { Animation } from './SpriteSheet';
-
-export interface AnimationComponent {
-    type: 'animation';
-    spriteSheet: string;
-    currentAnimation: string;
-    currentFrame: number;
-    frameTime: number;
-    elapsedTime: number;
-    loop: boolean;
-    playing: boolean;
-    animations: Map<string, Animation>;
-    // Optional mapping from animation frame index -> sfx clip name
-    frameSfx?: { [frameIndex: number]: string };
-    // Runtime direction for ping-pong animations: 1 = forward, -1 = backward
-    direction?: number;
-}
-
 export class AnimationState {
     name: string;
     frames: number[];

@@ -1,5 +1,4 @@
 import { System } from '../core/GameLoop';
-import { ScriptComponent } from './ScriptComponent';
 import { scriptRegistry } from './ScriptRegistry';
 import { EventSystem } from '../core/EventSystem';
 import { Logger } from '../core/Logger';
@@ -7,7 +6,7 @@ import { SCENE_EVENTS, WORLD_EVENTS } from '../types/event-const';
 import { Entity } from './Entity';
 
 export class ScriptSystem implements System {
-    requiredComponents = ['script'];
+    requiredComponents: Array<ComponentType> = ['script'];
     private eventSystem = EventSystem.getInstance();
 
     private boundEntityRemoved = (event: any) => {
@@ -55,9 +54,9 @@ export class ScriptSystem implements System {
         }
     }
 
-    update(entities: any[], dt: number): void {
+    update(entities: EntityElement[], dt: number): void {
         for (const e of entities) {
-            const sc = e.getComponent('script') as ScriptComponent;
+            const sc = e.getComponent<ScriptComponent>('script');
             if (!sc) continue;
 
             // Helper mejorado para crear/restaurar/init/update una entrada de script

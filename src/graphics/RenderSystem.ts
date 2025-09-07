@@ -1,6 +1,4 @@
-import { System } from '../ecs/System';
-import { Entity } from '../ecs/Entity';
-import { SpriteComponent } from './Sprite';
+import { FunctionalSystem } from '../ecs/FunctionalSystem';
 import { RenderStrategy } from './Renderer';
 import { Texture } from './Texture';
 import { Vector2 } from '../math/Vector2';
@@ -8,15 +6,8 @@ import { Camera2D } from './Camera2D';
 import { Color } from '../math/Color';
 import { Logger } from '../core/Logger';
 
-export interface TransformComponent {
-    type: 'transform';
-    position: Vector2;
-    rotation: number;
-    scale: Vector2;
-}
-
-export class RenderSystem extends System {
-    requiredComponents = ['transform', 'sprite'];
+export class RenderSystem extends FunctionalSystem {
+    requiredComponents: Array<ComponentType> = ['transform', 'sprite'];
     private renderer: RenderStrategy;
     private textures = new Map<string, Texture>();
     private _backgroundColor: Color = new Color(0, 0, 0, 255);
@@ -96,7 +87,7 @@ export class RenderSystem extends System {
         return this._backgroundColor;
     }
 
-    update(entities: Entity[], _deltaTime: number): void {
+    update(entities: EntityElement[], _deltaTime: number): void {
         // Clear the screen
         this.renderer.clear();
         // Apply camera transform if available
@@ -257,7 +248,7 @@ export class RenderSystem extends System {
         this.layerOrder = layers;
     }
 
-    private renderEntity(entity: Entity): void {
+    private renderEntity(entity: EntityElement): void {
         const transform = entity.getComponent<TransformComponent>('transform');
         const sprite = entity.getComponent<SpriteComponent>('sprite');
 
@@ -362,7 +353,7 @@ export class RenderSystem extends System {
         }
     }
 
-    private sortEntitiesByZIndex(entities: Entity[]): Entity[] {
+    private sortEntitiesByZIndex(entities: EntityElement[]): EntityElement[] {
         // If layerOrder is provided, sort by layer index first, then zIndex
         return entities.sort((a, b) => {
             const spriteA = a.getComponent<SpriteComponent>('sprite');
@@ -395,7 +386,7 @@ export class RenderSystem extends System {
         return this.requiredComponents.length;
     }
 
-    getRenderableEntityCount(entities: Entity[]): number {
+    getRenderableEntityCount(entities: EntityElement[]): number {
         return this.getEntitiesWithComponents(entities, this.requiredComponents).length;
     }
 

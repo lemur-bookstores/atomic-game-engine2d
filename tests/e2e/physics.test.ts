@@ -1,19 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { Entity } from '../../src/ecs/Entity';
-import { System } from '../../src/ecs/System';
+import { FunctionalSystem } from '../../src/ecs/FunctionalSystem';
 import { World } from '../../src/ecs/World';
-import { TransformComponent } from '../../src/ecs/Component';
 
-interface VelocityComponent {
-    type: 'velocity';
-    x: number;
-    y: number;
-}
+class PhysicsSystem extends FunctionalSystem {
+    readonly requiredComponents: Array<ComponentType> = ['transform', 'velocity'];
 
-class PhysicsSystem extends System {
-    readonly requiredComponents = ['transform', 'velocity'];
-
-    update(entities: Entity[], deltaTime: number): void {
+    update(entities: EntityElement[], deltaTime: number): void {
         const physicsEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
 
         for (const entity of physicsEntities) {

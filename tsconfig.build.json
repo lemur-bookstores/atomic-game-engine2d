@@ -1,0 +1,35 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false,
+    "noEmit": true,
+
+    // ✅ Configuración para tests
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    // ✅ Incluir tipos de Vitest
+    "types": ["vitest/globals", "jsdom", "node"],
+
+    // ✅ Resolución de módulos para tests
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    // ✅ Configuración estricta para tests
+    "strict": true,
+    "noUnusedLocals": false, // Relajar en tests
+    "noUnusedParameters": false // Relajar en tests
+  },
+  "include": [
+    "src/**/*",
+    "src/**/*.d.ts", // ✅ Incluir explícitamente archivos .d.ts
+    "tests/**/*",
+    "tests/**/*.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "examples"]
+}

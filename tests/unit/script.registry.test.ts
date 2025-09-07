@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { scriptRegistry } from '../../src/ecs/ScriptRegistry';
-import { ScriptInstance } from '../../src/ecs/ScriptComponent';
 
 class TestScript implements ScriptInstance {
     public entity?: any;
