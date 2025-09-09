@@ -5,7 +5,7 @@ import { EventSystem } from '../../src/core/EventSystem';
 import { AssetManager } from '../../src/assets/AssetManager';
 import { AudioManager } from '../../src/audio/AudioManager';
 import { RenderSystem } from '../../src/graphics';
-import { AnimationSystem } from '../../src/graphics/AnimationSystem';
+import { AnimationSystem } from '../../src/ecs/components/animation/AnimationSystem';
 import { AudioSystem } from '../../src/audio/AudioSystem';
 import { InputManager, InputSystem } from '../../src/input';
 import { MovementSystem } from '../../src/ecs/MovementSystem';
