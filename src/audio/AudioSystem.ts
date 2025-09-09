@@ -1,3 +1,5 @@
+import { AnimationComponent, AudioComponent } from 'atomic-game-engine2d-components';
+import { ComponentType, EntityElement } from 'atomic-game-engine2d-types';
 import { FunctionalSystem } from '../ecs/FunctionalSystem';
 import { AudioManager } from './AudioManager';
 import { EventSystem } from '../core/EventSystem';
@@ -24,9 +26,19 @@ export class AudioSystem extends FunctionalSystem {
                 // First, check if the entity's animation component maps this frame to a sfx
                 const anim = entity.getComponent<AnimationComponent>('animation');
                 if (anim && anim.frameSfx && typeof frameIndex === 'number') {
-                    const clip = anim.frameSfx[frameIndex];
-                    if (clip) {
-                        this.audioManager.play(clip, {});
+                    const animation = anim.frameSfx?.[anim.currentAnimation];
+                    if (animation) {
+                        const frameSfx = animation[anim.currentFrame];
+                        if (typeof frameSfx === 'string') {
+                            this.audioManager.play(frameSfx, {});
+                        } else {
+
+                            this.audioManager.play(frameSfx.soundName, {
+                                volume: frameSfx.volume,
+                                loop: frameSfx.loop,
+                                group: frameSfx.group
+                            });
+                        }
                     }
                 }
 

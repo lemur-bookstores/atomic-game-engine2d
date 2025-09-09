@@ -1,3 +1,5 @@
+import { ComponentType, EntityElement } from 'atomic-game-engine2d-types';
+import { TransformComponent, PhysicsComponent } from 'atomic-game-engine2d-components';
 import { FunctionalSystem } from './FunctionalSystem';
 
 export class MovementSystem extends FunctionalSystem {

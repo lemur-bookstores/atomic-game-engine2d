@@ -1,3 +1,5 @@
+import { ComponentType, EntityElement } from "atomic-game-engine2d-types";
+
 /**
  * Sistema funcional que recibe entidades y las filtra según necesidades.
  * Ideal para sistemas con lógica compleja de filtrado o múltiples casos.

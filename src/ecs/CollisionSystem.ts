@@ -1,3 +1,5 @@
+import { ComponentType, EntityElement } from 'atomic-game-engine2d-types';
+import { TransformComponent, ColliderComponent } from 'atomic-game-engine2d-components';
 import { FunctionalSystem } from './FunctionalSystem';
 import { EventSystem } from '../core/EventSystem';
 import { PHYSICS_EVENTS } from '../types/event-const';

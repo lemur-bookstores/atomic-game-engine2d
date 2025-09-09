@@ -1,3 +1,5 @@
+import { ComponentsSystem } from 'atomic-game-engine2d-components';
+import { EntityElement, ComponentType, EntityId } from 'atomic-game-engine2d-types';
 import { v4 as uuidv4 } from 'uuid';
 
 export class Entity extends EntityElement {
@@ -5,7 +7,7 @@ export class Entity extends EntityElement {
     protected components: Map<string, ComponentsSystem>;
     protected _layer: string | number = 'default';
 
-    constructor(public readonly id: string = uuidv4()) {
+    constructor(public readonly id: EntityId = uuidv4()) {
         super(id);
         this.active = true;
         this.components = new Map();

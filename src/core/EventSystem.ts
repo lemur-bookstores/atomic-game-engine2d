@@ -3,6 +3,8 @@
 /**
  * Event system for handling game events using the Observer pattern
  */
+import { AllEventTypes } from 'atomic-game-engine2d-event-names';
+import { EventCallback, GameEvent } from 'atomic-game-engine2d-types';
 import { Logger } from './Logger';
 
 export class EventSystem {
