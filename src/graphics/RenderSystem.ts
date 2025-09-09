@@ -1,3 +1,5 @@
+import { TransformComponent, SpriteComponent } from 'atomic-game-engine2d-components';
+import { ComponentType, EntityElement } from 'atomic-game-engine2d-types';
 import { FunctionalSystem } from '../ecs/FunctionalSystem';
 import { RenderStrategy } from './Renderer';
 import { Texture } from './Texture';

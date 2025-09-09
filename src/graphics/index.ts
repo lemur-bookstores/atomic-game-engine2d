@@ -10,8 +10,8 @@ export { SpriteSheet } from './SpriteSheet';
 export type { SpriteFrame } from './SpriteSheet';
 
 // Animation system
-export { AnimationState } from './Animation';
-export { AnimationSystem } from './AnimationSystem';
+export { AnimationState } from '../ecs/components/animation/AnimationState';
+export { AnimationSystem } from '../ecs/components/animation/AnimationSystem';
 
 // Rendering system
 export { RenderSystem } from './RenderSystem';
