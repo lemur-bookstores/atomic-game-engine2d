@@ -6,7 +6,7 @@ export * from './math';
 export { Engine as GameEngine } from './core/Engine';
 
 // Script API
-export { scriptRegistry } from './ecs/ScriptRegistry';
+export { scriptRegistry } from './ecs/components/script/ScriptRegistry';
 
 // Version
 export const VERSION = '0.7.0';

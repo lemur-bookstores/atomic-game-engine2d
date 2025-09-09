@@ -1,3 +1,16 @@
+import {
+    TestEvents,
+    WorldEvents,
+    SceneEvents,
+    InputEvents,
+    EngineEvents,
+    GameLoopEvents,
+    PhysicsEvents,
+    AnimationEvents,
+    HierarchyEvents,
+    AssetEvents
+} from "atomic-game-engine2d-event-names";
+
 // Objetos constantes para fácil acceso (opcional pero recomendado)
 export const TEST_EVENTS: TestEvents = {
     TESTONE: 'TEST:ONE',
@@ -100,6 +113,12 @@ export const PHYSICS_EVENTS: PhysicsEvents = {
 export const ANIMATION_EVENTS: AnimationEvents = {
     FRAME: 'ANIMATION:FRAME',
     COMPLETE: 'ANIMATION:COMPLETE'
+} as const;
+
+export const HIERARCHY_EVENTS: HierarchyEvents = {
+    CHANGED: 'HIERARCHY:CHANGED',
+    ENTITY_REMOVED: 'HIERARCHY:ENTITY_REMOVED',
+    TRANSFORM_DIRTY: 'HIERARCHY:TRANSFORM_DIRTY'
 } as const;
 
 export const ASSET_EVENTS: AssetEvents = {

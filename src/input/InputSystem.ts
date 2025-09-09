@@ -1,3 +1,5 @@
+import { InputComponent, TransformComponent } from 'atomic-game-engine2d-components';
+import { EntityElement } from 'atomic-game-engine2d-types';
 import { ReactSystem } from '../core/ecs/ReactSystem';
 import { InputManager } from './InputManager';
 import { Transform } from '../math/Transform';
