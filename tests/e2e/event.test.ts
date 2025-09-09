@@ -4,6 +4,7 @@ import { FunctionalSystem } from '../../src/ecs/FunctionalSystem';
 import { World } from '../../src/ecs/World';
 import { EventSystem } from '../../src/core/EventSystem';
 import { TEST_EVENTS, WORLD_EVENTS } from '../../src/types/event-const';
+import { ComponentType } from '@/types';
 
 describe('Event System Tests', () => {
     let eventSystem: EventSystem;

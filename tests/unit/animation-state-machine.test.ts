@@ -2,6 +2,7 @@ import { expect, test, beforeEach } from 'vitest';
 import { AnimationStateMachineSystem, registerStateMachine } from '../../src/ecs/components/animation/AnimationStateMachine';
 import { EventSystem } from '../../src/core/EventSystem';
 import { Entity } from '../../src/ecs';
+import { AnimationComponent, AnimationStateMachineComponent, InputComponent } from '@/types/components';
 
 beforeEach(() => {
     EventSystem.reset();

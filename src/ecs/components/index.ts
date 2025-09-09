@@ -24,7 +24,7 @@ export { createDefaultParticleComponent } from './particles/ParticleComponent';
 
 // Light Component
 export * from './light/LightComponent';
-export { lightRegistry } from './light/LightingSystem';
+export { LightingSystem, lightRegistry } from './light/LightingSystem';
 export { LightRegistry } from './light/LightRegistry';
 export {
     PointLight,

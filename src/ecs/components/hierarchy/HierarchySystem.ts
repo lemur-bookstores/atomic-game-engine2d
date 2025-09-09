@@ -1,8 +1,8 @@
 import { EventSystem } from "@/core";
 import { ReactSystem } from "@/core/ecs/ReactSystem";
 import { Transform, Vector2 } from "@/math";
-import { HierarchyComponent, TransformComponent } from "atomic-game-engine2d-components";
-import { EntityElement } from "atomic-game-engine2d-types";
+import { HierarchyComponent, TransformComponent } from '@/types';
+import { EntityElement } from '@/types';
 import { HierarchyManager } from "./HierarchyManager";
 import { HIERARCHY_EVENTS } from "@/types/event-const";
 

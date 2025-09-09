@@ -1,5 +1,5 @@
-import { ScriptInstance } from 'atomic-game-engine2d-components';
-import { PropertyMetadata, State } from 'atomic-game-engine2d-types';
+import { ScriptInstance } from '@/types/components';
+import { PropertyMetadata, State } from '@/types';
 import { Logger } from '../../../core/Logger';
 
 export type ScriptConstructor = new (...args: any[]) => ScriptInstance;

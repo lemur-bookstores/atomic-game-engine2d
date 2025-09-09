@@ -1,4 +1,4 @@
-import { PlaybackHandle } from 'atomic-game-engine2d-types';
+import { PlaybackHandle } from '@/types';
 import { Logger } from '../core/Logger';
 
 

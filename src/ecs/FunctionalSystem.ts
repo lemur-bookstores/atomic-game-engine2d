@@ -1,4 +1,4 @@
-import { ComponentType, EntityElement } from "atomic-game-engine2d-types";
+import { ComponentType, EntityElement } from '@/types';
 
 /**
  * Sistema funcional que recibe entidades y las filtra según necesidades.

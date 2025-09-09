@@ -9,7 +9,7 @@ import {
     AnimationEvents,
     HierarchyEvents,
     AssetEvents
-} from "atomic-game-engine2d-event-names";
+} from "./event-names";
 
 // Objetos constantes para fácil acceso (opcional pero recomendado)
 export const TEST_EVENTS: TestEvents = {

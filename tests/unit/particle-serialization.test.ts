@@ -1,7 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ParticleRegistry } from '../../src/particles/ParticleRegistry';
-import { ParticleSystem } from '../../src/particles/ParticleSystem';
-import { BasicEmitter } from '../../src/particles/BuiltInEmitters';
+import { ParticleRegistry, BasicEmitter, ParticleSystem } from '@/ecs/components';
 import { Entity } from '../../src/ecs/Entity';
 
 describe('Particle serialization', () => {

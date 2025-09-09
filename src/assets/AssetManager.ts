@@ -1,9 +1,10 @@
 import { EventSystem } from '../core/EventSystem';
+import { GameEvent } from '@/types';
 import { AssetLoader, AssetType, AssetLoadEvent } from './AssetLoader';
 import { Texture, SpriteSheet } from '../graphics';
 import { ASSET_EVENTS } from '../types/event-const';
-import { SpriteSheetLibrary, GridDetectionConfig, DynamicDetectionConfig } from '../libs/sprite-sheet';
-import { convertNormalizedToPixelFrames, createImageDataFromCanvas, createCanvasFromImage } from '../libs/sprite-sheet/engine-adapter';
+import { SpriteSheetLibrary, GridDetectionConfig, DynamicDetectionConfig } from '../math/libs/sprite-sheet';
+import { convertNormalizedToPixelFrames, createImageDataFromCanvas, createCanvasFromImage } from '../math/libs/sprite-sheet/engine-adapter';
 import { Logger } from '../core/Logger';
 
 interface Asset {

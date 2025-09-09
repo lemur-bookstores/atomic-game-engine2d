@@ -1,3 +1,5 @@
+import { TransformComponent } from '@/types/components';
+import { ComponentType, EntityElement } from '@/types';
 import { describe, it, expect, expectTypeOf } from 'vitest';
 
 
@@ -5,9 +7,20 @@ describe('Type System Tests', () => {
     it('should have correct ComponentsSystem union type', () => {
         // ✅ Test de tipos en tiempo de compilación
         expectTypeOf<ComponentType>().toEqualTypeOf<
-            'audio' | 'light' | 'input' | 'transform' | 'animation' |
-            'anim-machine' | 'sprite' | 'script' | 'physics' |
-            'collider' | 'physicsBody' | 'particle' | 'velocity'
+            'audio'
+            | 'light'
+            | 'input'
+            | 'transform'
+            | 'hierarchy'
+            | 'animation'
+            | 'anim-machine'
+            | 'sprite'
+            | 'script'
+            | 'physics'
+            | 'collider'
+            | 'physicsBody'
+            | 'particle'
+            | 'velocity'
         >();
     });
 

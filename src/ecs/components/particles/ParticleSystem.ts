@@ -1,5 +1,5 @@
-import { ComponentType, EntityElement } from 'atomic-game-engine2d-types';
-import { ParticleComponent, TransformComponent } from 'atomic-game-engine2d-components';
+import { ComponentType, EntityElement } from '@/types';
+import { ParticleComponent, TransformComponent } from '@/types/components';
 import { FunctionalSystem } from '@/ecs/FunctionalSystem';
 import { ParticleRegistry } from './ParticleRegistry';
 import { Scene } from '@/core';

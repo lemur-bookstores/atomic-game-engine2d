@@ -1,5 +1,5 @@
-import { AnimationComponent, AudioComponent } from 'atomic-game-engine2d-components';
-import { ComponentType, EntityElement } from 'atomic-game-engine2d-types';
+import { AnimationComponent, AudioComponent } from '@/types/components';
+import { ComponentType, EntityElement } from '@/types';
 import { FunctionalSystem } from '../ecs/FunctionalSystem';
 import { AudioManager } from './AudioManager';
 import { EventSystem } from '../core/EventSystem';

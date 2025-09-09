@@ -1,5 +1,5 @@
-import { LightComponent, LightInstance } from "atomic-game-engine2d-components";
-import { ComponentEntry, PropertyMetadata, State } from "atomic-game-engine2d-types";
+import { LightComponent, LightInstance } from '@/types';
+import { ComponentEntry, PropertyMetadata, State } from '@/types';
 
 export type LightConstructor = new (...args: any[]) => LightInstance;
 

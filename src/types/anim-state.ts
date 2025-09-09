@@ -1,4 +1,6 @@
-export interface AnimationState {
+import { EntityElement } from "./types";
+
+export interface AnimationStateStateMachine {
     name: string;
     animation: string;
     onEnter?: { reset?: boolean; events?: string[] };
@@ -14,7 +16,7 @@ export interface AnimationTransition {
 }
 
 export interface StateMachineDefinition {
-    states: AnimationState[];
+    states: AnimationStateStateMachine[];
     transitions: AnimationTransition[];
     initial: string;
 }

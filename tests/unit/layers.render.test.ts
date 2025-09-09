@@ -1,3 +1,4 @@
+import { TransformComponent } from '@/types/components';
 import { describe, it, expect } from 'vitest';
 import { Scene } from '../../src/core/Scene';
 import { RenderSystem } from '../../src/graphics/RenderSystem';

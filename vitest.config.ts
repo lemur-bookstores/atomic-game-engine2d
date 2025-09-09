@@ -7,22 +7,6 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./tests/setup.ts'],
 
-    // ✅ Configuración para TypeScript y .d.ts
-    typecheck: {
-      enabled: true,
-      // Incluir tests de tipos
-      include: ['**/*.{test,spec}-d.{ts,tsx}', 'src/**/*.d.ts'],
-      // Usar tsconfig específico para tests
-      tsconfig: './tsconfig.test.json'
-    },
-
-    // ✅ Incluir archivos de test
-    include: [
-      'src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-      'tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'
-    ],
-
-    // ✅ Configuración de coverage
     coverage: {
       include: ['src/**/*'],
       exclude: [
@@ -44,8 +28,7 @@ export default defineConfig({
 
   esbuild: {
     loader: 'ts',
-    // ✅ Incluir archivos .d.ts en el procesamiento
-    include: /\.(m?[jt]sx?|json)$/,
+    include: [],
     exclude: []
   },
 

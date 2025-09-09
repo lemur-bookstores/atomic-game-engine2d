@@ -6,6 +6,7 @@ import { SpriteSheet } from '../../src/graphics/SpriteSheet';
 import { Entity } from '../../src/ecs/Entity';
 import { AudioManager } from '../../src/audio/AudioManager';
 import { AudioSystem } from '../../src/audio/AudioSystem';
+import { AnimationComponent, SpriteComponent } from '@/types/components';
 
 test('integration: AnimationSystem advances frames and AudioSystem plays mapped SFX', () => {
     // Ensure fresh EventSystem (clears previous listeners)

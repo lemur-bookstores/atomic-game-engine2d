@@ -1,5 +1,5 @@
-import { LightComponent, TransformComponent, LightInstance } from "atomic-game-engine2d-components";
-import { Color, EntityElement } from "atomic-game-engine2d-types";
+import { LightComponent, TransformComponent, LightInstance } from '@/types';
+import { Color, EntityElement } from '@/types';
 import { LightEntry } from "./LightComponent";
 import { LightRegistry } from "./LightRegistry";
 import { Scene } from "@/core/Scene";

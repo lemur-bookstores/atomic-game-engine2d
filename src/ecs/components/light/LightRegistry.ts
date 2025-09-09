@@ -1,7 +1,7 @@
-import { LightInstance } from "atomic-game-engine2d-components";
+import { LightInstance } from '@/types';
 import { LightConstructor, LightMetadata } from "./LightComponent";
 import { Logger } from "@/core/Logger";
-import { PropertyMetadata, State } from "atomic-game-engine2d-types";
+import { PropertyMetadata, State } from '@/types';
 
 export class LightRegistry {
     private lightTypes = new Map<string, LightConstructor>();

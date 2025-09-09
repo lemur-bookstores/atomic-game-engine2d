@@ -1,5 +1,5 @@
-import { TransformComponent, HierarchyComponent } from "atomic-game-engine2d-components";
-import { EntityElement } from "atomic-game-engine2d-types";
+import { TransformComponent, HierarchyComponent } from '@/types';
+import { EntityElement } from '@/types';
 import { HierarchyUtils } from "./HierarchyUtils";
 
 export class HierarchyOptimizations {

@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-
 import {
     GridFrameDetectionAdapter,
     DynamicFrameDetectionAdapter,
@@ -10,7 +9,7 @@ import {
     GridDetectionConfig,
     DynamicDetectionConfig,
     SpriteFrame
-} from '../../src/libs/sprite-sheet';
+} from '../../src/math/libs/sprite-sheet';
 
 describe('sprite-sheet library - unit', () => {
     it('UVCoordinateCalculatorService normalizes rectangles to UVs', () => {

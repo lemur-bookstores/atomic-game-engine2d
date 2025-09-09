@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { ComponentType, EntityElement } from '@/types';
 import { FunctionalSystem } from '../../src/ecs/FunctionalSystem';
 import { World } from '../../src/ecs/World';
 import { EventSystem } from '../../src/core/EventSystem';
+import { TransformComponent, SpriteComponent } from '@/types/components';
 
 class RenderSystem extends FunctionalSystem {
     readonly requiredComponents: Array<ComponentType> = ['transform', 'sprite'];
@@ -30,12 +32,12 @@ class RenderSystem extends FunctionalSystem {
         const renderableEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
 
         for (const entity of renderableEntities) {
-            const transform = entity.getComponent('transform') as TransformComponent;
-            const sprite = entity.getComponent('sprite') as SpriteComponent;
+            const transform = entity.getComponent<TransformComponent>('transform');
+            const sprite = entity.getComponent<SpriteComponent>('sprite');
 
             // In a real implementation, this would perform actual WebGL rendering
             // For testing, we just verify that the components are valid
-            this.validateRenderableEntity(transform, sprite);
+            this.validateRenderableEntity(transform as TransformComponent, sprite as SpriteComponent);
         }
     }
 

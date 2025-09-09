@@ -6,7 +6,7 @@
  * @example MovementSystem, RenderSystem, PhysicsSystem
  */
 
-import { ComponentType, EntityElement } from "atomic-game-engine2d-types";
+import { ComponentType, EntityElement } from '@/types';
 
 export abstract class ReactSystem {
     protected entities: Set<EntityElement>;

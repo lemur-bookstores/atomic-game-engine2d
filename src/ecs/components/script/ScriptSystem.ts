@@ -1,3 +1,5 @@
+import { ScriptComponent } from '@/types/components';
+import { ComponentType, EntityElement } from '@/types';
 import { System } from '../../../core/GameLoop';
 import { scriptRegistry } from './ScriptRegistry';
 import { EventSystem } from '../../../core/EventSystem';

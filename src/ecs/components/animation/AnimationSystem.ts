@@ -1,5 +1,5 @@
-import { AnimationComponent, SpriteComponent, SpriteAnimation, FrameEventData } from 'atomic-game-engine2d-components';
-import { ComponentType, EntityElement } from 'atomic-game-engine2d-types';
+import { AnimationComponent, SpriteComponent, SpriteAnimation, FrameEventData } from '@/types';
+import { ComponentType, EntityElement } from '@/types';
 import { FunctionalSystem } from '../../FunctionalSystem';
 import { SpriteSheet } from '../../../graphics/SpriteSheet';
 import { AssetManager } from '../../../assets/AssetManager';
@@ -341,3 +341,5 @@ export class AnimationSystem extends FunctionalSystem {
         return animComponent.currentFrame / (animation.frames.length - 1);
     }
 }
+
+export default AnimationSystem;

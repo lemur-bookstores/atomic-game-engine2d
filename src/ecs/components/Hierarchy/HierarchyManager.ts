@@ -1,6 +1,6 @@
 import { EventSystem } from "@/core";
 import { HIERARCHY_EVENTS } from "@/types/event-const";
-import { EntityId, TypesHierarchyChangeEvents } from "atomic-game-engine2d-types";
+import { EntityId, TypesHierarchyChangeEvents } from '@/types';
 
 export interface HierarchyRelation {
     parentId: EntityId | null;

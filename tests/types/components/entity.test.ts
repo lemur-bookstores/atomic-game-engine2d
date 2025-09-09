@@ -1,4 +1,5 @@
 import { Entity } from '@/ecs'
+import { TransformComponent, SpriteComponent } from '@/types/components'
 import { describe, expect, expectTypeOf, it } from 'vitest'
 
 

@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { TransformComponent, PhysicsBodyComponent } from '@/types/components';
 import { PhysicsSystem } from '../../src/physics/PhysicsSystem';
 import { Vector2 } from '../../src/math/Vector2';
 import { Entity } from '@/ecs';

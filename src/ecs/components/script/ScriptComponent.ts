@@ -1,5 +1,5 @@
-import { ScriptComponent } from "atomic-game-engine2d-components";
-import { State } from "atomic-game-engine2d-types";
+import { ScriptComponent } from '@/types';
+import { State } from '@/types';
 
 export function createScriptComponent(name?: string, state?: State): ScriptComponent {
     if (name === undefined) return { type: 'script' };

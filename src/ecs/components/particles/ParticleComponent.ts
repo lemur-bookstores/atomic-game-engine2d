@@ -1,4 +1,4 @@
-import { ParticleComponent } from "atomic-game-engine2d-components";
+import { ParticleComponent } from '@/types';
 
 export const createDefaultParticleComponent = (): ParticleComponent => ({
     type: 'point' as ParticleComponent['type'],

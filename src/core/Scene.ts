@@ -1,7 +1,8 @@
+import { EntityId } from '@/types';
+import { SCENE_EVENTS } from '@/types/event-const';
 import { EventSystem } from './EventSystem';
 import { Logger } from './Logger';
 import { Entity } from '@/ecs';
-import { SCENE_EVENTS } from '@/types/event-const';
 
 export interface CollisionLayer {
     name: string;

@@ -1,5 +1,5 @@
-import { AllEventTypes } from 'atomic-game-engine2d-event-names';
-import { EntityElement } from 'atomic-game-engine2d-types';
+import { AllEventTypes } from '@/types/event-names';
+import { EntityElement } from '@/types';
 import { FunctionalSystem } from './FunctionalSystem'
 import { ReactSystem } from '@/core/ecs/ReactSystem';
 import { WORLD_EVENTS } from '@/types/event-const';

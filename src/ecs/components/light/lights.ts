@@ -1,5 +1,5 @@
-import { LightInstance, LightBounds, LightComponent } from 'atomic-game-engine2d-components';
-import { EntityElement, Vector2D, Color } from 'atomic-game-engine2d-types';
+import { LightInstance, LightBounds, LightComponent } from '@/types/components';
+import { EntityElement, Vector2D, Color } from '@/types';
 import { Scene } from '@/core/Scene';
 import { Logger } from '@/core/Logger';
 import { createLightComponent } from "./LightComponent";

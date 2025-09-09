@@ -1,5 +1,5 @@
-import { HierarchyComponent } from "atomic-game-engine2d-components";
-import { EntityElement, Vector2D } from "atomic-game-engine2d-types";
+import { HierarchyComponent } from '@/types';
+import { EntityElement, Vector2D } from '@/types';
 import { createHierarchyComponent } from "./HierarchyComponent";
 import { HierarchyManager } from "./HierarchyManager";
 

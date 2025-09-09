@@ -1,4 +1,4 @@
-import { HierarchyComponent } from 'atomic-game-engine2d-components';
+import { HierarchyComponent } from '@/types';
 
 /**
  * Factory para crear componentes de jerarquía con valores por defecto

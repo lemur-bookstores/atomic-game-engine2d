@@ -1,3 +1,4 @@
+import { EngineConfig } from '@/types';
 import { GameLoop, System } from './GameLoop';
 import { EventSystem } from './EventSystem';
 import { Scene, CollisionLayer } from './Scene';

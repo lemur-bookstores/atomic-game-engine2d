@@ -1,4 +1,6 @@
-export class AnimationState {
+import { AnimationDirection, AnimationStateBase } from '@/types';
+
+export class AnimationState extends AnimationStateBase {
     name: string;
     frames: number[];
     duration: number;
@@ -7,7 +9,7 @@ export class AnimationState {
     currentFrame: number;
     elapsedTime: number;
     playing: boolean;
-    direction: number; // 1 = forward, -1 = backward (for ping-pong)
+    direction: AnimationDirection; // 1 = forward, -1 = backward (for ping-pong)
 
     constructor(
         name: string,
@@ -16,6 +18,7 @@ export class AnimationState {
         loop: boolean = true,
         pingPong: boolean = false
     ) {
+        super();
         this.name = name;
         this.frames = frames;
         this.duration = duration;
@@ -60,7 +63,7 @@ export class AnimationState {
         return false;
     }
 
-    private nextFrame(): boolean {
+    protected nextFrame(): boolean {
         if (this.pingPong) {
             this.currentFrame += this.direction;
 
@@ -118,3 +121,5 @@ export class AnimationState {
         return animation;
     }
 }
+
+export default AnimationState;

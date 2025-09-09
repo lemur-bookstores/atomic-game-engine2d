@@ -1,5 +1,5 @@
-import { PhysicsBodyComponent, TransformComponent } from 'atomic-game-engine2d-components';
-import { EntityElement } from 'atomic-game-engine2d-types';
+import { PhysicsBodyComponent, TransformComponent } from '@/types/components';
+import { EntityElement } from '@/types';
 import { ReactSystem } from '../core/ecs/ReactSystem';
 import { PhysicsWorld } from './PhysicsWorld';
 import { PhysicsBody, PhysicsBodyConfig, PhysicsBodyType, PhysicsShape } from './PhysicsBody';

@@ -1,4 +1,6 @@
 import { describe, it, expect } from 'vitest';
+import { TransformComponent, VelocityComponent } from '@/types/components';
+import { ComponentType, EntityElement } from '@/types';
 import { FunctionalSystem } from '../../src/ecs/FunctionalSystem';
 import { World } from '../../src/ecs/World';
 

@@ -1,5 +1,5 @@
-import { ComponentType, EntityElement } from 'atomic-game-engine2d-types';
-import { AnimationStateMachineComponent, AnimationComponent } from 'atomic-game-engine2d-components';
+import { ComponentType, EntityElement } from '@/types';
+import { AnimationStateMachineComponent, AnimationComponent } from '@/types/components';
 import { FunctionalSystem } from '../../FunctionalSystem';
 import { StateMachineDefinition, AnimationTransition } from '../../../types/anim-state';
 import { EventSystem } from '../../../core/EventSystem';

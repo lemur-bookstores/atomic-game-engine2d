@@ -1,4 +1,4 @@
-import { SpriteAnimation } from 'atomic-game-engine2d-components';
+import { SpriteAnimation } from '@/types/components';
 import { Texture } from './Texture';
 import { v4 as uuidv4 } from 'uuid';
 import { AnimationState } from '@/ecs/components/animation/AnimationState';

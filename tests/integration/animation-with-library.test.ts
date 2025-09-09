@@ -4,6 +4,8 @@ import { AnimationSystem } from '../../src/ecs/components/animation/AnimationSys
 import { Entity } from '../../src/ecs/Entity';
 import { Texture } from '../../src/graphics/Texture';
 import { Color } from '../../src/math/Color';
+import { SpriteComponent, AnimationComponent } from '@/types/components';
+import { AnimationState } from '@/graphics';
 
 describe('animation with sprite-sheet library integration', () => {
     let assetManager: AssetManager;
@@ -107,13 +109,13 @@ describe('animation with sprite-sheet library integration', () => {
             loop: true,
             playing: true,
             animations: new Map([
-                ['walk', {
-                    name: 'walk',
-                    frames: [0, 1, 2, 3],
-                    duration: 0.1,
-                    loop: true,
-                    pingPong: false,
-                }],
+                ['walk', new AnimationState(
+                    'walk',
+                    [0, 1, 2, 3],
+                    0.1,
+                    true,
+                    false
+                )],
             ]),
         };
 

@@ -1,4 +1,4 @@
-import { ParticleComponent } from "atomic-game-engine2d-components";
+import { ParticleComponent } from '@/types';
 
 export class BasicEmitter implements Omit<ParticleComponent, 'type'> {
     type = 'basic';

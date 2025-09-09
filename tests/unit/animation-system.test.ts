@@ -5,6 +5,7 @@ import { Entity } from '../../src/ecs/Entity';
 import { expect, test } from 'vitest';
 import { EventSystem } from '../../src/core/EventSystem';
 import { ANIMATION_EVENTS } from '../../src/types/event-const';
+import { AnimationComponent } from '@/types/components';
 
 // Mock a minimal spriteSheet with frame metadata
 const mockTexture: any = { width: 64, height: 16, dispose: () => { } };
