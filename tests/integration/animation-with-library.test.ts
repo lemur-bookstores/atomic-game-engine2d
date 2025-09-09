@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { AssetManager, SpriteSheetLibraryOptions } from '../../src/assets/AssetManager';
-import { AnimationSystem } from '../../src/graphics/AnimationSystem';
+import { AnimationSystem } from '../../src/ecs/components/animation/AnimationSystem';
 import { Entity } from '../../src/ecs/Entity';
 import { Texture } from '../../src/graphics/Texture';
 import { Color } from '../../src/math/Color';

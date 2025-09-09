@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { ScriptSystem } from '../../src/ecs/ScriptSystem';
-import { scriptRegistry } from '../../src/ecs/ScriptRegistry';
+import { ScriptSystem } from '../../src/ecs/components/script/ScriptSystem';
+import { scriptRegistry } from '../../src/ecs/components/script/ScriptRegistry';
 import { Entity } from '../../src/ecs/Entity';
 import { EventSystem } from '../../src/core/EventSystem';
 import { SCENE_EVENTS } from '../../src/types/event-const';

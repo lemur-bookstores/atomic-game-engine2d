@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 import { test, expect, vi } from 'vitest';
 import { EventSystem } from '../../src/core/EventSystem';
-import { AnimationSystem } from '../../src/graphics/AnimationSystem';
+import { AnimationSystem } from '../../src/ecs/components/animation/AnimationSystem';
 import { SpriteSheet } from '../../src/graphics/SpriteSheet';
 import { Entity } from '../../src/ecs/Entity';
 import { AudioManager } from '../../src/audio/AudioManager';

@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { AnimationSystem } from '../../src/graphics/AnimationSystem';
+import { AnimationSystem } from '../../src/ecs/components/animation/AnimationSystem';
 import { SpriteSheet } from '../../src/graphics/SpriteSheet';
 import { Entity } from '../../src/ecs/Entity';
 import { expect, test } from 'vitest';

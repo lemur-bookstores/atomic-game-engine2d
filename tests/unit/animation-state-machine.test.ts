@@ -1,5 +1,5 @@
 import { expect, test, beforeEach } from 'vitest';
-import { AnimationStateMachineSystem, registerStateMachine } from '../../src/graphics/AnimationStateMachine';
+import { AnimationStateMachineSystem, registerStateMachine } from '../../src/ecs/components/animation/AnimationStateMachine';
 import { EventSystem } from '../../src/core/EventSystem';
 import { Entity } from '../../src/ecs';
 
