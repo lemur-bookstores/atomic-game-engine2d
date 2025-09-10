@@ -348,7 +348,7 @@ export interface AnimationComponent extends Component {
 
     // Nuevas funcionalidades propuestas
     frameSfx?: Record<string, Record<number, string | SfxConfig>>;
-    frameEvents?: Record<string, Record<number, FrameEventData>>;
+    frameEvents?: Record<string, Record<number, FrameEventData | Array<FrameEventData>>>;
     speed?: number; // Multiplicador de velocidad global
 
     // Runtime state para ping-pong
@@ -489,6 +489,7 @@ export interface PhysicsBodyComponent extends Component {
  * @property {number} y - Velocidad en el eje Y
  */
 export interface VelocityComponent {
+    maxSpeed: any;
     type: 'velocity';
     x: number;
     y: number;

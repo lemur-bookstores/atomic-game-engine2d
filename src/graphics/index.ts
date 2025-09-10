@@ -9,10 +9,6 @@ export { Sprite } from './Sprite';
 export { SpriteSheet } from './SpriteSheet';
 export type { SpriteFrame } from './SpriteSheet';
 
-// Animation system
-export { AnimationState } from '../ecs/components/animation/AnimationState';
-export { AnimationSystem } from '../ecs/components/animation/AnimationSystem';
-
 // Rendering system
 export { RenderSystem } from './RenderSystem';
 export type { RenderStats } from './RenderSystem';

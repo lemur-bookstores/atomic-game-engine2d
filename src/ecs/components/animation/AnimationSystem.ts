@@ -1,4 +1,4 @@
-import { AnimationComponent, SpriteComponent, SpriteAnimation, FrameEventData } from '@/types';
+import { AnimationComponent, SpriteComponent, SpriteAnimation } from '@/types';
 import { ComponentType, EntityElement } from '@/types';
 import { FunctionalSystem } from '../../FunctionalSystem';
 import { SpriteSheet } from '../../../graphics/SpriteSheet';
@@ -48,9 +48,9 @@ export class AnimationSystem extends FunctionalSystem {
             this.requiredComponents
         );
 
-        animatedEntities.forEach((entity) => {
+        for (const entity of animatedEntities) {
             this.updateAnimation(entity, deltaTime);
-        });
+        }
     }
 
     private updateAnimation(entity: EntityElement, deltaTime: number): void {
@@ -158,18 +158,19 @@ export class AnimationSystem extends FunctionalSystem {
         }
 
         // Procesar eventos personalizados por frame si existen
-        const frameEvents = (animComponent as any).frameEvents?.[animComponent.currentAnimation]?.[animComponent.currentFrame];
+        const frameEvents = animComponent.frameEvents?.[animComponent.currentAnimation]?.[animComponent.currentFrame];
         if (frameEvents) {
             if (Array.isArray(frameEvents)) {
                 // Múltiples eventos
-                frameEvents.forEach((eventData: FrameEventData) => {
+                for (const eventData of frameEvents) {
                     this.eventSystem.emit(eventData.eventName as any, {
                         entity,
                         animationName: animComponent.currentAnimation,
                         frameIndex: animComponent.currentFrame,
                         data: eventData.data
                     });
-                });
+
+                }
             } else if (typeof frameEvents === 'string') {
                 // Evento simple (string)
                 this.eventSystem.emit(frameEvents as any, {
@@ -237,16 +238,17 @@ export class AnimationSystem extends FunctionalSystem {
         animation: SpriteAnimation
     ): void {
         const frameIndex = animation.frames[animComponent.currentFrame];
-        const frame = spriteSheet.getFrame(frameIndex);
+        const frame = spriteSheet?.getSpriteFrameUV(frameIndex);
 
         if (frame) {
+            const { size, uv } = frame;
             // algunos tests esperan coordenadas de pixel aquí
-            sprite.uvX = frame.x as any;
-            sprite.uvY = frame.y as any;
-            sprite.uvWidth = frame.width as any;
-            sprite.uvHeight = frame.height as any;
-            sprite.width = frame.width;
-            sprite.height = frame.height;
+            sprite.uvX = uv.uvX;
+            sprite.uvY = uv.uvY;
+            sprite.uvWidth = uv.uvWidth;
+            sprite.uvHeight = uv.uvHeight;
+            sprite.width = size.width;
+            sprite.height = size.height;
         }
     }
 
