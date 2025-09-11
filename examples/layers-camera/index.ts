@@ -1,7 +1,10 @@
+import { SpriteComponent, TransformComponent } from '@/types';
 import { GameEngine } from '../../src';
 import { Scene } from '../../src/core/Scene';
 import { Entity } from '../../src/ecs/Entity';
 import { Texture, RenderSystem } from '../../src/graphics';
+
+let tint = { r: 255, g: 255, b: 255, a: 1 };
 
 // Helper: create an image filled with a color and return a loaded HTMLImageElement
 function createColoredImage(width: number, height: number, color: string): Promise<HTMLImageElement> {
@@ -65,11 +68,11 @@ window.addEventListener('load', async () => {
         texture: 'bg',
         width: 1024,
         height: 768,
-        tint: { r: 255, g: 255, b: 255, },
+        tint,
         uvX: 0,
         uvY: 0,
-        uvWidth: 0,
-        uvHeight: 0,
+        uvWidth: 1,
+        uvHeight: 1,
         flipX: false,
         flipY: false
     });
@@ -80,11 +83,15 @@ window.addEventListener('load', async () => {
     const player = new Entity('player');
     player.addComponent({ type: 'transform', position: { x: 400, y: 300 }, rotation: 0, scale: { x: 1, y: 1 } });
     player.addComponent({
-        type: 'sprite', texture: 'player', width: 64, height: 64, tint: { r: 255, g: 255, b: 255, },
+        type: 'sprite',
+        texture: 'player',
+        width: 64,
+        height: 64,
+        tint,
         uvX: 0,
         uvY: 0,
-        uvWidth: 0,
-        uvHeight: 0,
+        uvWidth: 1,
+        uvHeight: 1,
         flipX: false,
         flipY: false
     });
@@ -95,12 +102,15 @@ window.addEventListener('load', async () => {
     const fg = new Entity('fg');
     fg.addComponent({ type: 'transform', position: { x: 520, y: 240 }, rotation: 0, scale: { x: 1, y: 1 } });
     fg.addComponent({
-        type: 'sprite', texture: 'fg', width: 256, height: 128,
-        tint: { r: 255, g: 255, b: 255, },
+        type: 'sprite',
+        texture: 'fg',
+        width: 256,
+        height: 128,
+        tint,
         uvX: 0,
         uvY: 0,
-        uvWidth: 0,
-        uvHeight: 0,
+        uvWidth: 1,
+        uvHeight: 1,
         flipX: false,
         flipY: false
     });
