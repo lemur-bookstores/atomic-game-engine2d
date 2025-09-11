@@ -1,3 +1,9 @@
+/// <reference types="vite/client" />
+declare module "*.wasm?url" {
+    const src: string;
+    export default src;
+}
+
 declare module 'box2d-wasm' {
     export interface Box2D {
         b2Vec2: typeof Vec2;

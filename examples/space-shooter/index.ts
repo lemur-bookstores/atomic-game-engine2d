@@ -5,12 +5,13 @@ import { EventSystem } from '../../src/core/EventSystem';
 import { AssetManager } from '../../src/assets/AssetManager';
 import { AudioManager } from '../../src/audio/AudioManager';
 import { RenderSystem } from '../../src/graphics';
-import { AnimationSystem } from '../../src/graphics/AnimationSystem';
+import { AnimationSystem } from '../../src/ecs/components/animation/AnimationSystem';
 import { AudioSystem } from '../../src/audio/AudioSystem';
 import { InputManager, InputSystem } from '../../src/input';
 import { MovementSystem } from '../../src/ecs/MovementSystem';
 import { CollisionSystem } from '../../src/ecs/CollisionSystem';
 import { ENGINE_EVENTS, INPUT_EVENTS, PHYSICS_EVENTS } from '../../src/types/event-const';
+import { SpriteComponent, TransformComponent } from '@/types';
 
 interface EventData {
     event: {
@@ -30,7 +31,7 @@ interface EventData {
 
 class SpaceShooterGame {
     private engine: GameEngine;
-    private player: Entity;
+    private player!: Entity;
     private projectiles: Entity[] = [];
     private enemies: Entity[] = [];
     private eventSystem: EventSystem;
@@ -287,7 +288,7 @@ class SpaceShooterGame {
         this.eventSystem.on(INPUT_EVENTS.KEYDOWN, (event) => {
             console.log(`[EventSystem] Event received: ${INPUT_EVENTS.KEYDOWN}`, event);
             const keyData = event.data as { code: string };
-            const transform = this.player.getComponent('transform');
+            const transform = this.player.getComponent<TransformComponent>('transform');
             if (!transform) return;
 
             const speed = 10; // Velocidad de movimiento
@@ -311,7 +312,7 @@ class SpaceShooterGame {
         this.eventSystem.on<EventData>(INPUT_EVENTS.MOUSEMOVE, ({ data, type }) => {
             const { event: mouseEvent } = data;
 
-            const transform = this.player.getComponent('transform');
+            const transform = this.player.getComponent<TransformComponent>('transform');
             if (transform) {
                 transform.position.x = mouseEvent.position.x;
             }
@@ -336,7 +337,7 @@ class SpaceShooterGame {
 
     private changePlayerShip() {
         this.currentShipIndex = (this.currentShipIndex + 1) % this.playerShips.length;
-        const sprite = this.player.getComponent('sprite');
+        const sprite = this.player.getComponent<SpriteComponent>('sprite');
         if (sprite) {
             sprite.texture = this.playerShips[this.currentShipIndex];
         }
@@ -421,7 +422,7 @@ class SpaceShooterGame {
 
     private fireProjectile() {
         const projectile = new Entity();
-        const playerTransform = this.player.getComponent('transform');
+        const playerTransform = this.player.getComponent<TransformComponent>('transform');
         if (!playerTransform) return;
 
         projectile.addComponent({
@@ -532,7 +533,7 @@ class SpaceShooterGame {
 
             // Clean up projectiles that go off-screen (top)
             this.projectiles = this.projectiles.filter(projectile => {
-                const transform = projectile.getComponent('transform');
+                const transform = projectile.getComponent<TransformComponent>('transform');
                 if (transform && transform.position.y < -50) {
                     this.engine.getActiveScene()?.removeEntity(projectile.id);
                     return false;
@@ -542,7 +543,7 @@ class SpaceShooterGame {
 
             // Clean up enemies that go off-screen (bottom)
             this.enemies = this.enemies.filter(enemy => {
-                const transform = enemy.getComponent('transform');
+                const transform = enemy.getComponent<TransformComponent>('transform');
                 if (transform && transform.position.y > canvasHeight + 50) {
                     this.engine.getActiveScene()?.removeEntity(enemy.id);
                     return false;

@@ -1,6 +1,7 @@
 
+import { LightRegistry } from '@/ecs/components';
 import { describe, it, expect } from 'vitest';
-import { LightRegistry } from '../../src/light/LightRegistry';
+
 
 describe('LightRegistry.normalizeLayerTarget', () => {
     it('returns layer name for string when no resolver', () => {

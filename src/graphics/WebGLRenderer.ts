@@ -85,7 +85,7 @@ export class WebGLRenderer implements RenderStrategy {
 
         // Set tint
         const tintLocation = this.gl.getUniformLocation(this.shaderProgram, 'u_tint');
-        this.gl.uniform4f(tintLocation, tint.r / 255, tint.g / 255, tint.b / 255, tint.a / 255);
+        this.gl.uniform4f(tintLocation, tint.r / 255, tint.g / 255, tint.b / 255, tint.a || 255 / 255);
 
         // Create transform matrix
         const transform = this.createTransformMatrix(position, size, rotation);

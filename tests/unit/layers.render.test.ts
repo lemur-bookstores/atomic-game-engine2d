@@ -1,3 +1,4 @@
+import { TransformComponent } from '@/types/components';
 import { describe, it, expect } from 'vitest';
 import { Scene } from '../../src/core/Scene';
 import { RenderSystem } from '../../src/graphics/RenderSystem';
@@ -9,7 +10,12 @@ const spriteComponent = {
     type: 'sprite', texture: 'mock', width: 16, height: 16, tint: { r: 255, g: 255, b: 255, a: 255 }
 };
 
-const transformComponent = (x: number, y: number) => ({ type: 'transform', position: { x, y }, rotation: 0, scale: { x: 1, y: 1 } });
+const transformComponent = (x: number, y: number): TransformComponent => ({
+    type: 'transform',
+    position: { x, y },
+    rotation: 0,
+    scale: { x: 1, y: 1 }
+});
 
 describe('RenderSystem respects layer visibility and opacity', () => {
     it('does not render entities on invisible layers and applies opacity', () => {

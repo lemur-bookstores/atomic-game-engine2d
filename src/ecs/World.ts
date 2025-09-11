@@ -1,20 +1,57 @@
-import { Entity } from './Entity';
-import { System } from './System';
-import { EventSystem } from '../core/EventSystem';
+import { AllEventTypes } from '@/types/event-names';
+import { EntityElement } from '@/types';
+import { FunctionalSystem } from './FunctionalSystem'
+import { ReactSystem } from '@/core/ecs/ReactSystem';
 import { WORLD_EVENTS } from '@/types/event-const';
+import { EventSystem } from '../core/EventSystem';
+import { HierarchySystem } from './components/hierarchy/HierarchySystem';
+import { Entity } from './Entity';
+import { HierarchyUtils } from './components/hierarchy/HierarchyUtils';
+
+type Systems = FunctionalSystem | ReactSystem;
 
 export class World {
     private entities: Map<string, Entity>;
-    private systems: System[];
+    private systems: Array<Systems>;
     private eventSystem: EventSystem;
+    private hierarchySystem: HierarchySystem | null = null;
 
     constructor() {
         this.entities = new Map();
         this.systems = [];
         this.eventSystem = EventSystem.getInstance();
+        this.hierarchySystem = new HierarchySystem();
+        this.addSystem(this.hierarchySystem);
     }
 
-    createEntity(): Entity {
+    /**
+     * Crea una entidad con un padre opcional
+     */
+    createEntityWithParent(parent?: EntityElement): EntityElement {
+        const entity = this.createEntity();
+
+        if (parent) {
+            HierarchyUtils.createParentChildRelation(parent, entity);
+        }
+
+        return entity;
+    }
+
+    /**
+     * Obtiene el sistema de jerarquías
+     */
+    getHierarchySystem(): HierarchySystem | null {
+        return this.hierarchySystem;
+    }
+
+    /**
+     * Fuerza el recálculo de todas las jerarquías
+     */
+    recalculateHierarchies(): void {
+        this.hierarchySystem?.forceRecalculate();
+    }
+
+    createEntity(): EntityElement {
         const entity = new Entity();
         this.entities.set(entity.id, entity);
         this.eventSystem.emit(WORLD_EVENTS.ENTITY_CREATED, { entity });
@@ -30,11 +67,11 @@ export class World {
         }
     }
 
-    addSystem(system: System): void {
+    addSystem(system: Systems): void {
         this.systems.push(system);
     }
 
-    removeSystem(system: System): void {
+    removeSystem(system: Systems): void {
         const index = this.systems.indexOf(system);
         if (index !== -1) {
             this.systems.splice(index, 1);
@@ -43,18 +80,25 @@ export class World {
 
     update(deltaTime: number): void {
         const activeEntities = Array.from(this.entities.values()).filter(entity => entity.active);
-        this.systems.forEach(system => system.update(activeEntities, deltaTime));
+        for (const system of this.systems) {
+            if (system instanceof FunctionalSystem) {
+                system.update(activeEntities, deltaTime);
+            } else {
+                system.update(deltaTime);
+            }
+
+        }
     }
 
-    getEntity(entityId: string): Entity | undefined {
+    getEntity(entityId: string): EntityElement | undefined {
         return this.entities.get(entityId);
     }
 
-    getEntities(): Entity[] {
+    getEntities(): EntityElement[] {
         return Array.from(this.entities.values());
     }
 
-    getActiveEntities(): Entity[] {
+    getActiveEntities(): EntityElement[] {
         return this.getEntities().filter(entity => entity.active);
     }
 

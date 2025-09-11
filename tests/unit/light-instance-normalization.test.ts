@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Scene } from '../../src/core/Scene';
-import { LightingSystem, lightRegistry } from '../../src/light/LightingSystem';
-// Ensure built-in light types (PointLight, SpotLight, etc.) are registered
-import '../../src/light/lights';
+import { LightingSystem, lightRegistry } from '@/ecs/components';
 
 describe('LightInstance normalization with Scene resolver', () => {
     let scene: Scene;

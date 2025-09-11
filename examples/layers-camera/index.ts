@@ -1,8 +1,10 @@
+import { SpriteComponent, TransformComponent } from '@/types';
 import { GameEngine } from '../../src';
 import { Scene } from '../../src/core/Scene';
 import { Entity } from '../../src/ecs/Entity';
 import { Texture, RenderSystem } from '../../src/graphics';
-import { Camera2D } from '../../src/graphics/Camera2D';
+
+let tint = { r: 255, g: 255, b: 255, a: 1 };
 
 // Helper: create an image filled with a color and return a loaded HTMLImageElement
 function createColoredImage(width: number, height: number, color: string): Promise<HTMLImageElement> {
@@ -46,7 +48,7 @@ window.addEventListener('load', async () => {
     engine.setCamera(cam);
 
     // Get render system to register textures
-    const renderSystems = engine.getGameLoop().getSystems().filter(s => (s as any).constructor?.name === 'RenderSystem') as RenderSystem[];
+    const renderSystems = engine.getGameLoop().getSystems().filter(s => (s).constructor?.name === 'RenderSystem') as RenderSystem[];
     const rs = renderSystems[0];
 
     // Create textures
@@ -61,21 +63,57 @@ window.addEventListener('load', async () => {
     // Background entity (large)
     const bg = new Entity('bg');
     bg.addComponent({ type: 'transform', position: { x: 400, y: 300 }, rotation: 0, scale: { x: 1, y: 1 } });
-    bg.addComponent({ type: 'sprite', texture: 'bg', width: 1024, height: 768 });
+    bg.addComponent<SpriteComponent>({
+        type: 'sprite',
+        texture: 'bg',
+        width: 1024,
+        height: 768,
+        tint,
+        uvX: 0,
+        uvY: 0,
+        uvWidth: 1,
+        uvHeight: 1,
+        flipX: false,
+        flipY: false
+    });
     bg.setLayer('background');
     scene.addEntity(bg);
 
     // Player entity
     const player = new Entity('player');
     player.addComponent({ type: 'transform', position: { x: 400, y: 300 }, rotation: 0, scale: { x: 1, y: 1 } });
-    player.addComponent({ type: 'sprite', texture: 'player', width: 64, height: 64 });
+    player.addComponent({
+        type: 'sprite',
+        texture: 'player',
+        width: 64,
+        height: 64,
+        tint,
+        uvX: 0,
+        uvY: 0,
+        uvWidth: 1,
+        uvHeight: 1,
+        flipX: false,
+        flipY: false
+    });
     player.setLayer('player');
     scene.addEntity(player);
 
     // Foreground entity (decorative)
     const fg = new Entity('fg');
     fg.addComponent({ type: 'transform', position: { x: 520, y: 240 }, rotation: 0, scale: { x: 1, y: 1 } });
-    fg.addComponent({ type: 'sprite', texture: 'fg', width: 256, height: 128 });
+    fg.addComponent({
+        type: 'sprite',
+        texture: 'fg',
+        width: 256,
+        height: 128,
+        tint,
+        uvX: 0,
+        uvY: 0,
+        uvWidth: 1,
+        uvHeight: 1,
+        flipX: false,
+        flipY: false
+    });
     fg.setLayer('foreground');
     scene.addEntity(fg);
 
@@ -83,12 +121,12 @@ window.addEventListener('load', async () => {
     rs.setLayerOrder(scene.getLayers());
 
     // Camera follow the player's transform component (object with position)
-    const playerTransform = player.getComponent('transform');
+    const playerTransform = player.getComponent<TransformComponent>('transform');
     cam.follow(playerTransform, { lerp: 0.08, offset: { x: 0, y: 0 } } as any);
 
     // Simple input to move player with arrow keys
     window.addEventListener('keydown', (e) => {
-        const t = player.getComponent('transform');
+        const t = player.getComponent<TransformComponent>('transform');
         if (!t) return;
         switch (e.code) {
             case 'ArrowLeft': t.position.x -= 16; break;

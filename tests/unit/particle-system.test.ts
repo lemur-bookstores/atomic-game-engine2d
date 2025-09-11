@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ParticleSystem } from '../../src/particles/ParticleSystem';
-import { createDefaultParticleComponent } from '../../src/particles/ParticleComponent';
+import { ParticleSystem, createDefaultParticleComponent } from '@/ecs/components';
 import { Entity } from '../../src/ecs/Entity';
 
 describe('ParticleSystem basic', () => {

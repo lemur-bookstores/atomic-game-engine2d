@@ -1,10 +1,6 @@
+import { PlaybackHandle } from '@/types';
 import { Logger } from '../core/Logger';
 
-export type PlaybackHandle = {
-    id: string;
-    sourceNode?: AudioBufferSourceNode;
-    gainNode?: GainNode;
-};
 
 export class AudioManager {
     private static instance: AudioManager;

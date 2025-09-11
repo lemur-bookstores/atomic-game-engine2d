@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { ParticleRegistry } from '../../src/particles/ParticleRegistry';
+import { ParticleRegistry } from '@/ecs/components';
 import { Scene } from '../../src/core/Scene';
 
 describe('ParticleRegistry', () => {

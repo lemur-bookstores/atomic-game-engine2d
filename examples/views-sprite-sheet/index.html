@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpriteSheet Inspector</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #1a1a1a;
+        color: #e0e0e0;
+        overflow: hidden;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        height: 100vh;
+      }
+
+      .sidebar {
+        background: #252525;
+        border-right: 1px solid #404040;
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      .main-content {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .toolbar {
+        background: #2a2a2a;
+        padding: 15px 20px;
+        border-bottom: 1px solid #404040;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .canvas-container {
+        flex: 1;
+        position: relative;
+        overflow: auto;
+        background: #1e1e1e;
+        background-image: linear-gradient(45deg, #333 25%, transparent 25%),
+          linear-gradient(-45deg, #333 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #333 75%),
+          linear-gradient(-45deg, transparent 75%, #333 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      }
+
+      .canvas-wrapper {
+        display: inline-block;
+        position: relative;
+        margin: 20px;
+      }
+
+      canvas {
+        display: block;
+        border: 2px solid #404040;
+        border-radius: 4px;
+      }
+
+      .section {
+        margin-bottom: 25px;
+      }
+
+      .section-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #404040;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 5px;
+        color: #b0b0b0;
+      }
+
+      input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        background: #1e1e1e;
+        border: 1px solid #404040;
+        border-radius: 4px;
+        color: #e0e0e0;
+        font-size: 12px;
+      }
+
+      input[type="number"],
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 8px;
+        background: #1e1e1e;
+        border: 1px solid #404040;
+        border-radius: 4px;
+        color: #e0e0e0;
+        font-size: 12px;
+      }
+
+      input[type="number"]:focus,
+      input[type="text"]:focus,
+      select:focus {
+        outline: none;
+        border-color: #0066cc;
+      }
+
+      button {
+        background: #0066cc;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      button:hover {
+        background: #0052a3;
+      }
+
+      button:disabled {
+        background: #404040;
+        cursor: not-allowed;
+      }
+
+      .btn-small {
+        padding: 6px 12px;
+        font-size: 11px;
+      }
+
+      .btn-secondary {
+        background: #404040;
+      }
+
+      .btn-secondary:hover {
+        background: #505050;
+      }
+
+      .btn-danger {
+        background: #cc3333;
+      }
+
+      .btn-danger:hover {
+        background: #b32d2d;
+      }
+
+      .toolbar button {
+        margin-right: 5px;
+      }
+
+      .info-panel {
+        background: #2a2a2a;
+        border-radius: 6px;
+        padding: 12px;
+        font-size: 11px;
+        line-height: 1.4;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+      }
+
+      .info-label {
+        color: #b0b0b0;
+      }
+
+      .info-value {
+        color: #ffffff;
+        font-weight: 500;
+      }
+
+      .frame-list {
+        max-height: 200px;
+        overflow-y: auto;
+        background: #1e1e1e;
+        border: 1px solid #404040;
+        border-radius: 4px;
+      }
+
+      .frame-item {
+        padding: 8px 12px;
+        border-bottom: 1px solid #404040;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        font-size: 11px;
+      }
+
+      .frame-item:hover {
+        background: #333333;
+      }
+
+      .frame-item.selected {
+        background: #0066cc;
+      }
+
+      .frame-item:last-child {
+        border-bottom: none;
+      }
+
+      .frame-overlay {
+        position: absolute;
+        border: 2px solid #ff6b35;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      .frame-label {
+        position: absolute;
+        top: -20px;
+        left: 0;
+        background: #ff6b35;
+        color: white;
+        padding: 2px 6px;
+        font-size: 10px;
+        font-weight: bold;
+        border-radius: 2px;
+      }
+
+      .animation-controls {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        margin-top: 10px;
+      }
+
+      .slider-container {
+        flex: 1;
+        margin: 0 10px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 4px;
+        background: #404040;
+        outline: none;
+        border-radius: 2px;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #0066cc;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: #0066cc;
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+      }
+
+      .export-section {
+        background: #2a2a2a;
+        border-radius: 6px;
+        padding: 12px;
+      }
+
+      .export-section h4 {
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+
+      .zoom-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .zoom-display {
+        min-width: 45px;
+        text-align: center;
+        font-size: 11px;
+        color: #b0b0b0;
+      }
+
+      .status-bar {
+        background: #252525;
+        padding: 8px 20px;
+        border-top: 1px solid #404040;
+        font-size: 11px;
+        color: #b0b0b0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(26, 26, 26, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        z-index: 100;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      input[type="checkbox"] {
+        width: auto;
+      }
+
+      .preview-section {
+        border-top: 1px solid #404040;
+        padding-top: 15px;
+        margin-top: 15px;
+      }
+
+      .preview-canvas {
+        background: #1e1e1e;
+        border: 1px solid #404040;
+        border-radius: 4px;
+        width: 100%;
+        height: 120px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="section">
+          <div class="section-title">Load Image</div>
+          <div class="form-group">
+            <label>Select SpriteSheet Image</label>
+            <input type="file" id="imageInput" accept="image/*" />
+          </div>
+          <button onclick="loadDefaultImage()">
+            Load Platform SpriteSheet
+          </button>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Detection Mode</div>
+          <div class="form-group">
+            <label>Mode</label>
+            <select id="detectionMode" onchange="onModeChange()">
+              <option value="dynamic">Dynamic Detection</option>
+              <option value="grid">Grid Detection</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section" id="dynamicControls">
+          <div class="section-title">Dynamic Settings</div>
+          <div class="form-group">
+            <label>Alpha Threshold (0-255)</label>
+            <input
+              type="number"
+              id="alphaThreshold"
+              min="0"
+              max="255"
+              value="128"
+              onchange="updateDetection()"
+            />
+          </div>
+          <div class="form-group">
+            <label>Min Frame Size (px)</label>
+            <input
+              type="number"
+              id="minFrameSize"
+              min="1"
+              value="16"
+              onchange="updateDetection()"
+            />
+          </div>
+          <div class="form-group">
+            <label>Padding (px)</label>
+            <input
+              type="number"
+              id="padding"
+              min="0"
+              value="1"
+              onchange="updateDetection()"
+            />
+          </div>
+        </div>
+
+        <div class="section hidden" id="gridControls">
+          <div class="section-title">Grid Settings</div>
+          <div class="two-column">
+            <div class="form-group">
+              <label>Frame Width</label>
+              <input
+                type="number"
+                id="frameWidth"
+                min="1"
+                value="32"
+                onchange="updateDetection()"
+              />
+            </div>
+            <div class="form-group">
+              <label>Frame Height</label>
+              <input
+                type="number"
+                id="frameHeight"
+                min="1"
+                value="32"
+                onchange="updateDetection()"
+              />
+            </div>
+          </div>
+          <div class="two-column">
+            <div class="form-group">
+              <label>Start X</label>
+              <input
+                type="number"
+                id="startX"
+                min="0"
+                value="0"
+                onchange="updateDetection()"
+              />
+            </div>
+            <div class="form-group">
+              <label>Start Y</label>
+              <input
+                type="number"
+                id="startY"
+                min="0"
+                value="0"
+                onchange="updateDetection()"
+              />
+            </div>
+          </div>
+          <div class="two-column">
+            <div class="form-group">
+              <label>Spacing X</label>
+              <input
+                type="number"
+                id="spacingX"
+                min="0"
+                value="0"
+                onchange="updateDetection()"
+              />
+            </div>
+            <div class="form-group">
+              <label>Spacing Y</label>
+              <input
+                type="number"
+                id="spacingY"
+                min="0"
+                value="0"
+                onchange="updateDetection()"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Display Options</div>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="showFrames"
+              checked
+              onchange="toggleFrameDisplay()"
+            />
+            <label>Show Frame Borders</label>
+          </div>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="showLabels"
+              checked
+              onchange="toggleFrameDisplay()"
+            />
+            <label>Show Frame Numbers</label>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Image Info</div>
+          <div class="info-panel" id="imageInfo">
+            <div class="info-row">
+              <span class="info-label">Size:</span>
+              <span class="info-value" id="imageSize">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Frames:</span>
+              <span class="info-value" id="frameCount">-</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Selected:</span>
+              <span class="info-value" id="selectedFrame">None</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Frame List</div>
+          <div class="frame-list" id="frameList">
+            <!-- Frames will be populated here -->
+          </div>
+        </div>
+
+        <div class="preview-section">
+          <div class="section-title">Animation Preview</div>
+          <canvas
+            class="preview-canvas"
+            id="previewCanvas"
+            width="200"
+            height="120"
+          ></canvas>
+          <div class="animation-controls">
+            <button class="btn-small" onclick="toggleAnimation()">▶️</button>
+            <button class="btn-small" onclick="stopAnimation()">⏹️</button>
+            <div class="slider-container">
+              <input
+                type="range"
+                id="frameSlider"
+                min="0"
+                max="0"
+                value="0"
+                onchange="onFrameSliderChange()"
+              />
+            </div>
+            <span id="frameIndicator">0/0</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Export</div>
+          <div class="export-section">
+            <button onclick="exportAtlas()">Export Atlas JSON</button>
+            <button onclick="exportFrames()" class="btn-secondary">
+              Export Frame Images
+            </button>
+            <button onclick="importAtlas()" class="btn-secondary">
+              Import Atlas JSON
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="toolbar">
+          <div class="zoom-controls">
+            <button onclick="zoomOut()">-</button>
+            <span class="zoom-display" id="zoomDisplay">100%</span>
+            <button onclick="zoomIn()">+</button>
+            <button onclick="resetZoom()">Reset</button>
+          </div>
+          <button onclick="fitToWindow()">Fit to Window</button>
+          <button onclick="actualSize()">Actual Size</button>
+          <button onclick="clearSelection()" class="btn-secondary">
+            Clear Selection
+          </button>
+        </div>
+
+        <div class="canvas-container" id="canvasContainer">
+          <div class="canvas-wrapper">
+            <canvas id="mainCanvas" width="800" height="600"></canvas>
+            <div
+              id="frameOverlays"
+              style="
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                position: absolute;
+                background-color: #3333339c;
+              "
+            ></div>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <span id="statusText">Ready</span>
+          <span id="mousePosition">-</span>
+        </div>
+
+        <div class="loading-overlay hidden" id="loadingOverlay">
+          <div>Processing image...</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      class SpriteSheetInspector {
+        constructor() {
+          this.canvas = document.getElementById("mainCanvas");
+          this.ctx = this.canvas.getContext("2d");
+          this.previewCanvas = document.getElementById("previewCanvas");
+          this.previewCtx = this.previewCanvas.getContext("2d");
+          this.image = null;
+          this.frames = [];
+          this.selectedFrame = -1;
+          this.zoom = 1;
+          this.animationFrame = 0;
+          this.animationPlaying = false;
+          this.animationTimer = null;
+
+          this.setupEventListeners();
+          this.updateStatus("Ready - Load an image to begin");
+        }
+
+        setupEventListeners() {
+          document
+            .getElementById("imageInput")
+            .addEventListener("change", (e) => {
+              const file = e.target.files[0];
+              console.log(file);
+
+              if (file) this.loadImageFile(file);
+            });
+
+          this.canvas.addEventListener("click", (e) => {
+            this.handleCanvasClick(e);
+          });
+
+          this.canvas.addEventListener("mousemove", (e) => {
+            this.updateMousePosition(e);
+          });
+
+          document
+            .getElementById("canvasContainer")
+            .addEventListener("scroll", () => {
+              this.updateFrameOverlays();
+            });
+        }
+
+        async loadImageFile(file) {
+          this.showLoading(true);
+
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              this.setImage(img);
+              this.showLoading(false);
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+
+        async loadDefaultImage() {
+          this.showLoading(true);
+          try {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+              this.setImage(img);
+              this.showLoading(false);
+              this.updateStatus("Platform spritesheet loaded");
+            };
+            img.onerror = () => {
+              this.showLoading(false);
+              this.updateStatus(
+                "Failed to load default image - please select a file instead"
+              );
+            };
+            img.src = "assets/sprite-sheet-plataforma.png";
+          } catch (error) {
+            this.showLoading(false);
+            this.updateStatus("Error loading default image: " + error.message);
+          }
+        }
+
+        setImage(img) {
+          this.image = img;
+          this.canvas.width = img.width;
+          this.canvas.height = img.height;
+
+          this.ctx.drawImage(img, 0, 0);
+
+          document.getElementById(
+            "imageSize"
+          ).textContent = `${img.width}x${img.height}`;
+          this.updateDetection();
+          this.fitToWindow();
+        }
+
+        updateDetection() {
+          if (!this.image) return;
+
+          const mode = document.getElementById("detectionMode").value;
+
+          if (mode === "dynamic") {
+            this.detectFramesDynamic();
+          } else {
+            this.detectFramesGrid();
+          }
+
+          this.updateFrameList();
+          this.updateFrameOverlays();
+          this.updateAnimationSlider();
+          document.getElementById("frameCount").textContent =
+            this.frames.length;
+          this.updateStatus(`Detected ${this.frames.length} frames`);
+        }
+
+        detectFramesDynamic() {
+          const alphaThreshold = parseInt(
+            document.getElementById("alphaThreshold").value
+          );
+          const minFrameSize = parseInt(
+            document.getElementById("minFrameSize").value
+          );
+          const padding = parseInt(document.getElementById("padding").value);
+
+          // Create a temporary canvas to analyze pixel data
+          const tempCanvas = document.createElement("canvas");
+          const tempCtx = tempCanvas.getContext("2d");
+          tempCanvas.width = this.image.width;
+          tempCanvas.height = this.image.height;
+          tempCtx.drawImage(this.image, 0, 0);
+
+          const imageData = tempCtx.getImageData(
+            0,
+            0,
+            this.image.width,
+            this.image.height
+          );
+          const data = imageData.data;
+
+          // Find non-transparent regions
+          const visited = new Array(this.image.width * this.image.height).fill(
+            false
+          );
+          this.frames = [];
+
+          for (let y = 0; y < this.image.height; y++) {
+            for (let x = 0; x < this.image.width; x++) {
+              const index = (y * this.image.width + x) * 4;
+              const alpha = data[index + 3];
+
+              if (
+                alpha >= alphaThreshold &&
+                !visited[y * this.image.width + x]
+              ) {
+                const bounds = this.floodFill(
+                  data,
+                  visited,
+                  x,
+                  y,
+                  this.image.width,
+                  this.image.height,
+                  alphaThreshold
+                );
+
+                if (
+                  bounds.width >= minFrameSize &&
+                  bounds.height >= minFrameSize
+                ) {
+                  this.frames.push({
+                    x: bounds.x - padding,
+                    y: bounds.y - padding,
+                    width: bounds.width + padding * 2,
+                    height: bounds.height + padding * 2,
+                    id: `frame_${this.frames.length}`,
+                  });
+                }
+              }
+            }
+          }
+
+          // Sort frames by position (top-to-bottom, left-to-right)
+          this.frames.sort((a, b) => {
+            if (Math.abs(a.y - b.y) < 10) {
+              return a.x - b.x;
+            }
+            return a.y - b.y;
+          });
+        }
+
+        floodFill(
+          data,
+          visited,
+          startX,
+          startY,
+          width,
+          height,
+          alphaThreshold
+        ) {
+          const stack = [{ x: startX, y: startY }];
+          let minX = startX,
+            maxX = startX,
+            minY = startY,
+            maxY = startY;
+
+          while (stack.length > 0) {
+            const { x, y } = stack.pop();
+
+            if (x < 0 || x >= width || y < 0 || y >= height) continue;
+
+            const index = y * width + x;
+            if (visited[index]) continue;
+
+            const pixelIndex = index * 4;
+            const alpha = data[pixelIndex + 3];
+
+            if (alpha < alphaThreshold) continue;
+
+            visited[index] = true;
+
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+
+            stack.push({ x: x + 1, y });
+            stack.push({ x: x - 1, y });
+            stack.push({ x, y: y + 1 });
+            stack.push({ x, y: y - 1 });
+          }
+
+          return {
+            x: minX,
+            y: minY,
+            width: maxX - minX + 1,
+            height: maxY - minY + 1,
+          };
+        }
+
+        detectFramesGrid() {
+          const frameWidth = parseInt(
+            document.getElementById("frameWidth").value
+          );
+          const frameHeight = parseInt(
+            document.getElementById("frameHeight").value
+          );
+          const startX = parseInt(document.getElementById("startX").value);
+          const startY = parseInt(document.getElementById("startY").value);
+          const spacingX = parseInt(document.getElementById("spacingX").value);
+          const spacingY = parseInt(document.getElementById("spacingY").value);
+
+          this.frames = [];
+
+          const cols = Math.floor(
+            (this.image.width - startX) / (frameWidth + spacingX)
+          );
+          const rows = Math.floor(
+            (this.image.height - startY) / (frameHeight + spacingY)
+          );
+
+          for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+              this.frames.push({
+                x: startX + col * (frameWidth + spacingX),
+                y: startY + row * (frameHeight + spacingY),
+                width: frameWidth,
+                height: frameHeight,
+                id: `frame_${row}_${col}`,
+              });
+            }
+          }
+        }
+
+        updateFrameList() {
+          const frameList = document.getElementById("frameList");
+          frameList.innerHTML = "";
+
+          this.frames.forEach((frame, index) => {
+            const item = document.createElement("div");
+            item.className = "frame-item";
+            item.innerHTML = `
+                        <strong>Frame ${index}</strong><br>
+                        ${frame.x}, ${frame.y} - ${frame.width}×${frame.height}
+                    `;
+            item.onclick = () => this.selectFrame(index);
+            frameList.appendChild(item);
+          });
+        }
+
+        updateFrameOverlays() {
+          const container = document.getElementById("frameOverlays");
+          container.innerHTML = "";
+
+          if (!document.getElementById("showFrames").checked) return;
+
+          const showLabels = document.getElementById("showLabels").checked;
+          const canvasRect = this.canvas.getBoundingClientRect();
+          const containerRect = document
+            .getElementById("canvasContainer")
+            .getBoundingClientRect();
+          const scrollLeft =
+            document.getElementById("canvasContainer").scrollLeft;
+          const scrollTop =
+            document.getElementById("canvasContainer").scrollTop;
+
+          const canvas = document.getElementById("mainCanvas");
+
+          this.frames.forEach((frame, index) => {
+            const overlay = document.createElement("div");
+            overlay.className = "frame-overlay";
+            if (index === this.selectedFrame) {
+              overlay.style.borderColor = "#00ff00";
+              overlay.style.borderWidth = "3px";
+            }
+
+            // const uvX = frame.x / canvas.width;
+            // const uvY = frame.y / canvas.height;
+            // const uvWidth = frame.width / canvas.width;
+            // const uvHeight = frame.height / canvas.height;
+
+            overlay.style.left = frame.x * this.zoom - 20 + "px";
+            overlay.style.top = frame.y * this.zoom - 20 + "px";
+            overlay.style.width = frame.width + "px";
+            overlay.style.height = frame.height + "px";
+
+            if (showLabels) {
+              const label = document.createElement("div");
+              label.className = "frame-label";
+              label.textContent = index;
+              overlay.appendChild(label);
+            }
+
+            container.appendChild(overlay);
+          });
+        }
+
+        selectFrame(index) {
+          // Clear previous selection
+          document.querySelectorAll(".frame-item").forEach((item) => {
+            item.classList.remove("selected");
+          });
+
+          this.selectedFrame = index;
+
+          if (index >= 0 && index < this.frames.length) {
+            document
+              .querySelectorAll(".frame-item")
+              [index].classList.add("selected");
+            document.getElementById(
+              "selectedFrame"
+            ).textContent = `Frame ${index}`;
+            this.drawPreview(index);
+          } else {
+            document.getElementById("selectedFrame").textContent = "None";
+            this.clearPreview();
+          }
+
+          this.updateFrameOverlays();
+        }
+
+        drawPreview(frameIndex) {
+          if (
+            !this.image ||
+            frameIndex < 0 ||
+            frameIndex >= this.frames.length
+          ) {
+            this.clearPreview();
+            return;
+          }
+
+          const frame = this.frames[frameIndex];
+          this.previewCtx.clearRect(
+            0,
+            0,
+            this.previewCanvas.width,
+            this.previewCanvas.height
+          );
+
+          // Calculate scaling to fit the preview canvas
+          const scaleX = this.previewCanvas.width / frame.width;
+          const scaleY = this.previewCanvas.height / frame.height;
+          const scale = Math.min(scaleX, scaleY, 4); // Max 4x zoom
+
+          const drawWidth = frame.width * scale;
+          const drawHeight = frame.height * scale;
+          const drawX = (this.previewCanvas.width - drawWidth) / 2;
+          const drawY = (this.previewCanvas.height - drawHeight) / 2;
+
+          this.previewCtx.drawImage(
+            this.image,
+            frame.x,
+            frame.y,
+            frame.width,
+            frame.height,
+            drawX,
+            drawY,
+            drawWidth,
+            drawHeight
+          );
+        }
+
+        clearPreview() {
+          this.previewCtx.clearRect(
+            0,
+            0,
+            this.previewCanvas.width,
+            this.previewCanvas.height
+          );
+        }
+
+        handleCanvasClick(e) {
+          const rect = this.canvas.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / this.zoom;
+          const y = (e.clientY - rect.top) / this.zoom;
+
+          // Find clicked frame
+          for (let i = 0; i < this.frames.length; i++) {
+            const frame = this.frames[i];
+            if (
+              x >= frame.x &&
+              x < frame.x + frame.width &&
+              y >= frame.y &&
+              y < frame.y + frame.height
+            ) {
+              this.selectFrame(i);
+              return;
+            }
+          }
+
+          this.selectFrame(-1);
+        }
+
+        updateMousePosition(e) {
+          const rect = this.canvas.getBoundingClientRect();
+          const x = Math.floor((e.clientX - rect.left) / this.zoom);
+          const y = Math.floor((e.clientY - rect.top) / this.zoom);
+          document.getElementById("mousePosition").textContent = `${x}, ${y}`;
+        }
+
+        // Animation methods
+        updateAnimationSlider() {
+          const slider = document.getElementById("frameSlider");
+          slider.max = Math.max(0, this.frames.length - 1);
+          slider.value = 0;
+          this.updateFrameIndicator();
+        }
+
+        updateFrameIndicator() {
+          const indicator = document.getElementById("frameIndicator");
+          indicator.textContent = `${this.animationFrame + 1}/${
+            this.frames.length
+          }`;
+        }
+
+        toggleAnimation() {
+          if (this.animationPlaying) {
+            this.pauseAnimation();
+          } else {
+            this.playAnimation();
+          }
+        }
+
+        playAnimation() {
+          if (this.frames.length === 0) return;
+
+          this.animationPlaying = true;
+          document.querySelector(".animation-controls button").textContent =
+            "⏸️";
+
+          const animate = () => {
+            if (!this.animationPlaying) return;
+
+            this.animationFrame =
+              (this.animationFrame + 1) % this.frames.length;
+            this.selectFrame(this.animationFrame);
+            document.getElementById("frameSlider").value = this.animationFrame;
+            this.updateFrameIndicator();
+
+            this.animationTimer = setTimeout(animate, 200); // 5 FPS
+          };
+
+          animate();
+        }
+
+        pauseAnimation() {
+          this.animationPlaying = false;
+          document.querySelector(".animation-controls button").textContent =
+            "▶️";
+          if (this.animationTimer) {
+            clearTimeout(this.animationTimer);
+            this.animationTimer = null;
+          }
+        }
+
+        stopAnimation() {
+          this.pauseAnimation();
+          this.animationFrame = 0;
+          this.selectFrame(0);
+          document.getElementById("frameSlider").value = 0;
+          this.updateFrameIndicator();
+        }
+
+        onFrameSliderChange() {
+          const slider = document.getElementById("frameSlider");
+          this.animationFrame = parseInt(slider.value);
+          this.selectFrame(this.animationFrame);
+          this.updateFrameIndicator();
+        }
+
+        // Zoom and view methods
+        zoomIn() {
+          this.setZoom(this.zoom * 1.25);
+        }
+
+        zoomOut() {
+          this.setZoom(this.zoom / 1.25);
+        }
+
+        resetZoom() {
+          this.setZoom(1);
+        }
+
+        setZoom(newZoom) {
+          const minZoom = 0.1;
+          const maxZoom = 10;
+          this.zoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
+
+          const wrapper = document.querySelector(".canvas-wrapper");
+          wrapper.style.transform = `scale(${this.zoom})`;
+          wrapper.style.transformOrigin = "top left";
+
+          document.getElementById("zoomDisplay").textContent =
+            Math.round(this.zoom * 100) + "%";
+          this.updateFrameOverlays();
+        }
+
+        fitToWindow() {
+          if (!this.image) return;
+
+          const container = document.getElementById("canvasContainer");
+          const containerWidth = container.clientWidth - 40;
+          const containerHeight = container.clientHeight - 40;
+
+          const scaleX = containerWidth / this.image.width;
+          const scaleY = containerHeight / this.image.height;
+          const scale = Math.min(scaleX, scaleY);
+
+          this.setZoom(scale);
+        }
+
+        actualSize() {
+          this.setZoom(1);
+        }
+
+        clearSelection() {
+          this.selectFrame(-1);
+        }
+
+        // Export/Import methods
+        exportAtlas() {
+          if (this.frames.length === 0) {
+            alert("No frames detected to export");
+            return;
+          }
+
+          const atlas = {
+            frames: this.frames.map((frame, index) => ({
+              id: `frame_${index}`,
+              frame: {
+                x: frame.x,
+                y: frame.y,
+                w: frame.width,
+                h: frame.height,
+              },
+            })),
+            meta: {
+              image: "spritesheet.png",
+              format: "RGBA8888",
+              size: {
+                w: this.image.width,
+                h: this.image.height,
+              },
+              scale: 1,
+            },
+          };
+
+          const blob = new Blob([JSON.stringify(atlas, null, 2)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "spritesheet_atlas.json";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+
+          this.updateStatus("Atlas JSON exported successfully");
+        }
+
+        async exportFrames() {
+          if (this.frames.length === 0 || !this.image) {
+            alert("No frames or image to export");
+            return;
+          }
+
+          this.showLoading(true);
+
+          try {
+            const zip = new JSZip();
+
+            for (let i = 0; i < this.frames.length; i++) {
+              const frame = this.frames[i];
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
+              canvas.width = frame.width;
+              canvas.height = frame.height;
+
+              ctx.drawImage(
+                this.image,
+                frame.x,
+                frame.y,
+                frame.width,
+                frame.height,
+                0,
+                0,
+                frame.width,
+                frame.height
+              );
+
+              const blob = await new Promise((resolve) =>
+                canvas.toBlob(resolve, "image/png")
+              );
+              zip.file(`frame_${i.toString().padStart(3, "0")}.png`, blob);
+            }
+
+            const content = await zip.generateAsync({ type: "blob" });
+            const url = URL.createObjectURL(content);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "spritesheet_frames.zip";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            this.updateStatus("Frames exported successfully");
+          } catch (error) {
+            this.updateStatus("Error exporting frames: " + error.message);
+          } finally {
+            this.showLoading(false);
+          }
+        }
+
+        importAtlas() {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = ".json";
+          input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                try {
+                  const atlas = JSON.parse(e.target.result);
+                  this.loadAtlasData(atlas);
+                  this.updateStatus("Atlas imported successfully");
+                } catch (error) {
+                  alert("Error parsing atlas file: " + error.message);
+                }
+              };
+              reader.readAsText(file);
+            }
+          };
+          input.click();
+        }
+
+        loadAtlasData(atlas) {
+          if (atlas.frames && Array.isArray(atlas.frames)) {
+            this.frames = atlas.frames.map((frameData) => ({
+              x: frameData.frame.x,
+              y: frameData.frame.y,
+              width: frameData.frame.w,
+              height: frameData.frame.h,
+              id: frameData.id || `frame_${this.frames.length}`,
+            }));
+
+            this.updateFrameList();
+            this.updateFrameOverlays();
+            this.updateAnimationSlider();
+            document.getElementById("frameCount").textContent =
+              this.frames.length;
+          }
+        }
+
+        // UI Helper methods
+        showLoading(show) {
+          const overlay = document.getElementById("loadingOverlay");
+          if (show) {
+            overlay.classList.remove("hidden");
+          } else {
+            overlay.classList.add("hidden");
+          }
+        }
+
+        updateStatus(message) {
+          document.getElementById("statusText").textContent = message;
+        }
+
+        toggleFrameDisplay() {
+          this.updateFrameOverlays();
+        }
+      }
+
+      // Global functions for UI events
+      let inspector;
+
+      function onModeChange() {
+        const mode = document.getElementById("detectionMode").value;
+        const dynamicControls = document.getElementById("dynamicControls");
+        const gridControls = document.getElementById("gridControls");
+
+        if (mode === "dynamic") {
+          dynamicControls.classList.remove("hidden");
+          gridControls.classList.add("hidden");
+        } else {
+          dynamicControls.classList.add("hidden");
+          gridControls.classList.remove("hidden");
+        }
+
+        if (inspector) {
+          inspector.updateDetection();
+        }
+      }
+
+      function updateDetection() {
+        if (inspector) {
+          inspector.updateDetection();
+        }
+      }
+
+      function toggleFrameDisplay() {
+        if (inspector) {
+          inspector.toggleFrameDisplay();
+        }
+      }
+
+      function loadDefaultImage() {
+        if (inspector) {
+          inspector.loadDefaultImage();
+        }
+      }
+
+      function zoomIn() {
+        if (inspector) {
+          inspector.zoomIn();
+        }
+      }
+
+      function zoomOut() {
+        if (inspector) {
+          inspector.zoomOut();
+        }
+      }
+
+      function resetZoom() {
+        if (inspector) {
+          inspector.resetZoom();
+        }
+      }
+
+      function fitToWindow() {
+        if (inspector) {
+          inspector.fitToWindow();
+        }
+      }
+
+      function actualSize() {
+        if (inspector) {
+          inspector.actualSize();
+        }
+      }
+
+      function clearSelection() {
+        if (inspector) {
+          inspector.clearSelection();
+        }
+      }
+
+      function toggleAnimation() {
+        if (inspector) {
+          inspector.toggleAnimation();
+        }
+      }
+
+      function stopAnimation() {
+        if (inspector) {
+          inspector.stopAnimation();
+        }
+      }
+
+      function onFrameSliderChange() {
+        if (inspector) {
+          inspector.onFrameSliderChange();
+        }
+      }
+
+      function exportAtlas() {
+        if (inspector) {
+          inspector.exportAtlas();
+        }
+      }
+
+      function exportFrames() {
+        if (inspector) {
+          inspector.exportFrames();
+        }
+      }
+
+      function importAtlas() {
+        if (inspector) {
+          inspector.importAtlas();
+        }
+      }
+
+      // Initialize the application
+      window.addEventListener("load", () => {
+        inspector = new SpriteSheetInspector();
+      });
+    </script>
+
+    <!-- JSZip library for frame export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  </body>
+</html>

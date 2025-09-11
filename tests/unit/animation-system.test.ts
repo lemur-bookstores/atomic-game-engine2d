@@ -1,11 +1,11 @@
 /// <reference types="vitest" />
-import { AnimationSystem } from '../../src/graphics/AnimationSystem';
+import { AnimationSystem } from '../../src/ecs/components/animation/AnimationSystem';
 import { SpriteSheet } from '../../src/graphics/SpriteSheet';
-import { AnimationComponent } from '../../src/graphics/Animation';
 import { Entity } from '../../src/ecs/Entity';
 import { expect, test } from 'vitest';
 import { EventSystem } from '../../src/core/EventSystem';
 import { ANIMATION_EVENTS } from '../../src/types/event-const';
+import { AnimationComponent } from '@/types/components';
 
 // Mock a minimal spriteSheet with frame metadata
 const mockTexture: any = { width: 64, height: 16, dispose: () => { } };
@@ -42,7 +42,19 @@ test('AnimationSystem advances frame with deltaTime', () => {
     };
 
     entity.addComponent(anim);
-    entity.addComponent({ type: 'sprite', texture: '', width: 16, height: 16, uvX: 0, uvY: 0, uvWidth: 1, uvHeight: 1, flipX: false, flipY: false });
+    entity.addComponent({
+        type: 'sprite',
+        texture: '',
+        width: 16,
+        height: 16,
+        uvX: 0,
+        uvY: 0,
+        uvWidth: 1,
+        uvHeight: 1,
+        flipX: false,
+        flipY: false,
+        tint: { r: 0, g: 0, b: 0 }
+    });
 
     // initial update with small dt should not advance
     system.update([entity], 0.05);

@@ -1,4 +1,4 @@
-import * as Box2DFactory from "box2d-wasm";
+import Box2DFactory from "box2d-wasm";
 import type { Box2D, World, Vec2 } from "box2d-wasm";
 import wasmUrl from "box2d-wasm/dist/umd/Box2D.simd.wasm?url";
 

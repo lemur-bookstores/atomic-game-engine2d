@@ -1,7 +1,7 @@
 
 import { describe, beforeEach, it, expect } from 'vitest';
 import { Scene, Engine } from '../../src';
-import { LightingSystem, lightRegistry } from '../../src/light/LightingSystem';
+import { LightingSystem, lightRegistry } from '@/ecs/components';
 
 class MockSystem {
     public receivedScene: Scene | null = null;
