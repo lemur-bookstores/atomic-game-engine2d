@@ -1,17 +1,8 @@
 import { Texture } from '../graphics';
 import { EventSystem } from '../core/EventSystem';
 import { ASSET_EVENTS } from '@/types/event-const';
+import { AssetLoadEvent, AssetType } from './types';
 
-export type AssetType = 'texture' | 'audio' | 'json' | 'text' | 'spritesheet';
-
-// Adjusted AssetLoadEvent type to match ASSET_EVENTS
-export interface AssetLoadEvent {
-    type: typeof ASSET_EVENTS[keyof typeof ASSET_EVENTS];
-    asset: string;
-    assetType: AssetType;
-    progress?: number;
-    error?: Error;
-}
 
 export class AssetLoader {
     private static instance: AssetLoader;
