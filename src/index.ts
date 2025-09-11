@@ -14,11 +14,11 @@ export { SpriteSheetLibrary } from './math/libs/sprite-sheet';
 export { Engine as GameEngine } from './core/Engine';
 
 // Hierarchy API
-export { HierarchySystem } from "./ecs/components/hierarchy/HierarchySystem";
-export { HierarchyOptimizations } from "./ecs/components/hierarchy/HierarchyOptimizations";
-export { HierarchyManager } from "./ecs/components/hierarchy/HierarchyManager";
-export { HierarchyDebugger } from "./ecs/components/hierarchy/HierarchyDebugger";
-export { createHierarchyComponent } from "./ecs/components/hierarchy/HierarchyComponent";
+export { HierarchySystem } from "./ecs/components/_hierarchy/HierarchySystem";
+export { HierarchyOptimizations } from "./ecs/components/_hierarchy/HierarchyOptimizations";
+export { HierarchyManager } from "./ecs/components/_hierarchy/HierarchyManager";
+export { HierarchyDebugger } from "./ecs/components/_hierarchy/HierarchyDebugger";
+export { createHierarchyComponent } from "./ecs/components/_hierarchy/HierarchyComponent";
 
 // Animation API
 export { AnimationState } from "./ecs/components/animation/AnimationState";
@@ -50,6 +50,9 @@ export {
     LightingEffects,
     GameLightingManager
 } from './ecs/components/light/lights';
+
+// Camera API
+export * from './ecs/components/camera';
 
 // Version
 export const VERSION = '0.7.0';

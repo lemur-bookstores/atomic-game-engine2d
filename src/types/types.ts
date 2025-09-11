@@ -19,7 +19,11 @@ export type ComponentType = 'audio'
     | 'collider'
     | 'physicsBody'
     | 'particle'
-    | 'velocity';
+    | 'velocity'
+    | 'camera'
+    | 'cameraFollow'
+    | 'cameraBounds'
+    | 'cameraEffects';
 
 export type TypesHierarchyChangeEvents = 'parent_set'
     | 'parent_removed'

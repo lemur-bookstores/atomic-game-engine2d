@@ -1,9 +1,9 @@
 // Hierarchy component
-export { HierarchySystem } from "./hierarchy/HierarchySystem";
-export { HierarchyOptimizations } from "./hierarchy/HierarchyOptimizations";
-export { HierarchyManager } from "./hierarchy/HierarchyManager";
-export { HierarchyDebugger } from "./hierarchy/HierarchyDebugger";
-export { createHierarchyComponent } from "./hierarchy/HierarchyComponent";
+export { HierarchySystem } from "./_hierarchy/HierarchySystem";
+export { HierarchyOptimizations } from "./_hierarchy/HierarchyOptimizations";
+export { HierarchyManager } from "./_hierarchy/HierarchyManager";
+export { HierarchyDebugger } from "./_hierarchy/HierarchyDebugger";
+export { createHierarchyComponent } from "./_hierarchy/HierarchyComponent";
 
 // Animation Component
 export { AnimationState } from "./animation/AnimationState";
@@ -35,3 +35,6 @@ export {
     LightingEffects,
     GameLightingManager
 } from './light/lights';
+
+// Camera Component
+export * from './camera';

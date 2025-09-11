@@ -521,6 +521,84 @@ export interface HierarchyComponent extends Component {
 }
 
 /**
+ * Componente de cámara básica
+ * @interface CameraComponent
+ * @extends Component
+ * @property {'camera'} declare type - Tipo del componente
+ * @property {number} zoom - Nivel de zoom de la cámara
+ * @property {{ width: number, height: number }} viewport - Dimensiones de la vista de la cámara
+ * @property {boolean} isActive - Si la cámara está activa
+ * @property {number} [priority] - Prioridad de la cámara (para orden de renderizado)
+ */
+export interface CameraComponent extends Component {
+    type: 'camera';
+    zoom: number;
+    viewport: { width: number, height: number };
+    isActive: boolean;
+    priority?: number;
+}
+
+/**
+ * Componente de seguimiento de cámara
+ * @interface CameraFollowComponent
+ * @extends Component
+ * @property {'cameraFollow'} declare type - Tipo del componente
+ * @property {EntityElement | null} target - Objetivo a seguir (entidad)
+ * @property {number} lerp - Factor de suavizado para el seguimiento
+ * @property {Vector2D} offset - Desplazamiento respecto al objetivo
+ * @property {{ width: number, height: number }} [deadZone] - Zona muerta para el seguimiento
+ * @property {number} [leadAmount] - Anticipación del movimiento del objetivo
+ */
+export interface CameraFollowComponent extends Component {
+    type: 'cameraFollow';
+    target: EntityElement | null;
+    lerp: number;
+    offset: Vector2D;
+    deadZone?: { width: number, height: number };
+    leadAmount?: number;
+}
+
+/**
+ * Componente de límites de cámara
+ * @interface CameraBoundsComponent
+ * @extends Component
+ * @property {'cameraBounds'} declare type - Tipo del componente
+ * @property {{ x: number, y: number, width: number, height: number }} bounds - Límites de la cámara
+ * @property {boolean} [softBounds] - Si los límites son suaves (con rebote)
+ * @property {number} [elasticity] - Elasticidad para los límites suaves
+ */
+export interface CameraBoundsComponent extends Component {
+    type: 'cameraBounds';
+    bounds: { x: number, y: number, width: number, height: number };
+    softBounds?: boolean;
+    elasticity?: number;
+}
+
+/**
+ * Componente de efectos de cámara
+ * @interface CameraEffectsComponent
+ * @extends Component
+ * @property {'cameraEffects'} declare type - Tipo del componente
+ * @property {Object} shake - Configuración del efecto de sacudida
+ * @property {Object} screenEffects - Efectos en pantalla (destello, desvanecimiento, zoom)
+ */
+export interface CameraEffectsComponent extends Component {
+    type: 'cameraEffects';
+    shake: {
+        intensity: number;
+        duration: number;
+        frequency: number;
+        decay: number;
+        active: boolean;
+    };
+    screenEffects: {
+        flash?: { color: Color, duration: number, intensity: number };
+        fade?: { color: Color, duration: number, direction: 'in' | 'out' };
+        zoom?: { targetZoom: number, duration: number, easing: string };
+    };
+}
+
+/**
  * Unión de todos los tipos de componentes disponibles en el sistema
  * @typedef {ScriptComponent | InputComponent | LightComponent | TransformComponent | SpriteComponent | AudioComponent | ParticleComponent | AnimationComponent | AnimationStateMachineComponent | PhysicsComponent | ColliderComponent | PhysicsBodyComponent | VelocityComponent} ComponentsSystem
  */
@@ -537,5 +615,9 @@ export type ComponentsSystem = ScriptComponent
     | PhysicsComponent
     | ColliderComponent
     | PhysicsBodyComponent
-    | VelocityComponent;
+    | VelocityComponent
+    | CameraComponent
+    | CameraFollowComponent
+    | CameraBoundsComponent
+    | CameraEffectsComponent;
 
