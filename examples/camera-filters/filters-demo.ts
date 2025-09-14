@@ -155,7 +155,7 @@ class CameraFiltersDemo {
 
     private applyFilters(): void {
         // Construir string de filtro CSS combinando todos los filtros activos
-        let filterString = '';
+        // let filterString = '';
         const filters: string[] = [];
 
         if (this.activeFilters.has('sepia')) {

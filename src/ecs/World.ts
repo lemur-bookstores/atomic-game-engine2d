@@ -4,9 +4,9 @@ import { FunctionalSystem } from './FunctionalSystem'
 import { ReactSystem } from '@/core/ecs/ReactSystem';
 import { WORLD_EVENTS } from '@/types/event-const';
 import { EventSystem } from '../core/EventSystem';
-import { HierarchySystem } from './components/_hierarchy/HierarchySystem';
+import { HierarchySystem } from './components/hierarchy/HierarchySystem';
+import { HierarchyUtils } from './components/hierarchy/HierarchyUtils';
 import { Entity } from './Entity';
-import { HierarchyUtils } from './components/_hierarchy/HierarchyUtils';
 
 type Systems = FunctionalSystem | ReactSystem;
 
