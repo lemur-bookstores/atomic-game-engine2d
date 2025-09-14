@@ -51,6 +51,8 @@ export type FilterType =
     | 'vignette';
 
 export type BlendMode = 'normal' | 'multiply' | 'screen' | 'overlay' | 'darken' | 'lighten';
+
+export type Easing = 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
 /**
 * Configuración base para filtros
 */
@@ -59,7 +61,7 @@ export interface FilterConfig {
     intensity: number; // 0.0 a 1.0
     enabled: boolean;
     duration?: number; // Para filtros temporales (ms)
-    easing?: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+    easing?: Easing;
 }
 
 /**
