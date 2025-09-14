@@ -581,6 +581,7 @@ export interface CameraBoundsComponent extends Component {
  * @property {'cameraEffects'} declare type - Tipo del componente
  * @property {Object} shake - Configuración del efecto de sacudida
  * @property {Object} screenEffects - Efectos en pantalla (destello, desvanecimiento, zoom)
+ * @property {Map<string, CustomEffect>} customEffects - Efectos personalizados
  */
 export interface CameraEffectsComponent extends Component {
     type: 'cameraEffects';
@@ -589,13 +590,23 @@ export interface CameraEffectsComponent extends Component {
         duration: number;
         frequency: number;
         decay: number;
-        active: boolean;
+        active?: boolean;
     };
     screenEffects: {
         flash?: { color: Color, duration: number, intensity: number };
         fade?: { color: Color, duration: number, direction: 'in' | 'out' };
         zoom?: { targetZoom: number, duration: number, easing: string };
     };
+    customEffects: Map<string, CustomEffect>;
+}
+
+/**
+ * Interfaz para efectos personalizados de cámara
+ */
+export interface CustomEffect {
+    duration: number;
+    properties: Map<string, any>;
+    updateFunction?: (effect: CustomEffect, deltaTime: number) => void;
 }
 
 /**

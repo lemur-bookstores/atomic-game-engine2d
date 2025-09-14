@@ -1,5 +1,5 @@
 import { FunctionalSystem } from "@/ecs/FunctionalSystem";
-import { EntityElement, ComponentType, CameraEffectsComponent, TransformComponent, CameraComponent } from "@/types";
+import { EntityElement, ComponentType, TransformComponent, CameraComponent, CameraEffectsComponent, CustomEffect } from "@/types";
 import { Vector2 } from "@/math";
 
 export class CameraEffectsSystem extends FunctionalSystem {
@@ -20,10 +20,11 @@ export class CameraEffectsSystem extends FunctionalSystem {
 
             // Procesar efectos de pantalla
             this.processScreenEffects(effectsComponent, deltaTime);
-        }
-    }
 
-    private processScreenShake(effects: CameraEffectsComponent, transform: TransformComponent, deltaTime: number): void {
+            // Procesar efectos personalizados
+            this.processCustomEffects(effectsComponent, transformComponent, deltaTime);
+        }
+    } private processScreenShake(effects: CameraEffectsComponent, transform: TransformComponent, deltaTime: number): void {
         const shake = effects.shake;
 
         if (!shake.active || shake.intensity <= 0) {
@@ -132,5 +133,65 @@ export class CameraEffectsSystem extends FunctionalSystem {
             duration,
             direction
         };
+    }
+
+    private processCustomEffects(effects: CameraEffectsComponent, _transform: TransformComponent, deltaTime: number): void {
+        const expiredEffects: string[] = [];
+
+        for (const [name, effect] of effects.customEffects) {
+            // Ejecutar función personalizada si existe
+            if (effect.updateFunction) {
+                effect.updateFunction(effect, deltaTime);
+            }
+
+            // Actualizar duración
+            effect.duration -= deltaTime;
+
+            // Marcar para eliminación si expiró
+            if (effect.duration <= 0) {
+                expiredEffects.push(name);
+            }
+        }
+
+        // Eliminar efectos expirados
+        for (const name of expiredEffects) {
+            effects.customEffects.delete(name);
+        }
+    }
+
+    /**
+     * Añade un efecto personalizado a una cámara
+     */
+    public addCustomEffect(entity: EntityElement, name: string, effect: CustomEffect): void {
+        const effectsComponent = entity.getComponent('cameraEffects') as CameraEffectsComponent;
+        if (!effectsComponent) {
+            return;
+        }
+
+        effectsComponent.customEffects.set(name, effect);
+    }
+
+    /**
+     * Remueve un efecto personalizado
+     */
+    public removeCustomEffect(entity: EntityElement, name: string): void {
+        const effectsComponent = entity.getComponent('cameraEffects') as CameraEffectsComponent;
+        if (!effectsComponent) {
+            return;
+        }
+
+        effectsComponent.customEffects.delete(name);
+    }
+
+    /**
+     * Obtiene un efecto personalizado por nombre
+     */
+    public getCustomEffect(entity: EntityElement, name: string): CustomEffect | undefined {
+        const effectsComponent = entity.getComponent('cameraEffects') as CameraEffectsComponent;
+        if (!effectsComponent) {
+            return undefined;
+        }
+
+        return effectsComponent.customEffects.get(name);
     }
 }
