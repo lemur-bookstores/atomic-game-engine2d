@@ -6,6 +6,12 @@ import { CameraEffectsSystem } from '@/ecs/components/camera/CameraEffectsSystem
 import { CameraBoundsSystem } from '@/ecs/components/camera/CameraBoundsSystem';
 import { Entity } from '@/ecs/Entity';
 import { Vector2 } from '@/math';
+import {
+    CameraComponent,
+    CameraEffectsComponent,
+    CameraFollowComponent,
+    TransformComponent
+} from '@/types';
 
 describe('Camera Entity System', () => {
     let cameraEntity: CameraEntity;
@@ -31,7 +37,8 @@ describe('Camera Entity System', () => {
             expect(cameraEntity.hasComponent('camera')).toBe(true);
             expect(cameraEntity.hasComponent('transform')).toBe(true);
 
-            const cameraComponent = cameraEntity.getComponent('camera');
+            const cameraComponent = cameraEntity.getComponent<CameraComponent>('camera');
+            if (!cameraComponent) throw new Error('Camera component is missing');
             expect(cameraComponent).toBeDefined();
             expect(cameraComponent.type).toBe('camera');
             expect(cameraComponent.zoom).toBe(1);
@@ -48,7 +55,8 @@ describe('Camera Entity System', () => {
                     decay: 0.9,
                     active: false
                 },
-                screenEffects: {}
+                screenEffects: {},
+                customEffects: new Map()
             });
 
             expect(cameraEntity.hasComponent('cameraEffects')).toBe(true);
@@ -57,7 +65,9 @@ describe('Camera Entity System', () => {
 
     describe('CameraSystem', () => {
         it('should manage active cameras', () => {
-            const cameraComponent = cameraEntity.getComponent('camera');
+            const cameraComponent = cameraEntity.getComponent('camera') as CameraComponent;
+            if (!cameraComponent) throw new Error('Camera component not found');
+
             cameraComponent.isActive = true;
 
             cameraSystem.update([cameraEntity], 0.016);
@@ -85,17 +95,24 @@ describe('Camera Entity System', () => {
                 offset: new Vector2(0, 0)
             });
 
-            const cameraComponent = cameraEntity.getComponent('camera');
+            const cameraComponent = cameraEntity.getComponent<CameraComponent>('camera');
+            if (!cameraComponent) throw new Error('Camera component not found');
             cameraComponent.isActive = true;
         });
 
         it('should follow target entity', () => {
-            const initialCameraPos = cameraEntity.getComponent('transform').position;
-            const targetPos = targetEntity.getComponent('transform').position;
+            const initialCameraTransform = cameraEntity.getComponent<TransformComponent>('transform');
+            const targetTransform = targetEntity.getComponent<TransformComponent>('transform');
+
+            if (!initialCameraTransform || !targetTransform) {
+                throw new Error('Transform components not found');
+            }
+
+            const initialCameraPos = new Vector2(initialCameraTransform.position.x, initialCameraTransform.position.y);
 
             followSystem.update([cameraEntity], 0.016);
 
-            const finalCameraPos = cameraEntity.getComponent('transform').position;
+            const finalCameraPos = initialCameraTransform.position;
 
             // Camera should move towards target
             expect(finalCameraPos.x).not.toBe(initialCameraPos.x);
@@ -103,10 +120,14 @@ describe('Camera Entity System', () => {
         });
 
         it('should respect dead zone', () => {
-            const followComponent = cameraEntity.getComponent('cameraFollow');
+            const followComponent = cameraEntity.getComponent('cameraFollow') as CameraFollowComponent;
+            if (!followComponent) throw new Error('Follow component not found');
+
             followComponent.deadZone = { width: 50, height: 50 };
 
-            const cameraTransform = cameraEntity.getComponent('transform');
+            const cameraTransform = cameraEntity.getComponent('transform') as TransformComponent;
+            if (!cameraTransform) throw new Error('Camera transform not found');
+
             cameraTransform.position = new Vector2(90, 90); // Within dead zone
 
             const initialPos = new Vector2(cameraTransform.position.x, cameraTransform.position.y);
@@ -134,32 +155,39 @@ describe('Camera Entity System', () => {
                     decay: 0.9,
                     active: false
                 },
-                screenEffects: {}
+                screenEffects: {},
+                customEffects: new Map()
             });
 
-            const cameraComponent = cameraEntity.getComponent('camera');
+            const cameraComponent = cameraEntity.getComponent('camera') as CameraComponent;
+            if (!cameraComponent) throw new Error('Camera component not found');
             cameraComponent.isActive = true;
         });
 
         it('should trigger screen shake', () => {
             effectsSystem.triggerShake(cameraEntity, 10, 0.5, 60);
 
-            const effectsComponent = cameraEntity.getComponent('cameraEffects');
+            const effectsComponent = cameraEntity.getComponent('cameraEffects') as CameraEffectsComponent;
+            if (!effectsComponent) throw new Error('Effects component not found');
+
             expect(effectsComponent.shake.active).toBe(true);
             expect(effectsComponent.shake.intensity).toBe(10);
             expect(effectsComponent.shake.duration).toBe(0.5);
         });
 
         it('should apply screen shake to camera position', () => {
+            const cameraTransform = cameraEntity.getComponent('transform') as TransformComponent;
+            if (!cameraTransform) throw new Error('Camera transform not found');
+
             const initialPos = new Vector2(
-                cameraEntity.getComponent('transform').position.x,
-                cameraEntity.getComponent('transform').position.y
+                cameraTransform.position.x,
+                cameraTransform.position.y
             );
 
             effectsSystem.triggerShake(cameraEntity, 10, 1.0, 60);
             effectsSystem.update([cameraEntity], 0.016);
 
-            const finalPos = cameraEntity.getComponent('transform').position;
+            const finalPos = cameraTransform.position;
 
             // Position should be different due to shake
             expect(finalPos.x).not.toBe(initialPos.x);
@@ -179,12 +207,15 @@ describe('Camera Entity System', () => {
                 softBounds: false
             });
 
-            const cameraComponent = cameraEntity.getComponent('camera');
+            const cameraComponent = cameraEntity.getComponent('camera') as CameraComponent;
+            if (!cameraComponent) throw new Error('Camera component not found');
             cameraComponent.isActive = true;
         });
 
         it('should clamp camera position to bounds', () => {
-            const transform = cameraEntity.getComponent('transform');
+            const transform = cameraEntity.getComponent('transform') as TransformComponent;
+            if (!transform) throw new Error('Transform component not found');
+
             transform.position = new Vector2(-1000, -1000); // Outside bounds
 
             boundsSystem.update([cameraEntity], 0.016);
@@ -195,7 +226,9 @@ describe('Camera Entity System', () => {
         });
 
         it('should detect if camera is within bounds', () => {
-            const transform = cameraEntity.getComponent('transform');
+            const transform = cameraEntity.getComponent('transform') as TransformComponent;
+            if (!transform) throw new Error('Transform component not found');
+
             transform.position = new Vector2(400, 300); // Center of bounds
 
             expect(boundsSystem.isWithinBounds(cameraEntity)).toBe(true);

@@ -113,6 +113,7 @@ export class CameraSystem extends FunctionalSystem {
         if (camera) {
             // Set highest priority
             const maxPriority = Math.max(
+                0, // Ensure minimum priority of 1
                 ...this.activeCameras.map(cam => {
                     const c = cam.getComponent<CameraComponent>('camera');
                     return c?.priority || 0;
@@ -120,6 +121,14 @@ export class CameraSystem extends FunctionalSystem {
             );
             camera.priority = maxPriority + 1;
             camera.isActive = true;
+
+            // Update main camera immediately
+            this.mainCamera = entity;
+
+            // Add to active cameras if not already there
+            if (!this.activeCameras.includes(entity)) {
+                this.activeCameras.push(entity);
+            }
         }
     }
 }
