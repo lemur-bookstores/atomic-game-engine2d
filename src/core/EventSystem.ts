@@ -3,6 +3,8 @@
 /**
  * Event system for handling game events using the Observer pattern
  */
+import { AllEventTypes } from '@/types/event-names';
+import { EventCallback, GameEvent } from '@/types';
 import { Logger } from './Logger';
 
 export class EventSystem {

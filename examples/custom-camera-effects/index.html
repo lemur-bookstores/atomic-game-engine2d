@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Efectos Personalizados de Cámara - Atomic Game Engine 2D</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      #gameCanvas {
+        border: 2px solid #333;
+        display: block;
+      }
+      .controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .controls button {
+        margin: 5px;
+        padding: 8px 12px;
+        background: #444;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .controls button:hover {
+        background: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="controls">
+      <h3>Efectos de Cámara Personalizados</h3>
+      <button onclick="triggerShake()">Shake</button>
+      <button onclick="triggerFlash()">Flash</button>
+      <button onclick="triggerFade()">Fade</button>
+      <button onclick="triggerWaveEffect()">Efecto Onda</button>
+      <button onclick="triggerPulseEffect()">Efecto Pulso</button>
+      <button onclick="triggerSpiralEffect()">Efecto Espiral</button>
+      <p>Usa WASD para mover la cámara</p>
+    </div>
+    <script type="module" src="./demo.ts"></script>
+  </body>
+</html>

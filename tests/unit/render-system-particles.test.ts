@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { RenderSystem } from '../../src/graphics/RenderSystem';
-import { ParticleSystem } from '../../src/particles/ParticleSystem';
+import { ParticleSystem } from '@/ecs/components';
 
 class DummyRenderer {
     clear() { }

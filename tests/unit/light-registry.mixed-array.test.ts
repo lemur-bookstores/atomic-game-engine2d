@@ -1,5 +1,5 @@
+import { LightRegistry } from '@/ecs/components';
 import { describe, it, expect } from 'vitest';
-import { LightRegistry } from '../../src/light/LightRegistry';
 
 describe('LightRegistry.normalizeLayerTarget mixed arrays', () => {
     it('handles mixed arrays of names and numbers when resolver present', () => {

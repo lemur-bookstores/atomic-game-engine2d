@@ -55,7 +55,7 @@ describe('AssetManager sprite-sheet library integration', () => {
 
     it('loads sprite sheet using grid library mode', async () => {
         const options: SpriteSheetLibraryOptions = {
-            useSpriteSheetLib: true,
+
             libraryMode: 'grid',
             grid: {
                 frameWidth: 32,
@@ -64,14 +64,8 @@ describe('AssetManager sprite-sheet library integration', () => {
             namingPattern: 'frame_{index}',
         };
 
-        const spriteSheet = await assetManager.loadSpriteSheet(
-            'test-sprite',
-            'test.png',
-            undefined,
-            undefined,
-            undefined,
-            options
-        );
+        const { spriteSheetWithLibrary } = await assetManager.loadTexture('test-sprite', 'test.png');
+        const spriteSheet = await spriteSheetWithLibrary(options);
 
         expect(spriteSheet).toBeDefined();
         expect(spriteSheet.getFrameCount()).toBeGreaterThan(0);
@@ -80,7 +74,7 @@ describe('AssetManager sprite-sheet library integration', () => {
 
     it('loads sprite sheet using dynamic library mode', async () => {
         const options: SpriteSheetLibraryOptions = {
-            useSpriteSheetLib: true,
+
             libraryMode: 'dynamic',
             dynamic: {
                 alphaThreshold: 128,
@@ -119,7 +113,7 @@ describe('AssetManager sprite-sheet library integration', () => {
 
     it('throws error when grid mode is selected but frame dimensions are missing', async () => {
         const options: SpriteSheetLibraryOptions = {
-            useSpriteSheetLib: true,
+
             libraryMode: 'grid',
             grid: {
                 frameWidth: 0,
@@ -152,7 +146,7 @@ describe('AssetManager sprite-sheet library integration', () => {
         mockLoader.loadJSON = vi.fn().mockResolvedValue(mockAtlasData);
 
         const options: SpriteSheetLibraryOptions = {
-            useSpriteSheetLib: true,
+
             libraryMode: 'grid',
             grid: { frameWidth: 16, frameHeight: 16 },
         };

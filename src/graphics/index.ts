@@ -6,18 +6,12 @@ export { Canvas2DRenderer } from './Canvas2DRenderer';
 // Texture and sprite management
 export { Texture } from './Texture';
 export { Sprite } from './Sprite';
-export type { SpriteComponent } from './Sprite';
 export { SpriteSheet } from './SpriteSheet';
-export type { SpriteFrame, Animation } from './SpriteSheet';
-
-// Animation system
-export { AnimationState } from './Animation';
-export type { AnimationComponent } from './Animation';
-export { AnimationSystem } from './AnimationSystem';
+export type { SpriteFrame } from './SpriteSheet';
 
 // Rendering system
 export { RenderSystem } from './RenderSystem';
-export type { TransformComponent, RenderStats } from './RenderSystem';
+export type { RenderStats } from './RenderSystem';
 
 // Type aliases for convenience
 export type Renderer = import('./Renderer').RenderStrategy;

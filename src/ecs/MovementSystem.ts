@@ -1,11 +1,11 @@
-import { System } from './System';
-import { Entity } from './Entity';
-import { PhysicsComponent, TransformComponent } from './Component';
+import { ComponentType, EntityElement } from '@/types';
+import { TransformComponent, PhysicsComponent } from '@/types/components';
+import { FunctionalSystem } from './FunctionalSystem';
 
-export class MovementSystem extends System {
-    readonly requiredComponents = ['transform', 'physics'];
+export class MovementSystem extends FunctionalSystem {
+    readonly requiredComponents: Array<ComponentType> = ['transform', 'physics'];
 
-    update(entities: Entity[], deltaTime: number): void {
+    update(entities: EntityElement[], deltaTime: number): void {
         const movableEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
 
         movableEntities.forEach(entity => {

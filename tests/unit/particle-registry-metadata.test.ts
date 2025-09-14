@@ -1,6 +1,5 @@
+import { BasicEmitter, ParticleRegistry } from '@/ecs/components';
 import { describe, it, expect } from 'vitest';
-import { ParticleRegistry } from '../../src/particles/ParticleRegistry';
-import { BasicEmitter } from '../../src/particles/BuiltInEmitters';
 
 describe('ParticleRegistry metadata', () => {
     it('registers built-in emitter and extracts metadata', () => {

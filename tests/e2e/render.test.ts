@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Entity } from '../../src/ecs/Entity';
-import { System } from '../../src/ecs/System';
+import { ComponentType, EntityElement } from '@/types';
+import { FunctionalSystem } from '../../src/ecs/FunctionalSystem';
 import { World } from '../../src/ecs/World';
-import { TransformComponent, SpriteComponent } from '../../src/ecs/Component';
 import { EventSystem } from '../../src/core/EventSystem';
+import { TransformComponent, SpriteComponent } from '@/types/components';
 
-class RenderSystem extends System {
-    readonly requiredComponents = ['transform', 'sprite'];
+class RenderSystem extends FunctionalSystem {
+    readonly requiredComponents: Array<ComponentType> = ['transform', 'sprite'];
 
     // Mock WebGL context for testing
     private gl: WebGLRenderingContext | null = null;
@@ -26,18 +26,18 @@ class RenderSystem extends System {
         }
     }
 
-    update(entities: Entity[], _deltaTime: number): void {
+    update(entities: EntityElement[], _deltaTime: number): void {
         if (!this.gl || !this.isGLMocked) return;
 
         const renderableEntities = this.getEntitiesWithComponents(entities, this.requiredComponents);
 
         for (const entity of renderableEntities) {
-            const transform = entity.getComponent('transform') as TransformComponent;
-            const sprite = entity.getComponent('sprite') as SpriteComponent;
+            const transform = entity.getComponent<TransformComponent>('transform');
+            const sprite = entity.getComponent<SpriteComponent>('sprite');
 
             // In a real implementation, this would perform actual WebGL rendering
             // For testing, we just verify that the components are valid
-            this.validateRenderableEntity(transform, sprite);
+            this.validateRenderableEntity(transform as TransformComponent, sprite as SpriteComponent);
         }
     }
 
@@ -113,7 +113,7 @@ describe('Render System Tests', () => {
     it('should handle multiple renderable entities', () => {
         const world = new World();
         const numEntities = 3;
-        const entities: Entity[] = [];
+        const entities: EntityElement[] = [];
 
         // Create multiple entities with different transforms but same sprite
         for (let i = 0; i < numEntities; i++) {

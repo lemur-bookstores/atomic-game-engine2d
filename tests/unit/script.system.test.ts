@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Entity } from '../../src/ecs/Entity';
-import { scriptRegistry } from '../../src/ecs/ScriptRegistry';
-import { ScriptSystem } from '../../src/ecs/ScriptSystem';
-import { createScriptComponent } from '../../src/ecs/ScriptComponent';
+import { scriptRegistry } from '../../src/ecs/components/script/ScriptRegistry';
+import { ScriptSystem } from '../../src/ecs/components/script/ScriptSystem';
+import { createScriptComponent } from '../../src/ecs/components/script/ScriptComponent';
 import { EventSystem } from '../../src/core/EventSystem';
 import { SCENE_EVENTS } from '../../src/types/event-const';
 

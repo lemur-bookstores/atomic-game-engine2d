@@ -1,9 +1,8 @@
 import { expect, test, beforeEach } from 'vitest';
-import { AnimationStateMachineSystem, registerStateMachine } from '../../src/graphics/AnimationStateMachine';
-import { Entity } from '../../src/ecs/Entity';
-import { AnimationComponent } from '../../src/graphics/Animation';
-import { AnimationStateMachineComponent } from '../../src/types/anim-state';
+import { AnimationStateMachineSystem, registerStateMachine } from '../../src/ecs/components/animation/AnimationStateMachine';
 import { EventSystem } from '../../src/core/EventSystem';
+import { Entity } from '../../src/ecs';
+import { AnimationComponent, AnimationStateMachineComponent, InputComponent } from '@/types/components';
 
 beforeEach(() => {
     EventSystem.reset();
@@ -53,7 +52,7 @@ test('StateMachine transitions by condition', () => {
     expect(machine.currentState).toBe('idle');
 
     // simulate input moving
-    entity.addComponent({ type: 'input', moving: true });
+    entity.addComponent({ type: 'input', moving: true } as unknown as InputComponent);
     system.update([entity], 0.016);
     expect(machine.currentState).toBe('move');
     expect(animComp.currentAnimation).toBe('walk');

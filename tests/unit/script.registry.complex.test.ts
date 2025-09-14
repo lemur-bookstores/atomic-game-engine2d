@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { scriptRegistry } from '../../src/ecs/ScriptRegistry';
-
-import { ScriptInstance } from '../../src/ecs/ScriptComponent';
+import { scriptRegistry } from '../../src/ecs/components';
+import { ScriptInstance } from '@/types/components';
 
 class VectorScript implements ScriptInstance { public entity?: any; public position = { x: 0, y: 0 }; }
 

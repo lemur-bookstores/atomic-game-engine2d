@@ -1,3 +1,4 @@
+import { Vector2D } from '@/types';
 import { Vector2 } from '../math/Vector2';
 
 export interface CameraFollowOptions {
@@ -5,12 +6,14 @@ export interface CameraFollowOptions {
     offset?: Vector2;
 }
 
+type Target = { position: Vector2D;[key: string]: any } | null | undefined;
+
 export class Camera2D {
     public position: Vector2 = new Vector2(0, 0);
     public zoom: number = 1;
     public rotation: number = 0; // radians
     public viewport = { x: 0, y: 0, width: 800, height: 600 };
-    private target: any = null;
+    private target: Target = null;
     private followOptions: CameraFollowOptions = { lerp: 1, offset: new Vector2(0, 0) };
     private bounds: { x: number; y: number; width: number; height: number } | null = null;
 
@@ -37,7 +40,7 @@ export class Camera2D {
         return new Vector2(x, y);
     }
 
-    follow(target: any, options?: CameraFollowOptions) {
+    follow(target: Target, options?: CameraFollowOptions) {
         this.target = target;
         this.followOptions = { ...this.followOptions, ...(options ?? {}) };
     }
@@ -52,7 +55,7 @@ export class Camera2D {
 
     update(delta: number) {
         if (this.target) {
-            const targetPos: Vector2 = this.target.position || this.target;
+            const targetPos: Vector2D = this.target.position;
             const desired = new Vector2(
                 targetPos.x + (this.followOptions.offset?.x ?? 0),
                 targetPos.y + (this.followOptions.offset?.y ?? 0)

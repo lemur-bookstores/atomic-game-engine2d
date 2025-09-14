@@ -1,4 +1,4 @@
-# 🎮 GameEngine 2D
+# 🎮 Atomic Game Engine 2D
 
 Un motor de juegos 2D ligero y modular para navegadores web, construido con TypeScript y diseñado con una arquitectura ECS (Entity-Component-System).
 

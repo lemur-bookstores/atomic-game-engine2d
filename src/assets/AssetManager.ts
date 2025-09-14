@@ -1,22 +1,19 @@
 import { EventSystem } from '../core/EventSystem';
-import { AssetLoader, AssetType, AssetLoadEvent } from './AssetLoader';
+import { GameEvent } from '@/types';
+import { AssetLoader } from './AssetLoader';
 import { Texture, SpriteSheet } from '../graphics';
 import { ASSET_EVENTS } from '../types/event-const';
-import { SpriteSheetLibrary, GridDetectionConfig, DynamicDetectionConfig } from '../libs/sprite-sheet';
-import { convertNormalizedToPixelFrames, createImageDataFromCanvas, createCanvasFromImage } from '../libs/sprite-sheet/engine-adapter';
+import { SpriteSheetLibrary, GridDetectionConfig, DynamicDetectionConfig } from '../math/libs/sprite-sheet';
+import { convertNormalizedToPixelFrames, createImageDataFromCanvas, createCanvasFromImage } from '../math/libs/sprite-sheet/engine-adapter';
 import { Logger } from '../core/Logger';
-
-interface Asset {
-    type: AssetType;
-    data: any;
-}
+import type { AssetType, AssetLoadEvent, Asset } from './types';
 
 interface SpriteSheetLibraryBase {
-    useSpriteSheetLib?: boolean;
+    libraryMode?: 'dynamic' | 'grid';
     namingPattern?: string;
 }
 
-interface SpriteSheetLibraryDynamic {
+interface SpriteSheetLibraryDynamic extends SpriteSheetLibraryBase {
     libraryMode: 'dynamic';
     dynamic?: {
         alphaThreshold?: number;
@@ -25,7 +22,7 @@ interface SpriteSheetLibraryDynamic {
     };
 }
 
-interface SpriteSheetLibraryGrid {
+interface SpriteSheetLibraryGrid extends SpriteSheetLibraryBase {
     libraryMode: 'grid';
     grid: {
         frameWidth: number;
@@ -37,7 +34,7 @@ interface SpriteSheetLibraryGrid {
     };
 }
 
-export type SpriteSheetLibraryOptions = SpriteSheetLibraryDynamic & SpriteSheetLibraryBase | SpriteSheetLibraryGrid & SpriteSheetLibraryBase;
+export type SpriteSheetLibraryOptions = SpriteSheetLibraryDynamic | SpriteSheetLibraryGrid;
 
 export class AssetManager {
     private static instance: AssetManager;
@@ -58,6 +55,13 @@ export class AssetManager {
         this.eventSystem = EventSystem.getInstance();
         this.registerBuiltInAssetMappers();
         this.setupEventListeners();
+    }
+
+    static getInstance(): AssetManager {
+        if (!AssetManager.instance) {
+            AssetManager.instance = new AssetManager();
+        }
+        return AssetManager.instance;
     }
 
     /**
@@ -99,13 +103,6 @@ export class AssetManager {
         this.registerAssetMapper('json', (v: any) => typeof v === 'object' && !v.getFrameCount && !(v as any).width, (v: any) => ({ keys: Object.keys(v) }), 'JSON data');
     }
 
-    static getInstance(): AssetManager {
-        if (!AssetManager.instance) {
-            AssetManager.instance = new AssetManager();
-        }
-        return AssetManager.instance;
-    }
-
     private setupEventListeners(): void {
         this.eventSystem.on(ASSET_EVENTS.LOADED, (event: GameEvent) => {
             const assetEvent = event.data as AssetLoadEvent;
@@ -123,18 +120,59 @@ export class AssetManager {
         });
     }
 
-    async loadTexture(name: string, path: string): Promise<Texture> {
+    async loadTexture(name: string, path: string) {
+        let texture: Texture;
         if (this.assets.has(name)) {
             const asset = this.assets.get(name)!;
             if (asset.type === 'texture') {
-                return asset.data as Texture;
+                texture = asset.data;
+            } else {
+                throw new Error(`Asset ${name} exists but is not a texture`);
             }
-            throw new Error(`Asset ${name} exists but is not a texture`);
         }
 
-        const texture = await this.loader.loadTexture(path);
+        texture = await this.loader.loadTexture(path);
         this.assets.set(name, { type: 'texture', data: texture });
-        return texture;
+
+        const setSpriteSheet = (spriteSheet: SpriteSheet) => {
+            this.assets.set(name, { type: 'spritesheet', data: texture, spriteSheet });
+            return spriteSheet;
+        }
+
+        return {
+            texture,
+            frameSizeToSpriteSheet: (frameWidth: number, frameHeight: number) => setSpriteSheet(this.textureFrameSizeToSpriteSheet(texture, frameWidth, frameHeight)),
+            withAtlasToSpriteSheet: async (atlasPath: string) => await this.textureWithAtlasToSpriteSheet(texture, atlasPath).then(setSpriteSheet),
+            spriteSheetWithLibrary: async (options: SpriteSheetLibraryOptions) => await this.createSpriteSheetWithLibrary(texture, options).then(setSpriteSheet),
+        };
+    }
+
+    async loadJSON(name: string, path: string): Promise<any> {
+        if (this.assets.has(name)) {
+            const asset = this.assets.get(name)!;
+            if (asset.type === 'json') {
+                return asset.data;
+            }
+            throw new Error(`Asset ${name} exists but is not JSON`);
+        }
+
+        const data = await this.loader.loadJSON(path);
+        this.assets.set(name, { type: 'json', data });
+        return data;
+    }
+
+    async loadAudio(name: string, path: string): Promise<AudioBuffer> {
+        if (this.assets.has(name)) {
+            const asset = this.assets.get(name)!;
+            if (asset.type === 'audio') {
+                return asset.data as AudioBuffer;
+            }
+            throw new Error(`Asset ${name} exists but is not audio`);
+        }
+
+        const audioBuffer = await this.loader.loadAudio(path);
+        this.assets.set(name, { type: 'audio', data: audioBuffer });
+        return audioBuffer;
     }
 
     async loadSpriteSheet(
@@ -145,24 +183,119 @@ export class AssetManager {
         frameHeight?: number,
         options?: SpriteSheetLibraryOptions
     ): Promise<SpriteSheet> {
-        const texture = await this.loadTexture(`${name}_texture`, texturePath);
 
+        const { texture } = await this.loadTexture(name, texturePath);
+        const spriteSheet = await this.textureToSpriteSheet(
+            texture,
+            atlasPath,
+            frameWidth,
+            frameHeight,
+            options,
+        );
+
+        this.assets.set(name, { type: 'spritesheet', data: texture, spriteSheet });
+        return spriteSheet;
+    }
+
+    async textureToSpriteSheet(
+        texture: Texture,
+        atlasPath?: string,
+        frameWidth?: number,
+        frameHeight?: number,
+        options?: SpriteSheetLibraryOptions
+    ): Promise<SpriteSheet> {
         let spriteSheet: SpriteSheet;
 
         // Use sprite-sheet library if enabled and no atlas path provided
-        if (options?.useSpriteSheetLib && !atlasPath) {
+        if (options) {
             spriteSheet = await this.createSpriteSheetWithLibrary(texture, options);
         } else if (atlasPath) {
-            const atlasData = await this.loader.loadJSON(atlasPath);
-            spriteSheet = SpriteSheet.fromAtlas(texture, atlasData);
+            spriteSheet = await this.textureWithAtlasToSpriteSheet(texture, atlasPath);
         } else if (frameWidth && frameHeight) {
-            spriteSheet = new SpriteSheet(texture, frameWidth, frameHeight);
+            spriteSheet = this.textureFrameSizeToSpriteSheet(texture, frameWidth, frameHeight);
         } else {
             throw new Error('Must specify either atlas path, frame dimensions, or use sprite-sheet library');
         }
 
-        this.assets.set(name, { type: 'spritesheet', data: spriteSheet });
         return spriteSheet;
+    }
+
+    textureFrameSizeToSpriteSheet(
+        texture: Texture,
+        frameWidth: number,
+        frameHeight: number,
+    ): SpriteSheet {
+        const spriteSheet = new SpriteSheet(texture, frameWidth, frameHeight);
+        return spriteSheet;
+    }
+
+    async textureWithAtlasToSpriteSheet(
+        texture: Texture,
+        atlasPath: string,
+    ): Promise<SpriteSheet> {
+        const atlasData = await this.loader.loadJSON(atlasPath);
+        const spriteSheet = SpriteSheet.fromAtlas(texture, atlasData);
+        return spriteSheet;
+    }
+
+    getTexture(name: string): Texture | undefined {
+        const asset = this.assets.get(name);
+        if (asset?.type === 'texture') {
+            return asset.data as Texture;
+        }
+        return undefined;
+    }
+
+    getSpriteSheet(name: string): SpriteSheet | undefined {
+        const asset = this.assets.get(name);
+        if (asset?.type === 'spritesheet' && asset.spriteSheet) {
+            return asset.spriteSheet;
+        }
+        return undefined;
+    }
+
+    getJSON(name: string): any | undefined {
+        const asset = this.assets.get(name);
+        if (asset?.type === 'json') {
+            return asset.data;
+        }
+        return undefined;
+    }
+
+    getAudio(name: string): AudioBuffer | undefined {
+        const asset = this.assets.get(name);
+        if (asset?.type === 'audio') {
+            return asset.data as AudioBuffer;
+        }
+        return undefined;
+    }
+
+    unload(name: string): boolean {
+        return this.assets.delete(name);
+    }
+
+    unloadAll(): void {
+        this.assets.clear();
+    }
+
+    async preloadAssets(manifest: Array<{ name: string; type: AssetType; path: string }>): Promise<void> {
+        const loadPromises = manifest.map(async ({ name, type, path }) => {
+            switch (type) {
+                case 'texture':
+                    await this.loadTexture(name, path);
+                    break;
+                case 'json':
+                    await this.loadJSON(name, path);
+                    break;
+                case 'audio':
+                    await this.loadAudio(name, path);
+                    break;
+                default:
+                    throw new Error(`Unsupported asset type: ${type}`);
+            }
+        });
+
+        await Promise.all(loadPromises);
     }
 
     private async createSpriteSheetWithLibrary(
@@ -250,91 +383,4 @@ export class AssetManager {
         } as ImageData;
     }
 
-    async loadJSON(name: string, path: string): Promise<any> {
-        if (this.assets.has(name)) {
-            const asset = this.assets.get(name)!;
-            if (asset.type === 'json') {
-                return asset.data;
-            }
-            throw new Error(`Asset ${name} exists but is not JSON`);
-        }
-
-        const data = await this.loader.loadJSON(path);
-        this.assets.set(name, { type: 'json', data });
-        return data;
-    }
-
-    async loadAudio(name: string, path: string): Promise<AudioBuffer> {
-        if (this.assets.has(name)) {
-            const asset = this.assets.get(name)!;
-            if (asset.type === 'audio') {
-                return asset.data as AudioBuffer;
-            }
-            throw new Error(`Asset ${name} exists but is not audio`);
-        }
-
-        const audioBuffer = await this.loader.loadAudio(path);
-        this.assets.set(name, { type: 'audio', data: audioBuffer });
-        return audioBuffer;
-    }
-
-    getTexture(name: string): Texture | undefined {
-        const asset = this.assets.get(name);
-        if (asset?.type === 'texture') {
-            return asset.data as Texture;
-        }
-        return undefined;
-    }
-
-    getSpriteSheet(name: string): SpriteSheet | undefined {
-        const asset = this.assets.get(name);
-        if (asset?.type === 'spritesheet') {
-            return asset.data as SpriteSheet;
-        }
-        return undefined;
-    }
-
-    getJSON(name: string): any | undefined {
-        const asset = this.assets.get(name);
-        if (asset?.type === 'json') {
-            return asset.data;
-        }
-        return undefined;
-    }
-
-    getAudio(name: string): AudioBuffer | undefined {
-        const asset = this.assets.get(name);
-        if (asset?.type === 'audio') {
-            return asset.data as AudioBuffer;
-        }
-        return undefined;
-    }
-
-    unload(name: string): boolean {
-        return this.assets.delete(name);
-    }
-
-    unloadAll(): void {
-        this.assets.clear();
-    }
-
-    async preloadAssets(manifest: Array<{ name: string; type: AssetType; path: string }>): Promise<void> {
-        const loadPromises = manifest.map(async ({ name, type, path }) => {
-            switch (type) {
-                case 'texture':
-                    await this.loadTexture(name, path);
-                    break;
-                case 'json':
-                    await this.loadJSON(name, path);
-                    break;
-                case 'audio':
-                    await this.loadAudio(name, path);
-                    break;
-                default:
-                    throw new Error(`Unsupported asset type: ${type}`);
-            }
-        });
-
-        await Promise.all(loadPromises);
-    }
 }

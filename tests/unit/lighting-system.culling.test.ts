@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { LightingSystem, lightRegistry } from '../../src/light/LightingSystem';
-import { LightRegistry } from '../../src/light/LightRegistry';
+import { LightingSystem, lightRegistry, LightRegistry } from '@/ecs/components';
 import { Scene } from '../../src/core/Scene';
-import '../../src/light/lights';
 
 describe('LightingSystem culling', () => {
     let system: LightingSystem;

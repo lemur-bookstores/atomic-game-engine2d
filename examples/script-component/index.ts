@@ -1,8 +1,8 @@
 import { GameEngine } from '../../src';
 import { Scene } from '../../src/core/Scene';
 import { Entity } from '../../src/ecs/Entity';
-import { scriptRegistry } from '../../src/ecs/ScriptRegistry';
-import { ScriptInstance } from '../../src/ecs/ScriptComponent';
+import { scriptRegistry } from '../../src/ecs/components/script/ScriptRegistry';
+import { ScriptInstance } from '../../src/ecs/components/script/ScriptComponent';
 
 class PlayerController implements ScriptInstance {
     entity: Entity;

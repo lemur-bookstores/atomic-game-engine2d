@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Entity } from '../../src/ecs/Entity';
-import { System } from '../../src/ecs/System';
+import { FunctionalSystem } from '../../src/ecs/FunctionalSystem';
 import { World } from '../../src/ecs/World';
 import { EventSystem } from '../../src/core/EventSystem';
 import { TEST_EVENTS, WORLD_EVENTS } from '../../src/types/event-const';
+import { ComponentType } from '@/types';
 
 describe('Event System Tests', () => {
     let eventSystem: EventSystem;
@@ -94,8 +95,8 @@ describe('Event System Tests', () => {
         const world = new World();
         let systemProcessed = false;
 
-        class TestEventSystem extends System {
-            readonly requiredComponents = [];
+        class TestEventSystem extends FunctionalSystem {
+            readonly requiredComponents: Array<ComponentType> = [];
 
             constructor() {
                 super();
