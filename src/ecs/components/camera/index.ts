@@ -2,5 +2,8 @@ export * from './CameraComponent';
 export * from './CameraEntity';
 export * from './CameraSystem';
 export * from './CameraFollowComponent';
+export * from './CameraFollowSystem';
 export * from './CameraBoundsComponent';
+export * from './CameraBoundsSystem';
 export * from './CameraEffectsComponent';
+export * from './CameraEffectsSystem';
