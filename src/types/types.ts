@@ -23,13 +23,134 @@ export type ComponentType = 'audio'
     | 'camera'
     | 'cameraFollow'
     | 'cameraBounds'
-    | 'cameraEffects';
+    | 'cameraEffects'
+    | 'cameraFilters';
 
 export type TypesHierarchyChangeEvents = 'parent_set'
     | 'parent_removed'
     | 'child_added'
     | 'child_removed';
 
+
+/**
+ * Tipos de filtros disponibles
+ */
+export type FilterType =
+    | 'sepia'
+    | 'grayscale'
+    | 'blur'
+    | 'brightness'
+    | 'contrast'
+    | 'saturation'
+    | 'hue-rotate'
+    | 'invert'
+    | 'sin-city'
+    | 'vintage'
+    | 'pixelate'
+    | 'chromatic-aberration'
+    | 'vignette';
+
+export type BlendMode = 'normal' | 'multiply' | 'screen' | 'overlay' | 'darken' | 'lighten';
+/**
+* Configuración base para filtros
+*/
+export interface FilterConfig {
+    type: FilterType;
+    intensity: number; // 0.0 a 1.0
+    enabled: boolean;
+    duration?: number; // Para filtros temporales (ms)
+    easing?: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+}
+
+/**
+ * Filtros específicos con sus parámetros únicos
+ */
+export interface SepiaFilter extends FilterConfig {
+    type: 'sepia';
+    warmth?: number; // 0.0 a 1.0
+}
+
+export interface GrayscaleFilter extends FilterConfig {
+    type: 'grayscale';
+    luminanceWeights?: { r: number; g: number; b: number };
+}
+
+export interface BlurFilter extends FilterConfig {
+    type: 'blur';
+    radius: number; // Radio del blur en píxeles
+}
+
+export interface BrightnessFilter extends FilterConfig {
+    type: 'brightness';
+    level: number; // -1.0 a 1.0 (0 = normal)
+}
+
+export interface ContrastFilter extends FilterConfig {
+    type: 'contrast';
+    level: number; // 0.0 a 2.0 (1.0 = normal)
+}
+
+export interface SaturationFilter extends FilterConfig {
+    type: 'saturation';
+    level: number; // 0.0 a 2.0 (1.0 = normal)
+}
+
+export interface HueRotateFilter extends FilterConfig {
+    type: 'hue-rotate';
+    degrees: number; // 0 a 360
+}
+
+export interface InvertFilter extends FilterConfig {
+    type: 'invert';
+}
+
+export interface SinCityFilter extends FilterConfig {
+    type: 'sin-city';
+    accentColor: { r: number; g: number; b: number }; // Color que se mantiene
+    threshold: number; // 0.0 a 1.0 - umbral para detectar el color
+}
+
+export interface VintageFilter extends FilterConfig {
+    type: 'vintage';
+    tint: { r: number; g: number; b: number };
+    vignette: number; // 0.0 a 1.0
+    grain: number; // 0.0 a 1.0
+}
+
+export interface PixelateFilter extends FilterConfig {
+    type: 'pixelate';
+    pixelSize: number; // Tamaño del pixel en unidades
+}
+
+export interface ChromaticAberrationFilter extends FilterConfig {
+    type: 'chromatic-aberration';
+    offset: number; // Offset de separación de canales
+}
+
+export interface VignetteFilter extends FilterConfig {
+    type: 'vignette';
+    radius: number; // 0.0 a 1.0
+    softness: number; // 0.0 a 1.0
+    opacity: number; // 0.0 a 1.0
+}
+
+/**
+ * Unión de todos los tipos de filtros
+ */
+export type CameraFilter =
+    | SepiaFilter
+    | GrayscaleFilter
+    | BlurFilter
+    | BrightnessFilter
+    | ContrastFilter
+    | SaturationFilter
+    | HueRotateFilter
+    | InvertFilter
+    | SinCityFilter
+    | VintageFilter
+    | PixelateFilter
+    | ChromaticAberrationFilter
+    | VignetteFilter;
 /**
  * Tipos de cuerpos físicos disponibles en el motor de física
  * @typedef {'static' | 'dynamic' | 'kinematic'} PhysicsBodyType

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Filtros de Cámara - Atomic Game Engine 2D</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #000;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      #gameCanvas {
+        border: 2px solid #333;
+        display: block;
+      }
+      .controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 15px;
+        border-radius: 8px;
+        max-width: 300px;
+      }
+      .controls h3 {
+        margin-top: 0;
+        color: #4caf50;
+      }
+      .filter-group {
+        margin-bottom: 15px;
+      }
+      .filter-group h4 {
+        margin: 10px 0 5px 0;
+        color: #ffc107;
+      }
+      .controls button {
+        margin: 3px;
+        padding: 8px 12px;
+        background: #444;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .controls button:hover {
+        background: #666;
+      }
+      .controls button.active {
+        background: #4caf50;
+      }
+      .preset-btn {
+        background: #2196f3 !important;
+      }
+      .preset-btn:hover {
+        background: #1976d2 !important;
+      }
+      .clear-btn {
+        background: #f44336 !important;
+      }
+      .clear-btn:hover {
+        background: #d32f2f !important;
+      }
+      .slider-group {
+        margin: 8px 0;
+      }
+      .slider-group label {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 3px;
+      }
+      .slider-group input[type="range"] {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="controls">
+      <h3>🎨 Filtros de Cámara</h3>
+
+      <div class="filter-group">
+        <h4>Presets Rápidos</h4>
+        <button class="preset-btn" onclick="applyPreset('Noir')">
+          Film Noir
+        </button>
+        <button class="preset-btn" onclick="applyPreset('Vintage')">
+          Vintage
+        </button>
+        <button class="preset-btn" onclick="applyPreset('Sin City')">
+          Sin City
+        </button>
+        <button class="preset-btn" onclick="applyPreset('Cyberpunk')">
+          Cyberpunk
+        </button>
+        <button class="preset-btn" onclick="applyPreset('Horror')">
+          Horror
+        </button>
+        <button class="clear-btn" onclick="clearAllFilters()">
+          Limpiar Todo
+        </button>
+      </div>
+
+      <div class="filter-group">
+        <h4>Filtros Básicos</h4>
+        <button onclick="toggleFilter('sepia')">Sepia</button>
+        <button onclick="toggleFilter('grayscale')">Escala Grises</button>
+        <button onclick="toggleFilter('invert')">Invertir</button>
+        <button onclick="toggleFilter('blur')">Blur</button>
+      </div>
+
+      <div class="filter-group">
+        <h4>Ajustes de Color</h4>
+        <div class="slider-group">
+          <label>Brillo: <span id="brightnessValue">0</span></label>
+          <input
+            type="range"
+            id="brightnessSlider"
+            min="-100"
+            max="100"
+            value="0"
+            onchange="updateBrightness(this.value)"
+          />
+        </div>
+        <div class="slider-group">
+          <label>Contraste: <span id="contrastValue">100</span>%</label>
+          <input
+            type="range"
+            id="contrastSlider"
+            min="0"
+            max="200"
+            value="100"
+            onchange="updateContrast(this.value)"
+          />
+        </div>
+        <div class="slider-group">
+          <label>Saturación: <span id="saturationValue">100</span>%</label>
+          <input
+            type="range"
+            id="saturationSlider"
+            min="0"
+            max="200"
+            value="100"
+            onchange="updateSaturation(this.value)"
+          />
+        </div>
+        <div class="slider-group">
+          <label>Rotación Tono: <span id="hueValue">0</span>°</label>
+          <input
+            type="range"
+            id="hueSlider"
+            min="0"
+            max="360"
+            value="0"
+            onchange="updateHue(this.value)"
+          />
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h4>Efectos Especiales</h4>
+        <button onclick="toggleFilter('vignette')">Viñeta</button>
+        <button onclick="toggleFilter('pixelate')">Pixelar</button>
+        <button onclick="toggleFilter('chromatic-aberration')">
+          Aberración
+        </button>
+        <button onclick="createSinCityEffect()">Sin City Personalizado</button>
+      </div>
+
+      <p style="font-size: 11px; color: #888">
+        Usa WASD para mover la cámara<br />
+        Los filtros se aplican en tiempo real
+      </p>
+    </div>
+    <script type="module" src="./filters-demo.ts"></script>
+  </body>
+</html>

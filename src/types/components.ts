@@ -1,6 +1,8 @@
 import {
     AnimationDirection,
     AnimationStateBase,
+    BlendMode,
+    CameraFilter,
     Color,
     Component,
     ComponentEntry,
@@ -531,10 +533,15 @@ export interface HierarchyComponent extends Component {
  * @property {number} [priority] - Prioridad de la cámara (para orden de renderizado)
  */
 export interface CameraComponent extends Component {
+    /** Tipo del componente */
     type: 'camera';
+    /** Nivel de zoom de la cámara (1.0 = zoom normal) */
     zoom: number;
+    /** Dimensiones de la ventana de visualización */
     viewport: { width: number, height: number };
+    /** Indica si la cámara está activa para renderizado */
     isActive: boolean;
+    /** Prioridad de la cámara para el orden de renderizado (opcional) */
     priority?: number;
 }
 
@@ -610,6 +617,23 @@ export interface CustomEffect {
 }
 
 /**
+ * Componente de filtros visuales de cámara
+ * @interface CameraFiltersComponent
+ * @extends Component
+ * @property {'cameraFilters'} declare type - Tipo del componente
+ * @property {Map<string, any>} filters - Filtros aplicados a la cámara
+ * @property {boolean} enabled - Si los filtros están habilitados
+ * @property {string} blendMode - Modo de mezcla de filtros
+ */
+export interface CameraFiltersComponent extends Component {
+    type: 'cameraFilters';
+    filters: Map<string, CameraFilter>;
+    renderTarget?: WebGLTexture | HTMLCanvasElement; // WebGLTexture | HTMLCanvasElement
+    enabled: boolean;
+    blendMode: BlendMode;
+}
+
+/**
  * Unión de todos los tipos de componentes disponibles en el sistema
  * @typedef {ScriptComponent | InputComponent | LightComponent | TransformComponent | SpriteComponent | AudioComponent | ParticleComponent | AnimationComponent | AnimationStateMachineComponent | PhysicsComponent | ColliderComponent | PhysicsBodyComponent | VelocityComponent} ComponentsSystem
  */
@@ -630,5 +654,6 @@ export type ComponentsSystem = ScriptComponent
     | CameraComponent
     | CameraFollowComponent
     | CameraBoundsComponent
-    | CameraEffectsComponent;
+    | CameraEffectsComponent
+    | CameraFiltersComponent;
 
