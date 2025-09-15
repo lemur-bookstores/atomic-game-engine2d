@@ -5,7 +5,7 @@ import { Entity } from '../../src/ecs/Entity';
 import { Texture } from '../../src/graphics/Texture';
 import { Color } from '../../src/math/Color';
 import { SpriteComponent, AnimationComponent } from '@/types/components';
-import { AnimationState } from '@/graphics';
+import { AnimationState } from '@/ecs';
 
 describe('animation with sprite-sheet library integration', () => {
     let assetManager: AssetManager;
@@ -48,7 +48,6 @@ describe('animation with sprite-sheet library integration', () => {
     it('creates sprite sheet with library, registers with animation system, and updates sprite UVs', async () => {
         // Load sprite sheet using the library (grid mode)
         const options: SpriteSheetLibraryOptions = {
-            useSpriteSheetLib: true,
             libraryMode: 'grid',
             grid: {
                 frameWidth: 32,
@@ -158,7 +157,6 @@ describe('animation with sprite-sheet library integration', () => {
 
     it('works with dynamic mode for irregular sprites', async () => {
         const options: SpriteSheetLibraryOptions = {
-            useSpriteSheetLib: true,
             libraryMode: 'dynamic',
             dynamic: {
                 alphaThreshold: 128,

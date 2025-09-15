@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2025-09-14
+
+### Fixed
+
+#### 🔧 Dependency and Configuration Issues
+
+- **FIX**: Resolved package dependency conflicts in package-lock.json
+- **FIX**: Updated CameraEntity constructor for proper component initialization
+- **FIX**: Improved type definitions compatibility
+- **FIX**: Fixed export issues in main index.ts file
+- **FIX**: Updated test files to work with latest dependencies
+- **FIX**: Resolved Vite configuration warnings
+
+#### 📋 Technical Improvements
+
+- Enhanced CameraEntity with better error handling
+- Improved type safety across camera components
+- Updated package.json to version 0.8.1
+
 ## [0.8.0] - 2025-09-14
 
 ### Added

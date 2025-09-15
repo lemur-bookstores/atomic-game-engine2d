@@ -37,7 +37,8 @@ describe('Physics System Tests', () => {
         const velocity: VelocityComponent = {
             type: 'velocity',
             x: 100, // 100 pixels per second
-            y: 50   // 50 pixels per second
+            y: 50,
+            maxSpeed: undefined
         };
 
         entity.addComponent(transform);

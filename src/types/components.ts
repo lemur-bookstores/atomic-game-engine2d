@@ -491,7 +491,7 @@ export interface PhysicsBodyComponent extends Component {
  * @property {number} y - Velocidad en el eje Y
  */
 export interface VelocityComponent {
-    maxSpeed: any;
+    maxSpeed?: number;
     type: 'velocity';
     x: number;
     y: number;
