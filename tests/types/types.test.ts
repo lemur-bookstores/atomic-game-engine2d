@@ -21,6 +21,11 @@ describe('Type System Tests', () => {
             | 'physicsBody'
             | 'particle'
             | 'velocity'
+            | 'camera'
+            | 'cameraFollow'
+            | 'cameraBounds'
+            | 'cameraEffects'
+            | 'cameraFilters'
         >();
     });
 

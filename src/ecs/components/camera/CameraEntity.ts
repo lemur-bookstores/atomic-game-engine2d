@@ -1,7 +1,6 @@
 import { Entity } from "@/ecs/Entity";
-import { TransformComponent } from "@/types";
+import { CameraComponent, TransformComponent } from "@/types";
 import { Vector2 } from "@/math";
-import { CameraComponent } from "./CameraComponent";
 import { EntityId } from "@/types";
 
 /**
