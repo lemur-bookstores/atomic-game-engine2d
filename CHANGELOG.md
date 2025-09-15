@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.2] - 2025-09-14
+
+### Fixed
+
+#### 📦 Module Export Improvements
+
+- **FIX**: Simplified module exports using wildcard exports (`export *`) for better tree-shaking
+- **FIX**: Removed specific component exports in favor of namespace-based access
+- **FIX**: Added `types` namespace export for improved TypeScript experience
+- **FIX**: Removed duplicate SpriteSheetLibrary export from math module
+- **FIX**: Improved bundle size optimization through simplified export structure
+
+#### 🚀 Performance Improvements
+
+- Enhanced tree-shaking capabilities for smaller bundle sizes
+- Simplified import paths for better developer experience
+- Reduced duplicate exports across modules
+
 ## [0.8.1] - 2025-09-14
 
 ### Fixed
