@@ -1,6 +1,6 @@
 
 import { describe, beforeEach, it, expect } from 'vitest';
-import { Scene, Engine } from '../../src';
+import { Scene, GameEngine } from '../../src';
 import { LightingSystem, lightRegistry } from '@/ecs/components';
 
 class MockSystem {
@@ -11,7 +11,7 @@ class MockSystem {
     }
 }
 
-describe('Engine -> scene propagation to systems', () => {
+describe('GameEngine -> scene propagation to systems', () => {
     let canvas: HTMLCanvasElement;
 
     beforeEach(() => {
@@ -21,7 +21,7 @@ describe('Engine -> scene propagation to systems', () => {
     });
 
     it('propagates scene to a newly added system when active scene exists', () => {
-        const engine = new Engine({ canvas, width: 800, height: 600, renderer: 'canvas2d' });
+        const engine = new GameEngine({ canvas, width: 800, height: 600, renderer: 'canvas2d' });
         const scene = new Scene('level1');
 
         engine.addScene(scene);
@@ -34,7 +34,7 @@ describe('Engine -> scene propagation to systems', () => {
     });
 
     it('propagates scene to existing systems when active scene is set', () => {
-        const engine = new Engine({ canvas, width: 800, height: 600, renderer: 'canvas2d' });
+        const engine = new GameEngine({ canvas, width: 800, height: 600, renderer: 'canvas2d' });
         const mock = new MockSystem();
         engine.addSystem(mock as any);
 
