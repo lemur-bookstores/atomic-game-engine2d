@@ -387,6 +387,7 @@ export interface AnimationStateMachineComponent extends Component {
  * @extends Component
  * @property {'audio'} declare type - Tipo del componente
  * @property {string} clip - Nombre del clip de audio
+ * @property {string} [audioSheet] - Nombre del audio sheet a usar (opcional)
  * @property {boolean} [loop] - Si el audio hace loop
  * @property {number} [volume] - Volumen de reproducción (0-1)
  * @property {string} [group] - Grupo de audio para mezcla
@@ -398,6 +399,7 @@ export interface AnimationStateMachineComponent extends Component {
 export interface AudioComponent extends Component {
     type: 'audio';
     clip: string;
+    audioSheet?: string;
     loop?: boolean;
     volume?: number;
     group?: string;

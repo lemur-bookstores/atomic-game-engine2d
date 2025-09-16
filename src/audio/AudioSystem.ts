@@ -50,13 +50,34 @@ export class AudioSystem extends FunctionalSystem {
                     }
 
                     // fire-and-forget play for SFX; don't store handle unless looping
-                    const handle = this.audioManager.play(audio.clip, { loop: !!audio.loop, volume: audio.volume, group: audio.group });
+                    const handle = this.playAudioClip(audio);
                     if (audio.loop) audio.playingHandle = handle;
                 }
             } catch (e) {
                 // swallow to avoid crashing game loop
                 Logger.getInstance().warn('Error in AudioSystem FRAME handler', e);
             }
+        });
+    }
+
+    /**
+     * Helper method to play audio clip, considering audio sheet if available
+     */
+    private playAudioClip(audio: AudioComponent): any {
+        let clipToPlay = audio.clip;
+
+        // If audioSheet is specified, modify clip path to include sheet reference
+        // TODO: Implement proper AudioSheetLibrary integration for clip resolution
+        if (audio.audioSheet) {
+            // For now, use simple concatenation pattern: audioSheet/clip
+            clipToPlay = `${audio.audioSheet}/${audio.clip}`;
+            Logger.getInstance().debug('Using audio sheet clip path:', clipToPlay);
+        }
+
+        return this.audioManager.play(clipToPlay, {
+            loop: !!audio.loop,
+            volume: audio.volume,
+            group: audio.group
         });
     }
 
@@ -69,15 +90,16 @@ export class AudioSystem extends FunctionalSystem {
 
             // Autoplay behavior
             if (audio.autoplay && !audio.playingHandle && this.audioManager.has(audio.clip)) {
-                const handle = this.audioManager.play(audio.clip, { loop: !!audio.loop, volume: audio.volume, group: audio.group });
+                const handle = this.playAudioClip(audio);
                 audio.playingHandle = handle;
             }
 
             // If clip not loaded, try to load lazily (no await here)
-            if (!this.audioManager.has(audio.clip)) {
+            const clipToLoad = audio.audioSheet ? `${audio.audioSheet}/${audio.clip}` : audio.clip;
+            if (!this.audioManager.has(clipToLoad)) {
                 // best-effort load (fire-and-forget)
-                this.audioManager.loadAudio(audio.clip, `assets/${audio.clip}`)
-                    .catch(err => Logger.getInstance().warn('Failed to load audio', audio.clip, err));
+                this.audioManager.loadAudio(clipToLoad, `assets/${clipToLoad}`)
+                    .catch(err => Logger.getInstance().warn('Failed to load audio', clipToLoad, err));
             }
         });
     }
@@ -87,7 +109,7 @@ export class AudioSystem extends FunctionalSystem {
     play(entity: EntityElement): boolean {
         const audio = entity.getComponent<AudioComponent>('audio');
         if (!audio) return false;
-        const handle = this.audioManager.play(audio.clip, { loop: !!audio.loop, volume: audio.volume, group: audio.group });
+        const handle = this.playAudioClip(audio);
         audio.playingHandle = handle;
         return !!handle;
     }
