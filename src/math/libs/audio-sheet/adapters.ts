@@ -125,21 +125,57 @@ export class SilenceBasedSegmentationAdapter implements AudioSegmentationPort {
 export class WebAudioExportAdapter implements AudioExportPort {
     async exportSegments(
         segments: TimeSegment[],
+        audioBuffer: AudioBuffer,
+        format: AudioExportFormat
     ): Promise<AudioFrame[]> {
         const audioFrames: AudioFrame[] = [];
 
         for (let i = 0; i < segments.length; i++) {
             const segment = segments[i];
+
+            // Generate name based on format and index
+            const extension = this.getFileExtension(format);
+            const frameName = `segment_${String(i).padStart(3, '0')}${extension}`;
+
+            // Calculate fade effects based on segment duration and audio quality
+            const fadeInOut = this.calculateOptimalFade(segment.duration, audioBuffer.sampleRate);
+
             const frame = new AudioFrame(
-                `segment_${i}`,
+                frameName,
                 segment.startTime,
                 segment.endTime,
-                segment.duration
+                segment.duration,
+                fadeInOut, // fadeIn
+                fadeInOut  // fadeOut
             );
 
             audioFrames.push(frame);
         }
 
         return audioFrames;
+    }
+
+    private getFileExtension(format: AudioExportFormat): string {
+        switch (format) {
+            case 'wav': return '.wav';
+            case 'mp3': return '.mp3';
+            case 'ogg': return '.ogg';
+            case 'buffer': return ''; // No extension for buffer format
+            default: return '.wav';
+        }
+    }
+
+    private calculateOptimalFade(duration: number, sampleRate: number): number {
+        // Calculate optimal fade time based on duration and sample rate
+        // Shorter segments get proportionally shorter fades
+        const minFade = Math.max(0.005, 1 / sampleRate * 10); // At least 10 samples or 5ms
+        const maxFade = 0.05;  // 50ms maximum
+
+        // For short segments, use shorter fade to preserve audio content
+        if (duration < 0.1) return minFade;
+        if (duration < 0.5) return Math.min(duration * 0.1, maxFade);
+
+        // For longer segments, use standard fade
+        return Math.min(0.01, maxFade); // 10ms standard fade
     }
 }
