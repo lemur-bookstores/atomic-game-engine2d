@@ -1,6 +1,6 @@
 import { INPUT_EVENTS } from '@/types/event-const';
 import { EventSystem } from '../core/EventSystem';
-import { Vector2 } from '../math/Vector2';
+import { Vector2 } from '../math/Vector2D';
 
 export interface InputConfig {
     canvas?: HTMLCanvasElement;
@@ -201,7 +201,7 @@ export class InputManager {
             this.triggerKeyDownCallbacks(key, inputEvent);
             this.eventSystem.emit(INPUT_EVENTS.KEYDOWN, { key, event: inputEvent });
             // Legacy/unprefixed compatibility expects event.data to be the KeyboardEvent itself
-            this.eventSystem.emit('keyDown' as any, inputEvent as any);
+            this.eventSystem.emit<any>('keyDown', inputEvent as any);
         }
     }
 
@@ -225,7 +225,7 @@ export class InputManager {
             this.triggerKeyUpCallbacks(key, inputEvent);
             this.eventSystem.emit(INPUT_EVENTS.KEYUP, { key, event: inputEvent });
             // Legacy/unprefixed compatibility expects event.data to be the KeyboardEvent itself
-            this.eventSystem.emit('keyUp' as any, inputEvent as any);
+            this.eventSystem.emit<any>('keyUp', inputEvent as any);
         }
     }
 
