@@ -9,9 +9,6 @@ export * from './assets';
 export * from './audio';
 export * as types from './types';
 
-// Main engine class
-export { Engine as GameEngine } from './core/Engine';
-
 // Version
 export const VERSION = '0.8.2';
 
