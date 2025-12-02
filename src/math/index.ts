@@ -1,4 +1,4 @@
-export { Vector2 } from './Vector2';
+export { Vector2D } from './Vector2D';
 export { Transform } from './Transform';
 export { MathUtils } from './MathUtils';
 export { SpriteSheetLibrary } from './libs/sprite-sheet';

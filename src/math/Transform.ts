@@ -1,17 +1,17 @@
-import { Vector2 } from './Vector2';
+import { Vector2D } from './Vector2D';
 
 /**
  * Transform class for handling position, rotation, and scale
  */
 export class Transform {
-    public position: Vector2;
+    public position: Vector2D;
     public rotation: number; // in radians
-    public scale: Vector2;
+    public scale: Vector2D;
 
     constructor(
-        position: Vector2 = new Vector2(),
+        position: Vector2D = new Vector2D(),
         rotation: number = 0,
-        scale: Vector2 = new Vector2(1, 1)
+        scale: Vector2D = new Vector2D(1, 1)
     ) {
         this.position = position;
         this.rotation = rotation;
@@ -52,7 +52,7 @@ export class Transform {
     /**
      * Translate by a vector
      */
-    translate(offset: Vector2): Transform {
+    translate(offset: Vector2D): Transform {
         this.position.add(offset);
         return this;
     }
@@ -76,7 +76,7 @@ export class Transform {
     /**
      * Scale non-uniformly
      */
-    scaleBy(scaleVector: Vector2): Transform {
+    scaleBy(scaleVector: Vector2D): Transform {
         this.scale.x *= scaleVector.x;
         this.scale.y *= scaleVector.y;
         return this;
@@ -85,23 +85,23 @@ export class Transform {
     /**
      * Get the forward direction vector based on rotation
      */
-    getForward(): Vector2 {
-        return Vector2.fromAngle(this.rotation);
+    getForward(): Vector2D {
+        return Vector2D.fromAngle(this.rotation);
     }
 
     /**
      * Get the right direction vector based on rotation
      */
-    getRight(): Vector2 {
-        return Vector2.fromAngle(this.rotation + Math.PI / 2);
+    getRight(): Vector2D {
+        return Vector2D.fromAngle(this.rotation + Math.PI / 2);
     }
 
     /**
      * Transform a point from local space to world space
      */
-    transformPoint(localPoint: Vector2): Vector2 {
+    transformPoint(localPoint: Vector2D): Vector2D {
         // Scale
-        const scaled = new Vector2(
+        const scaled = new Vector2D(
             localPoint.x * this.scale.x,
             localPoint.y * this.scale.y
         );
@@ -109,32 +109,32 @@ export class Transform {
         // Rotate
         const cos = Math.cos(this.rotation);
         const sin = Math.sin(this.rotation);
-        const rotated = new Vector2(
+        const rotated = new Vector2D(
             scaled.x * cos - scaled.y * sin,
             scaled.x * sin + scaled.y * cos
         );
 
         // Translate
-        return Vector2.add(rotated, this.position);
+        return Vector2D.add(rotated, this.position);
     }
 
     /**
      * Transform a point from world space to local space
      */
-    inverseTransformPoint(worldPoint: Vector2): Vector2 {
+    inverseTransformPoint(worldPoint: Vector2D): Vector2D {
         // Translate
-        const translated = Vector2.subtract(worldPoint, this.position);
+        const translated = Vector2D.subtract(worldPoint, this.position);
 
         // Rotate (inverse)
         const cos = Math.cos(-this.rotation);
         const sin = Math.sin(-this.rotation);
-        const rotated = new Vector2(
+        const rotated = new Vector2D(
             translated.x * cos - translated.y * sin,
             translated.x * sin + translated.y * cos
         );
 
         // Scale (inverse)
-        return new Vector2(
+        return new Vector2D(
             rotated.x / this.scale.x,
             rotated.y / this.scale.y
         );
@@ -188,9 +188,9 @@ export class Transform {
      */
     static lerp(a: Transform, b: Transform, t: number): Transform {
         return new Transform(
-            Vector2.lerp(a.position, b.position, t),
+            Vector2D.lerp(a.position, b.position, t),
             a.rotation + (b.rotation - a.rotation) * t,
-            Vector2.lerp(a.scale, b.scale, t)
+            Vector2D.lerp(a.scale, b.scale, t)
         );
     }
 }
