@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PhysicsWorld } from '../../src/physics/PhysicsWorld';
 import { PhysicsBody, PhysicsBodyType, PhysicsShape } from '../../src/physics/PhysicsBody';
 import { PhysicsJoint, JointType } from '../../src/physics/PhysicsJoint';
-import { Vector2 } from '../../src/math/Vector2';
+import { Vector2 } from '../../src/math/Vector2D';
 
 describe('PhysicsJoint Integration Tests', () => {
     let physicsWorld: PhysicsWorld;

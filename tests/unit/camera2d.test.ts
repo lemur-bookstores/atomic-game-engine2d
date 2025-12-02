@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Camera2D } from '../../src/graphics/Camera2D';
-import { Vector2 } from '../../src/math/Vector2';
+import { Vector2 } from '../../src/math/Vector2D';
 
 describe('Camera2D transforms', () => {
     it('converts world to screen and back with default', () => {
