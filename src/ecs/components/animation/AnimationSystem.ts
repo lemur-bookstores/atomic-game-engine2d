@@ -163,7 +163,7 @@ export class AnimationSystem extends FunctionalSystem {
             if (Array.isArray(frameEvents)) {
                 // Múltiples eventos
                 for (const eventData of frameEvents) {
-                    this.eventSystem.emit(eventData.eventName as any, {
+                    this.eventSystem.emit<any>(eventData.eventName, {
                         entity,
                         animationName: animComponent.currentAnimation,
                         frameIndex: animComponent.currentFrame,
@@ -173,7 +173,7 @@ export class AnimationSystem extends FunctionalSystem {
                 }
             } else if (typeof frameEvents === 'string') {
                 // Evento simple (string)
-                this.eventSystem.emit(frameEvents as any, {
+                this.eventSystem.emit<any>(frameEvents, {
                     entity,
                     animationName: animComponent.currentAnimation,
                     frameIndex: animComponent.currentFrame

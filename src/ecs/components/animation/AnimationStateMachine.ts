@@ -155,7 +155,7 @@ export class AnimationStateMachineSystem extends FunctionalSystem {
         // run onExit for current state
         const prevState = def.states.find(s => s.name === machine.currentState);
         if (prevState && prevState.onExit?.events) {
-            for (const ev of prevState.onExit.events) this.eventSystem.emit(ev as any, { entity });
+            for (const ev of prevState.onExit.events) this.eventSystem.emit<any>(ev, { entity });
         }
 
         machine.currentState = transition.to;
@@ -164,7 +164,7 @@ export class AnimationStateMachineSystem extends FunctionalSystem {
         const nextState = def.states.find(s => s.name === transition.to);
         if (nextState) {
             if (nextState.onEnter?.events) {
-                for (const ev of nextState.onEnter.events) this.eventSystem.emit(ev as any, { entity });
+                for (const ev of nextState.onEnter.events) this.eventSystem.emit<any>(ev, { entity });
             }
 
             // Apply the animation on the AnimationComponent (use animation name)
