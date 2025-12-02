@@ -1,5 +1,5 @@
 import type { Body } from 'box2d-wasm';
-import { Vector2 } from '../math/Vector2';
+import { Vector2 } from '../math/Vector2D';
 import { Transform } from '../math/Transform';
 import { PhysicsWorld } from './PhysicsWorld';
 import { Logger } from '../core/Logger';

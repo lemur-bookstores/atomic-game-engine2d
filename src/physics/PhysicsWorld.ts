@@ -2,7 +2,7 @@ import Box2DFactory from "box2d-wasm";
 import type { Box2D, World, Vec2 } from "box2d-wasm";
 import wasmUrl from "box2d-wasm/dist/umd/Box2D.simd.wasm?url";
 
-import { Vector2 } from '../math/Vector2';
+import { Vector2 } from '../math/Vector2D';
 import { EventSystem } from '../core/EventSystem';
 import { Logger } from '../core/Logger';
 import { getBodyUserData, PhysicsBody } from './PhysicsBody';

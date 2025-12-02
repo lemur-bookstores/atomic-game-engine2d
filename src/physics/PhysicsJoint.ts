@@ -1,4 +1,4 @@
-import { Vector2 } from '../math/Vector2';
+import { Vector2 } from '../math/Vector2D';
 import { PhysicsWorld } from './PhysicsWorld';
 import { EventSystem } from '@/core/EventSystem';
 import { PHYSICS_EVENTS } from '@/types/event-const';

@@ -4,7 +4,7 @@ import { ReactSystem } from '../core/ecs/ReactSystem';
 import { PhysicsWorld } from './PhysicsWorld';
 import { PhysicsBody, PhysicsBodyConfig, PhysicsBodyType, PhysicsShape } from './PhysicsBody';
 import { Transform } from '../math/Transform';
-import { Vector2 } from '../math/Vector2';
+import { Vector2 } from '../math/Vector2D';
 
 /**
  * PhysicsSystem manages the lifecycle of physics bodies and synchronizes
