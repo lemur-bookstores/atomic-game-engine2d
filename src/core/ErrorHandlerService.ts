@@ -1,6 +1,7 @@
 import { EventSystem } from './EventSystem';
 import { EngineError } from './EngineError';
 import { Logger } from './Logger';
+import { ENGINE_EVENTS } from '@/types';
 
 export interface ErrorHandler {
     canHandle(error: EngineError): boolean;
@@ -20,7 +21,7 @@ export class ErrorHandlerService {
 
         // Emit event for listeners
         try {
-            this.eventSystem.emit('engine.error' as any, { error: engineError });
+            this.eventSystem.emit(ENGINE_EVENTS.ERROR, { error: engineError });
         } catch (e) { /* ignore */ }
 
         let handled = false;
@@ -43,7 +44,7 @@ export class ErrorHandlerService {
 
         if (engineError.isCritical) {
             try {
-                this.eventSystem.emit('engine.critical_error' as any, { error: engineError });
+                this.eventSystem.emit(ENGINE_EVENTS.CRITICAL_ERROR, { error: engineError });
             } catch (e) { /* ignore */ }
         }
     }

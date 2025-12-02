@@ -1,4 +1,4 @@
-import { EntityId } from '@/types';
+import { ComponentType, EntityElement, EntityId } from '@/types';
 import { SCENE_EVENTS } from '@/types/event-const';
 import { EventSystem } from './EventSystem';
 import { Logger } from './Logger';
@@ -20,7 +20,7 @@ export class Scene {
     public readonly name: string;
     public active: boolean = false;
 
-    private entities = new Map<EntityId, any>();
+    private entities = new Map<EntityId, EntityElement>();
     private eventSystem: EventSystem;
     private initialized = false;
     private layers = new Map<string, CollisionLayer>();
@@ -110,14 +110,14 @@ export class Scene {
     /**
      * Get all entities in the scene
      */
-    getEntities(): any[] {
+    getEntities(): EntityElement[] {
         return Array.from(this.entities.values());
     }
 
     /**
      * Get all active entities in the scene
      */
-    getActiveEntities(): any[] {
+    getActiveEntities(): EntityElement[] {
         return this.getEntities().filter(entity => entity.active !== false);
     }
 
@@ -159,7 +159,7 @@ export class Scene {
     /**
      * Find entities by component type
      */
-    findEntitiesWithComponent(componentType: string): any[] {
+    findEntitiesWithComponent(componentType: ComponentType): any[] {
         return this.getEntities().filter(entity =>
             entity.hasComponent && entity.hasComponent(componentType)
         );
@@ -168,7 +168,7 @@ export class Scene {
     /**
      * Find entities with multiple components
      */
-    findEntitiesWithComponents(componentTypes: string[]): any[] {
+    findEntitiesWithComponents(componentTypes: ComponentType[]): any[] {
         return this.getEntities().filter(entity => {
             if (!entity.hasComponent) return false;
             return componentTypes.every(type => entity.hasComponent(type));

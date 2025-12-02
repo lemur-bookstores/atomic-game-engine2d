@@ -47,7 +47,7 @@ export class EventSystem {
     /**
      * Register an event listener
      */
-    on<T = any>(type: AllEventTypes, callback: EventCallback<T>): void {
+    on<T, E>(type: AllEventTypes & T, callback: EventCallback<E>): void {
         if (!this.listeners.has(type)) {
             this.listeners.set(type, []);
         }
@@ -57,8 +57,8 @@ export class EventSystem {
     /**
      * Register a one-time event listener
      */
-    once<T = any>(type: AllEventTypes, callback: EventCallback<T>): void {
-        const wrappedCallback: EventCallback<T> = (event: GameEvent<T>) => {
+    once<T, E>(type: AllEventTypes & T, callback: EventCallback<E>): void {
+        const wrappedCallback: EventCallback<E> = (event: GameEvent<E>) => {
             callback(event);
             this.off(type, wrappedCallback);
         };
@@ -68,7 +68,7 @@ export class EventSystem {
     /**
      * Remove an event listener
      */
-    off<T = any>(type: AllEventTypes, callback: EventCallback<T>): void {
+    off<T, E>(type: AllEventTypes & T, callback: EventCallback<E>): void {
         const callbacks = this.listeners.get(type);
         if (callbacks) {
             const index = callbacks.indexOf(callback);
@@ -81,7 +81,7 @@ export class EventSystem {
     /**
      * Remove all listeners for a specific event type
      */
-    removeAllListeners(type?: AllEventTypes): void {
+    removeAllListeners<T>(type?: AllEventTypes & T): void {
         if (type) {
             this.listeners.delete(type);
         } else {
@@ -92,16 +92,16 @@ export class EventSystem {
     /**
      * Check if there are any listeners for an event type
      */
-    hasListeners(type: AllEventTypes): boolean {
-        const callbacks = this.listeners.get(type);
+    hasListeners<T>(type?: AllEventTypes & T): boolean {
+        const callbacks = this.listeners.get(type as AllEventTypes);
         return callbacks !== undefined && callbacks.length > 0;
     }
 
     /**
      * Get the number of listeners for an event type
      */
-    listenerCount(type: AllEventTypes): number {
-        const callbacks = this.listeners.get(type);
+    listenerCount<T>(type?: AllEventTypes & T): number {
+        const callbacks = this.listeners.get(type as AllEventTypes);
         return callbacks ? callbacks.length : 0;
     }
 
@@ -153,10 +153,10 @@ export class EventSystem {
 
         // Also dispatch to compatibility names: convert SCREAMING_SNAKE_CASE to camelCase
         // For example: 'ENGINE:ACTIVE_SCENE_CHANGE' -> 'engine:activeSceneChange' and 'engine:activeSceneChanged'
-        const parts = String(event.type).split(':');
-        if (parts.length === 2) {
-            const prefix = parts[0].toLowerCase();
-            const name = parts[1];
+        const [module, action] = String(event.type).split(':');
+        if (Boolean(module) && Boolean(action)) {
+            const prefix = module.toLowerCase();
+            const name = action;
 
             const toCamel = (s: string) => {
                 return s.toLowerCase().split('_').map((part, i) => i === 0 ? part : (part.charAt(0).toUpperCase() + part.slice(1))).join('');
@@ -184,7 +184,7 @@ export class EventSystem {
 
             // Also dispatch to unprefixed camelCase name (e.g. 'entityCreated' or 'keyDown')
             if (camelName !== event.type) {
-                const nameOnlyCallbacks = this.listeners.get(camelName as any);
+                const nameOnlyCallbacks = this.listeners.get(camelName as AllEventTypes);
                 if (nameOnlyCallbacks) {
                     const nameOnlyCopy = [...nameOnlyCallbacks];
                     for (const callback of nameOnlyCopy) {
@@ -269,15 +269,15 @@ export class EventSystem {
     /**
      * Debug method to list all registered event types
      */
-    getRegisteredEventTypes(): string[] {
+    getRegisteredEventTypes(): AllEventTypes[] {
         return Array.from(this.listeners.keys());
     }
 
     /**
      * Debug method to get detailed listener information
      */
-    getDebugInfo(): { [eventType: string]: number } {
-        const info: { [eventType: string]: number } = {};
+    getDebugInfo(): { [key in AllEventTypes]: number } {
+        const info: { [key in AllEventTypes]: number } = {} as any;
         for (const [eventType, callbacks] of this.listeners) {
             info[eventType] = callbacks.length;
         }
