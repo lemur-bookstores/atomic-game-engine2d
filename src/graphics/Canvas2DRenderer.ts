@@ -1,6 +1,6 @@
 import { RenderStrategy } from './Renderer';
 import { Texture } from './Texture';
-import { Vector2 } from '../math/Vector2';
+import { Vector2 } from '../math/Vector2D';
 import { Color } from '../math/Color';
 import { Logger } from '../core/Logger';
 
@@ -60,7 +60,7 @@ export class Canvas2DRenderer implements RenderStrategy {
         }
 
         // Apply tint if not white
-        if (tint.r !== 255 || tint.g !== 255 || tint.b !== 255 || tint.a !== 255) {
+        if (tint.r !== 255 || tint.g !== 255 || tint.b !== 255) {
             this.ctx.globalAlpha = tint.a || 255 / 255;
             this.ctx.globalCompositeOperation = 'multiply';
             this.ctx.fillStyle = `rgb(${tint.r}, ${tint.g}, ${tint.b})`;
@@ -132,7 +132,7 @@ export class Canvas2DRenderer implements RenderStrategy {
         }
 
         // Apply tint if not white
-        if (tint.r !== 255 || tint.g !== 255 || tint.b !== 255 || tint.a !== 255) {
+        if (tint.r !== 255 || tint.g !== 255 || tint.b !== 255) {
             this.ctx.globalAlpha = tint.a || 255 / 255;
 
             // For colored tints, we need to use a more complex approach

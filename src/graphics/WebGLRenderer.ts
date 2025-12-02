@@ -1,6 +1,6 @@
 import { RenderStrategy } from './Renderer';
 import { Texture } from './Texture';
-import { Vector2 } from '../math/Vector2';
+import { Vector2 } from '../math/Vector2D';
 import { Color } from '../math/Color';
 
 export class WebGLRenderer implements RenderStrategy {

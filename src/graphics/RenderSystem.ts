@@ -3,7 +3,7 @@ import { ComponentType, EntityElement } from '@/types';
 import { FunctionalSystem } from '../ecs/FunctionalSystem';
 import { RenderStrategy } from './Renderer';
 import { Texture } from './Texture';
-import { Vector2 } from '../math/Vector2';
+import { Vector2 } from '../math/Vector2D';
 import { Camera2D } from './Camera2D';
 import { Color } from '../math/Color';
 import { Logger } from '../core/Logger';
