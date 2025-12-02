@@ -1,5 +1,6 @@
 
 
+import { Vector2D } from "@/math/Vector2D";
 import { ComponentsSystem } from "./components";
 import { AllEventTypes } from "./event-names";
 /**
@@ -229,15 +230,6 @@ export interface Color {
     g: number
     b: number
     a?: number
-}
-
-export interface Vector2D {
-    x: number;
-    y: number;
-}
-
-export interface Vector3D extends Vector2D {
-    z: number;
 }
 
 export interface EngineConfig {

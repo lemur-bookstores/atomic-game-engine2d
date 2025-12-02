@@ -59,6 +59,7 @@ export type EngineEvents = {
     PAUSE: CreateEventType<EventNames.ENGINE, 'PAUSE'>,
     RESUME: CreateEventType<EventNames.ENGINE, 'RESUME'>,
     ERROR: CreateEventType<EventNames.ENGINE, 'ERROR'>
+    CRITICAL_ERROR: CreateEventType<EventNames.ENGINE, 'CRITICAL_ERROR'>
 };
 
 export type GameLoopEvents = {

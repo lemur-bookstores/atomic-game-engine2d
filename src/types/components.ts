@@ -1,3 +1,4 @@
+import { Vector2D } from "@/math/Vector2D";
 import {
     AnimationDirection,
     AnimationStateBase,
@@ -11,7 +12,6 @@ import {
     PlaybackHandle,
     ShapeType,
     State,
-    Vector2D
 } from "./types";
 
 /**
@@ -455,7 +455,7 @@ export interface ColliderComponent extends Component {
  * Componente de cuerpo físico avanzado
  * @declare interface PhysicsBodyComponent
  * @extends Component
- * @property {'physicsBody' | 'physics'} declare type - Tipo del componente
+ * @property {'physicsBody'} declare type - Tipo del componente
  * @property {PhysicsBodyType} bodyType - Tipo de cuerpo físico
  * @property {ShapeType} shape - Forma del cuerpo físico
  * @property {number} [width] - Ancho para formas rectangulares
@@ -470,7 +470,7 @@ export interface ColliderComponent extends Component {
  * @property {number} [collisionGroup] - Grupo de colisión para filtrado
  */
 export interface PhysicsBodyComponent extends Component {
-    type: 'physicsBody' | 'physics';
+    type: 'physicsBody';
     bodyType: PhysicsBodyType;
     shape: ShapeType;
     width?: number;
